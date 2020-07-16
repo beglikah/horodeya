@@ -1700,19 +1700,19 @@ def accept_epay_payment(request):
 
     calc_checksum = hmac.new(key, encodedParam, sha1).hexdigest()
 
-    support = EpayMoneySupport.objects.filter(id=invoice_number_decoded)
+    support = get_object_or_404(EpayMoneySupport, invoice_number_decoded)
 
     if(calc_checksum == checksum):
         if(status == 'PAID'):
-            support.status = Support.STATUS.accepted
+            support.status = 'accepted'
             support.save()
             return HttpResponse(status=200, invoice=invoice_number_decoded)
         elif(status == 'EXPIRED'):
-            support.status = Support.STATUS.expired
+            support.status = 'expired'
             support.save()
             return HttpResponse(status=200, invoice=invoice_number_decoded)
         else:
-            support.status = Support.STATUS.declined
+            support.status = 'declined'
             support.save()
             return HttpResponse(status=200, invoice=invoice_number_decoded)
     else:
