@@ -35,7 +35,7 @@ docker run -it --rm --network container:horodeya-postgres postgres psql -h $DB_H
 
 ### Стартиране
 
-`   ``bash
+```bash
 ./manage.sh migrate
 ./manage.sh loaddata fixtures/dev.yaml
 ./manage.sh runserver
@@ -63,4 +63,6 @@ manage.py compilemessages -l bg
 from django.contrib.auth import get_user_model
 user = get_user_model()
 user.objects.all()
+u = user.objects.get(username='mavrov.georgi')
+u.set_password('123123')
 ```
