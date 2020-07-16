@@ -1704,7 +1704,7 @@ def accept_epay_payment(request):
 
     if(calc_checksum == checksum):
         if(status == 'PAID'):
-            support.status = 'accepted'
+            support.status = EpayMoneySupport.STATUS.delivered
             support.save()
             return HttpResponse(status=200, invoice=invoice_number_decoded)
         elif(status == 'EXPIRED'):
