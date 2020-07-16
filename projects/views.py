@@ -30,7 +30,7 @@ from django.utils.translation import gettext as _
 
 from rules.contrib.views import AutoPermissionRequiredMixin, permission_required, objectgetter, PermissionRequiredMixin
 
-from projects.models import Project, Community, Report, MoneySupport, TimeSupport, User, Announcement, TimeNecessity, ThingNecessity, Question, QuestionPrototype, DonatorData, LegalEntityDonatorData, BugReport, EpayMoneySupport
+from projects.models import Project, Community, Report, MoneySupport, TimeSupport, User, Announcement, TimeNecessity, ThingNecessity, Question, QuestionPrototype, DonatorData, LegalEntityDonatorData, BugReport, EpayMoneySupport, Support
 
 from projects.forms import QuestionForm, PaymentForm, ProjectUpdateForm, BugReportForm, EpayMoneySupportForm
 
@@ -1704,15 +1704,15 @@ def accept_epay_payment(request):
 
     if(calc_checksum == checksum):
         if(status == 'PAID'):
-            support.status = 'PAID'
+            support.status = Support.STATUS.accepted
             support.save()
             return HttpResponse(status=200, invoice=invoice_number_decoded)
         elif(status == 'EXPIRED'):
-            support.status = 'EXPIRED'
+            support.status = Support.STATUS.expired
             support.save()
             return HttpResponse(status=200, invoice=invoice_number_decoded)
         else:
-            support.status = 'DENIED'
+            support.status = Support.STATUS.declined
             support.save()
             return HttpResponse(status=200, invoice=invoice_number_decoded)
     else:
