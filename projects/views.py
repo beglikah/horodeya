@@ -1698,7 +1698,7 @@ def accept_epay_payment(request):
     key = (
         'RPV28AWHKQKIXW55Q7D52EM8BN90U26MV0IZKR4K2IM4U2B5RVGUFKSA6PQA31T9').encode()
 
-    calc_checksum = hmac.new(key, encoded, sha1).hexdigest()
+    calc_checksum = hmac.new(key, encodedParam, sha1).hexdigest()
 
     support = EpayMoneySupport.objects.filter(id=invoice_number_decoded)
 
