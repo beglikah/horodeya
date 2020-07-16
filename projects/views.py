@@ -1700,7 +1700,7 @@ def accept_epay_payment(request):
 
     calc_checksum = hmac.new(key, encodedParam, sha1).hexdigest()
 
-    support = get_object_or_404(EpayMoneySupport, invoice_number_decoded)
+    support = get_object_or_404(EpayMoneySupport, pk=invoice_number_decoded)
 
     if(calc_checksum == checksum):
         if(status == 'PAID'):
