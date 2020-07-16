@@ -1679,10 +1679,41 @@ def pay_epay_support(request, pk):
 
 @csrf_exempt
 def accept_epay_payment(request):
+
     encodedParam = request.POST.get('encoded')
     checksum = request.POST.get('checksum')
 
-    a = BugReport(email=checksum, message=encodedParam)
-    a.save()
+    encoded = base64.b64decode(encodedParam).decode('utf-8')
 
-    return HttpResponse(status=200)
+    epay_items = encoded.split(':')
+
+    epay_item_currencies = []
+
+    for item in epay_items:
+        epay_item_currencies.append(item.split('=')[1])
+
+    invoice_number_decoded = epay_item_currencies[0]
+    status = epay_item_currencies[1]
+    pay_time = epay_item_currencies[2]
+    key = (
+        'RPV28AWHKQKIXW55Q7D52EM8BN90U26MV0IZKR4K2IM4U2B5RVGUFKSA6PQA31T9').encode()
+
+    calc_checksum = hmac.new(key, encoded, sha1).hexdigest()
+
+    support = EpayMoneySupport.objects.filter(id=invoice_number_decoded)
+
+    if(calc_checksum == checksum):
+        if(status == 'PAID'):
+            support.status = 'PAID'
+            support.save()
+            return HttpResponse(status=200, invoice=invoice_number_decoded)
+        elif(status == 'EXPIRED'):
+            support.status = 'EXPIRED'
+            support.save()
+            return HttpResponse(status=200, invoice=invoice_number_decoded)
+        else:
+            support.status = 'DENIED'
+            support.save()
+            return HttpResponse(status=200, invoice=invoice_number_decoded)
+    else:
+        return HttpResponse(status=500, invoice=invoice_number_decoded)
