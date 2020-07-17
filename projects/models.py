@@ -857,7 +857,7 @@ class LegalEntityDonatorData(Timestamped):
     postAddress = models.CharField(
         _('postAdress'), max_length=200, blank=True)
     TIN = models.CharField(_('TIN'), max_length=10,
-                           blank=False, default=None, null=True)
+                           blank=True, default=None, null=True)
     website = models.CharField(_('website'), blank=True, max_length=100)
 
 
