@@ -1481,29 +1481,14 @@ def questions_update(request, project_id):
 
 class DonatorDataCreate(AutoPermissionRequiredMixin, CreateView):
     model = DonatorData
-    fields = ['phone', 'citizenship', 'domicile', 'postAddress',
-              'TIN', 'passportData', 'birthdate', 'placeOfBirth',
-              'profession', 'website']
+    fields = ['phone', 'citizenship', 'postAddress',
+              'TIN']
     redirectUrl = ''
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         redirectUrl = self.request.GET.get('next')
         return context
-
-    def get_form(self, form_class=None):
-        form = super(DonatorDataCreate, self).get_form(form_class)
-        form.fields['birthdate'].widget = DatePicker(
-            attrs={
-                'style': 'width:120px',
-                'required': True
-            },
-            options={
-                'useCurrent': True,
-                'collapse': False,
-            },
-        )
-        return form
 
     def form_valid(self, form):
         user = self.request.user
@@ -1520,7 +1505,7 @@ class DonatorDataCreate(AutoPermissionRequiredMixin, CreateView):
 
 class LegalEntityDataCreate(AutoPermissionRequiredMixin, CreateView):
     model = LegalEntityDonatorData
-    fields = ['name', 'type', 'EIK',
+    fields = ['name', 'type', 'headquarters', 'EIK', 'postAddress', 'TIN',
               'DDORegistration', 'phoneNumber', 'website']
 
     def form_valid(self, form):

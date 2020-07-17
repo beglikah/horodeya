@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-15 18:08+0300\n"
+"POT-Creation-Date: 2020-07-17 18:06+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,8 +39,8 @@ msgstr "Профилът е неактивен"
 msgid "This account is inactive."
 msgstr "Този профил е неактивен"
 
-#: .\home\templates\account\email.html:6 .\home\templates\base.html:92
-#: .\home\templates\home\account.html:8
+#: .\home\templates\account\email.html:6 .\home\templates\base.html:100
+#: .\home\templates\home\account.html:9
 #: .\projects\templates\projects\user_support_list.html:8
 msgid "Account"
 msgstr "Профил"
@@ -393,50 +393,50 @@ msgid ""
 "mail address</a>."
 msgstr ""
 
-#: .\home\templates\base.html:32
+#: .\home\templates\base.html:29
 msgid "Horodeya"
 msgstr "Хородея"
 
-#: .\home\templates\base.html:73 .\home\templates\base.html:137
+#: .\home\templates\base.html:75 .\home\templates\base.html:145
 msgid "Home"
 msgstr "Начало"
 
-#: .\home\templates\base.html:80 .\home\templates\home\account.html:61
+#: .\home\templates\base.html:81 .\home\templates\home\account.html:62
 #: .\projects\templates\projects\project_breadcrumb.html:4
 msgid "Causes"
 msgstr "Задруги"
 
-#: .\home\templates\base.html:90
+#: .\home\templates\base.html:97
 msgid "About us"
 msgstr "За нас"
 
-#: .\home\templates\base.html:93
+#: .\home\templates\base.html:101
 msgid "Sign out"
 msgstr "Излез"
 
-#: .\home\templates\base.html:95
+#: .\home\templates\base.html:104
 msgid "Sign in / Sign up"
 msgstr ""
 
-#: .\home\templates\home\account.html:12
+#: .\home\templates\home\account.html:13
 #: .\projects\templates\projects\community_detail.html:10
 msgid "Update photo"
 msgstr "Промени Снимка"
 
-#: .\home\templates\home\account.html:39
+#: .\home\templates\home\account.html:40
 #: .\projects\templates\projects\community_detail.html:29
 #, fuzzy
 #| msgid "Add row"
 msgid "Add photo"
 msgstr "Добави ред"
 
-#: .\home\templates\home\account.html:50
+#: .\home\templates\home\account.html:51
 #: .\projects\templates\projects\community_breadcrumb.html:4
 #: .\projects\templates\projects\community_list.html:10
 msgid "Communities"
 msgstr "Общности"
 
-#: .\home\templates\home\account.html:72
+#: .\home\templates\home\account.html:73
 #, python-format
 msgid ""
 "\n"
@@ -447,11 +447,11 @@ msgstr ""
 "        %(count)s дарения.\n"
 "        "
 
-#: .\home\templates\home\account.html:75 .\home\templates\home\account.html:81
+#: .\home\templates\home\account.html:76 .\home\templates\home\account.html:82
 msgid "See all"
 msgstr "Виж всички"
 
-#: .\home\templates\home\account.html:78
+#: .\home\templates\home\account.html:79
 #, python-format
 msgid ""
 "\n"
@@ -462,7 +462,7 @@ msgstr ""
 "        %(count)s вложения на труд\n"
 "        "
 
-#: .\home\templates\home\list.html:15
+#: .\home\templates\home\list.html:48
 msgid "Create Cause"
 msgstr "Създай Задруга"
 
@@ -499,11 +499,11 @@ msgstr "Ще изпратя парите на посочения Revolut про�
 msgid "Name"
 msgstr "Име"
 
-#: .\projects\models.py:109 .\projects\models.py:854
+#: .\projects\models.py:109 .\projects\models.py:849
 msgid "type"
 msgstr "Тип"
 
-#: .\projects\models.py:110 .\projects\models.py:856
+#: .\projects\models.py:110 .\projects\models.py:852
 msgid "DDORegistration"
 msgstr "Регистрация по ДДС"
 
@@ -523,7 +523,7 @@ msgstr "Предишен опит"
 msgid "activityType"
 msgstr "Сфера на дейност"
 
-#: .\projects\models.py:117 .\projects\models.py:841 .\projects\models.py:859
+#: .\projects\models.py:117 .\projects\models.py:855 .\projects\models.py:859
 msgid "website"
 msgstr "Уебсайт"
 
@@ -535,11 +535,11 @@ msgstr "Текст"
 msgid "bulstat"
 msgstr "Булстат"
 
-#: .\projects\models.py:121
+#: .\projects\models.py:121 .\projects\models.py:863
 msgid "email"
 msgstr "Имейл"
 
-#: .\projects\models.py:122 .\projects\models.py:830
+#: .\projects\models.py:122 .\projects\models.py:832
 msgid "phone"
 msgstr "Телефонен номер"
 
@@ -575,11 +575,11 @@ msgstr "месечен"
 msgid "twoweeks"
 msgstr "двуседмичен"
 
-#: .\projects\models.py:204
+#: .\projects\models.py:204 .\projects\models.py:581
 msgid "review"
 msgstr "Прегледай"
 
-#: .\projects\models.py:205
+#: .\projects\models.py:205 .\projects\models.py:583
 msgid "accepted"
 msgstr "Одобри"
 
@@ -599,11 +599,11 @@ msgstr "Цел"
 msgid "description"
 msgstr "Описание"
 
-#: .\projects\models.py:238 .\projects\models.py:444 .\projects\models.py:754
+#: .\projects\models.py:238 .\projects\models.py:444 .\projects\models.py:756
 msgid "start_date"
 msgstr "Начална дата"
 
-#: .\projects\models.py:239 .\projects\models.py:445 .\projects\models.py:755
+#: .\projects\models.py:239 .\projects\models.py:445 .\projects\models.py:757
 msgid "end_date"
 msgstr "Крайна дата"
 
@@ -639,8 +639,8 @@ msgstr "известие"
 msgid "published_at"
 msgstr "Публикуван на"
 
-#: .\projects\models.py:442 .\projects\models.py:477 .\projects\models.py:707
-#: .\projects\models.py:753
+#: .\projects\models.py:442 .\projects\models.py:477 .\projects\models.py:709
+#: .\projects\models.py:755
 msgid "price"
 msgstr "Пазарна стойност"
 
@@ -652,91 +652,103 @@ msgstr "Брой"
 msgid "Do you have a comment"
 msgstr "Искате ли да коментирате"
 
-#: .\projects\models.py:586
+#: .\projects\models.py:582
+#, fuzzy
+#| msgid "Mark as delivered"
+msgid "delivered"
+msgstr "Отбележи като изпълнено"
+
+#: .\projects\models.py:584
+#, fuzzy
+#| msgid "Decline"
+msgid "declined"
+msgstr "Откажи"
+
+#: .\projects\models.py:585
+#, fuzzy
+#| msgid "required"
+msgid "expired"
+msgstr "Задължително"
+
+#: .\projects\models.py:588
 #, fuzzy
 #| msgid "Status"
 msgid "status"
 msgstr "Статус"
 
-#: .\projects\models.py:589
+#: .\projects\models.py:591
 msgid "status_since"
 msgstr ""
 
-#: .\projects\models.py:654
+#: .\projects\models.py:656
 msgid "Which necessity do you wish to donate to"
 msgstr "За коя от нуждите искате да дарите"
 
-#: .\projects\models.py:655
+#: .\projects\models.py:657 .\projects\models.py:869
 msgid "How much do you wish to donate"
 msgstr "Каква сума искате да дарите"
 
-#: .\projects\models.py:657
+#: .\projects\models.py:659
 msgid "I wish to remain anonymous"
 msgstr "Искам да съм анонимен"
 
-#: .\projects\models.py:657
+#: .\projects\models.py:659
 msgid "Check if you want your name to be hidden"
 msgstr "Отбележете ако искате името ви да е скрито"
 
-#: .\projects\models.py:660
+#: .\projects\models.py:662
 msgid "Bank Transfer"
 msgstr "Банков трансфер"
 
-#: .\projects\models.py:661
+#: .\projects\models.py:663
 msgid "Revolut"
 msgstr "Revolut"
 
-#: .\projects\models.py:663
+#: .\projects\models.py:665
 msgid "Choose a payment method"
 msgstr "Как ще изпратите дарението"
 
-#: .\projects\models.py:733
+#: .\projects\models.py:735
 msgid "answer"
 msgstr "отговор"
 
-#: .\projects\models.py:790
+#: .\projects\models.py:792 .\projects\models.py:812
 msgid "required"
 msgstr "Задължително"
 
-#: .\projects\models.py:831
+#: .\projects\models.py:833
 msgid "citizenship"
 msgstr "Гражданство"
 
-#: .\projects\models.py:832
-msgid "domicile"
-msgstr "Местожителство"
-
-#: .\projects\models.py:833
+#: .\projects\models.py:835 .\projects\models.py:857
 msgid "postAdress"
-msgstr "Пощенски код"
+msgstr "Адрес"
 
-#: .\projects\models.py:834
+#: .\projects\models.py:836 .\projects\models.py:858
 msgid "TIN"
 msgstr "ЕГН"
 
-#: .\projects\models.py:836
-msgid "passportData"
-msgstr "Номер на Лична Карта"
-
-#: .\projects\models.py:837
-msgid "birthdate"
-msgstr "Рожденна дата"
-
-#: .\projects\models.py:839
-msgid "placeOfBirth"
-msgstr "Месторождение"
-
-#: .\projects\models.py:840
-msgid "profession"
-msgstr "Професия"
-
-#: .\projects\models.py:853
+#: .\projects\models.py:848
 msgid "name"
 msgstr "Име"
 
-#: .\projects\models.py:858
+#: .\projects\models.py:850
+msgid "headquarters"
+msgstr "Държава на регистрация"
+
+#: .\projects\models.py:851
+msgid "EIK"
+msgstr "Булстат"
+
+#: .\projects\models.py:854
 msgid "phoneNumber"
 msgstr "Телефонен номер"
+
+#: .\projects\models.py:864
+#, fuzzy
+#| msgid "Messages"
+msgid "message"
+msgstr "Съобщения"
 
 #: .\projects\templates\activity\aggregated\report.html:7
 #, python-format
@@ -749,17 +761,17 @@ msgstr ""
 "        публикува %(activity_count)s %(action)s за\n"
 "        "
 
-#: .\projects\templates\activity\announcement.html:11
+#: .\projects\templates\activity\announcement.html:12
 msgid "posted an announcement for"
 msgstr "публикува известие за"
 
-#: .\projects\templates\activity\report.html:11
+#: .\projects\templates\activity\report.html:12
 msgid "published new report for"
 msgstr "публикува нов отчет за"
 
 #: .\projects\templates\file_form.html:12 .\projects\templates\form.html:14
 #: .\projects\templates\projects\community_photo_update.html:16
-#: .\projects\templates\projects\necessity_form.html:43
+#: .\projects\templates\projects\necessity_form.html:53
 #: .\projects\templates\projects\photo_form.html:43
 #: .\projects\templates\projects\questions_form.html:83
 #: .\projects\templates\projects\user_photo_update.html:16
@@ -838,7 +850,7 @@ msgstr "Вложители на труд"
 msgid "Donations"
 msgstr "Дарения"
 
-#: .\projects\templates\projects\necessity_form.html:42
+#: .\projects\templates\projects\necessity_form.html:52
 #: .\projects\templates\projects\questions_form.html:82
 msgid "Add row"
 msgstr "Добави ред"
@@ -900,7 +912,7 @@ msgid "Add image"
 msgstr "Добави изображение"
 
 #: .\projects\templates\projects\project_detail.html:72
-#: .\projects\templates\projects\project_detail.html:245
+#: .\projects\templates\projects\project_detail.html:246
 msgid "Follow the cause"
 msgstr "Следвай задруга"
 
@@ -934,17 +946,17 @@ msgid "Update volunteer types"
 msgstr "Промени позиции за вложители на труд"
 
 #: .\projects\templates\projects\project_detail.html:128
-#: .\projects\templates\projects\project_stats.html:33
+#: .\projects\templates\projects\project_stats.html:30
 #: .\projects\templates\projects\support_detail_fragment.html:24
 msgid "Volunteer"
 msgstr "Вложи труд"
 
 #: .\projects\templates\projects\project_detail.html:130
-#: .\projects\templates\projects\project_stats.html:35
+#: .\projects\templates\projects\project_stats.html:32
 msgid "No volunteers needed"
 msgstr "Няма нужда от вложители на труд"
 
-#: .\projects\templates\projects\project_detail.html:138
+#: .\projects\templates\projects\project_detail.html:139
 #, python-format
 msgid ""
 "\n"
@@ -955,42 +967,42 @@ msgstr ""
 "      Задругата има нужда от %(count)s неща на стойност %(price)s\n"
 "        "
 
-#: .\projects\templates\projects\project_detail.html:154
-#: .\projects\templates\projects\project_stats.html:59
+#: .\projects\templates\projects\project_detail.html:155
+#: .\projects\templates\projects\project_stats.html:56
 msgid "See donations"
 msgstr "Виж дарения"
 
-#: .\projects\templates\projects\project_detail.html:155
-#: .\projects\templates\projects\project_stats.html:64
+#: .\projects\templates\projects\project_detail.html:156
+#: .\projects\templates\projects\project_stats.html:61
 msgid "Update necessities"
 msgstr "Промени нужди"
 
-#: .\projects\templates\projects\project_detail.html:165
+#: .\projects\templates\projects\project_detail.html:166
 #: .\projects\templates\projects\support_form.html:9
 msgid "Donate"
 msgstr "Дари средства"
 
-#: .\projects\templates\projects\project_detail.html:185
-#: .\projects\templates\projects\project_stats.html:95
+#: .\projects\templates\projects\project_detail.html:186
+#: .\projects\templates\projects\project_stats.html:92
 msgid "Support as donator"
 msgstr "Дари като физическо лице"
 
-#: .\projects\templates\projects\project_detail.html:190
-#: .\projects\templates\projects\project_stats.html:100
+#: .\projects\templates\projects\project_detail.html:191
+#: .\projects\templates\projects\project_stats.html:97
 msgid "Support as legalentity"
 msgstr "Дари като организация"
 
-#: .\projects\templates\projects\project_detail.html:197
+#: .\projects\templates\projects\project_detail.html:198
 msgid "Close"
 msgstr "затвори"
 
-#: .\projects\templates\projects\project_detail.html:207
+#: .\projects\templates\projects\project_detail.html:208
 #: .\projects\templates\projects\report_breadcrumb.html:5
 #: .\projects\templates\projects\report_list.html:22
 msgid "Reports"
 msgstr "Отчети"
 
-#: .\projects\templates\projects\project_detail.html:208
+#: .\projects\templates\projects\project_detail.html:209
 msgid ""
 "Regular reports allow for transparency and accountability. Read the reports "
 "from the cause."
@@ -998,34 +1010,34 @@ msgstr ""
 "Редовните отчети позволяват прозрачност и отчетност. Разгледай докладите на "
 "задругата."
 
-#: .\projects\templates\projects\project_detail.html:212
+#: .\projects\templates\projects\project_detail.html:213
 #: .\projects\templates\projects\thingnecessity_detail_fragment.html:11
 #: .\projects\templates\projects\timenecessity_detail_fragment.html:12
 msgid "Description"
 msgstr "Описание"
 
-#: .\projects\templates\projects\project_detail.html:213
+#: .\projects\templates\projects\project_detail.html:214
 msgid "Published"
 msgstr "Публикуван"
 
-#: .\projects\templates\projects\project_detail.html:223
+#: .\projects\templates\projects\project_detail.html:224
 msgid "Read"
 msgstr "Прочети"
 
-#: .\projects\templates\projects\project_detail.html:229
+#: .\projects\templates\projects\project_detail.html:230
 msgid "see all"
 msgstr "виж всички"
 
-#: .\projects\templates\projects\project_detail.html:238
+#: .\projects\templates\projects\project_detail.html:239
 #: .\projects\templates\projects\report_list.html:11
 msgid "Add new report"
 msgstr "Напиши отчет"
 
-#: .\projects\templates\projects\project_detail.html:242
+#: .\projects\templates\projects\project_detail.html:243
 msgid "Announcements"
 msgstr "Известия"
 
-#: .\projects\templates\projects\project_detail.html:253
+#: .\projects\templates\projects\project_detail.html:254
 msgid "Publish"
 msgstr "Публикувай"
 
@@ -1046,7 +1058,7 @@ msgstr ""
 "вложители на труд\n"
 "  "
 
-#: .\projects\templates\projects\project_stats.html:43
+#: .\projects\templates\projects\project_stats.html:40
 #, fuzzy, python-format
 #| msgid ""
 #| "\n"
@@ -1255,126 +1267,131 @@ msgstr "лв"
 msgid "unknown"
 msgstr "неизвестно"
 
-#: .\projects\views.py:106
+#: .\projects\views.py:110
 msgid "Text(5000 characters)"
 msgstr "Текст(до 5000 символа)"
 
-#: .\projects\views.py:114
+#: .\projects\views.py:118
 msgid "End date must be after  start date"
 msgstr ""
 
-#: .\projects\views.py:260
+#: .\projects\views.py:345
 msgid "Could not get timeline"
 msgstr "Системата не може да зареди времевата рамка"
 
-#: .\projects\views.py:417 .\projects\views.py:427
+#: .\projects\views.py:502 .\projects\views.py:512
 msgid "Success"
 msgstr "Успешно"
 
-#: .\projects\views.py:553 .\projects\views.py:753
+#: .\projects\views.py:638 .\projects\views.py:838
 msgid "Could not delete vote"
 msgstr "Неуспешно изтриване на глас"
 
-#: .\projects\views.py:556 .\projects\views.py:756
+#: .\projects\views.py:641 .\projects\views.py:841
 msgid "Deleted vote"
 msgstr "Успешно изтрит глас"
 
-#: .\projects\views.py:565 .\projects\views.py:765
+#: .\projects\views.py:650 .\projects\views.py:850
 msgid "Could not vote"
 msgstr "Неуспешно гласуване"
 
-#: .\projects\views.py:567 .\projects\views.py:767
+#: .\projects\views.py:652 .\projects\views.py:852
 msgid "Voted up"
 msgstr "Гласувах за"
 
-#: .\projects\views.py:568 .\projects\views.py:768
+#: .\projects\views.py:653 .\projects\views.py:853
 msgid "Voted down"
 msgstr "Гласувах против"
 
-#: .\projects\views.py:594
+#: .\projects\views.py:679
 msgid "Any will do"
 msgstr "Без значение"
 
-#: .\projects\views.py:678
+#: .\projects\views.py:763
 msgid "Next step"
 msgstr "Следваща стъпка"
 
-#: .\projects\views.py:802
+#: .\projects\views.py:887
 msgid "Support already accepted"
 msgstr "Подкрепата вече е била приета"
 
-#: .\projects\views.py:803
+#: .\projects\views.py:888
 msgid "Support already declined"
 msgstr "Подкрепата вече е била отказана"
 
-#: .\projects\views.py:807
+#: .\projects\views.py:892
 msgid "Select a necessity for the money support"
 msgstr "Избери ресурс за парична подкрепа"
 
-#: .\projects\views.py:825
+#: .\projects\views.py:910
 msgid "Support accepted"
 msgstr "Подкрепата приета"
 
-#: .\projects\views.py:826
+#: .\projects\views.py:911
 msgid "Support declined"
 msgstr "Подкрепата отказана"
 
-#: .\projects\views.py:828
+#: .\projects\views.py:913
 msgid "Support could not be accepted"
 msgstr "Подкрепата не може да бъде приета"
 
-#: .\projects\views.py:829
+#: .\projects\views.py:914
 msgid "Support could not be declined"
 msgstr "Подкрепата не може да била отказана"
 
-#: .\projects\views.py:856
+#: .\projects\views.py:941
 msgid "Support already marked as delivered"
 msgstr "Подкрепата вече е била отбелязана като изпълнена"
 
-#: .\projects\views.py:864
+#: .\projects\views.py:949
 msgid "Support marked as delivered"
 msgstr "Подкрепата е отбелязана като изпълнена"
 
-#: .\projects\views.py:938
+#: .\projects\views.py:1023
 msgid "Email:"
 msgstr "Имейл:"
 
-#: .\projects\views.py:977
+#: .\projects\views.py:1062
 msgid "Started following"
 msgstr "Започна да следва"
 
-#: .\projects\views.py:1058
+#: .\projects\views.py:1146
 msgid ""
 "Why do you apply for this position? List your relevant experience / skills"
 msgstr ""
 "Защо кандидатстваш за тази позиция? С какъв опит / умения ще допринесеш?"
 
-#: .\projects\views.py:1093
+#: .\projects\views.py:1181
 msgid "Choose at least one volunteer position"
 msgstr "Избери поне един позиция, като вложител на труд"
 
-#: .\projects\views.py:1109
+#: .\projects\views.py:1197
 #, python-format
 msgid "Applied to %d volunteer positions"
 msgstr "Кандидатства за %d позиции, като вложител на труд"
 
-#: .\projects\views.py:1275 .\projects\views.py:1307
+#: .\projects\views.py:1363 .\projects\views.py:1395
 msgid "Image deleted"
 msgstr "Изображението е изтрито"
 
-#: .\projects\views.py:1281 .\projects\views.py:1313
+#: .\projects\views.py:1369 .\projects\views.py:1401
 msgid "Image uploaded"
 msgstr "Изображението е качено"
 
-#, fuzzy
-#~| msgid "Mark as delivered"
-#~ msgid "delivered"
-#~ msgstr "Отбележи като изпълнено"
+#~ msgid "domicile"
+#~ msgstr "Местожителство"
 
-#, fuzzy
-#~| msgid "Decline"
-#~ msgid "declined"
-#~ msgstr "Откажи"
+#~ msgid "passportData"
+#~ msgstr "Номер на Лична Карта"
+
+#~ msgid "birthdate"
+#~ msgstr "Рожденна дата"
+
+#~ msgid "placeOfBirth"
+#~ msgstr "Месторождение"
+
+#~ msgid "profession"
+#~ msgstr "Професия"
 
 #~ msgid "Prototype"
 #~ msgstr "Категория"
@@ -1393,9 +1410,6 @@ msgstr "Изображението е качено"
 #~ "\n"
 #~ "    + още %(more)s\n"
 #~ "    "
-
-#~ msgid "Messages"
-#~ msgstr "Съобщения"
 
 #~ msgid "Follow"
 #~ msgstr "Следвай"
