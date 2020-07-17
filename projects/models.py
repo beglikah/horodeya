@@ -833,7 +833,8 @@ class DonatorData(Timestamped):
     citizenship = CountryField(_('citizenship'), max_length=30, blank=False)
     postAddress = models.CharField(
         _('postAdress'), max_length=200, blank=False)
-    TIN = models.CharField(_('TIN'), max_length=10, blank=False)
+    TIN = models.CharField(_('TIN'), max_length=10,
+                           blank=False, default=None, null=True)
 
 
 class LegalEntityDonatorData(Timestamped):
@@ -855,7 +856,8 @@ class LegalEntityDonatorData(Timestamped):
     website = models.CharField(_('website'), max_length=30, blank=True)
     postAddress = models.CharField(
         _('postAdress'), max_length=200, blank=False)
-    TIN = models.CharField(_('TIN'), max_length=10, blank=False, default=None)
+    TIN = models.CharField(_('TIN'), max_length=10,
+                           blank=False, default=None, null=True)
     website = models.CharField(_('website'), blank=True, max_length=100)
 
 
