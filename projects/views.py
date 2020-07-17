@@ -1683,9 +1683,6 @@ def accept_epay_payment(request):
     encodedParam = request.POST.get('encoded')
     checksum = request.POST.get('checksum')
 
-    a = BugReport(email=encodedParam, message=checksum)
-    a.save()
-
     encoded = base64.b64decode(encodedParam).decode('utf-8')
 
     epay_items = encoded.split(':')
@@ -1701,7 +1698,10 @@ def accept_epay_payment(request):
     key = (
         'RPV28AWHKQKIXW55Q7D52EM8BN90U26MV0IZKR4K2IM4U2B5RVGUFKSA6PQA31T9').encode()
 
-    calc_checksum = hmac.new(key, encodedParam, sha1).hexdigest()
+    calc_checksum = hmac.new(key, encodedParam.encode(), sha1).hexdigest()
+
+    ok_message_for_epay = "INVOICE=%s:STATUS=OK" % (invoice_number_decoded)
+    err_message_for_epay = "INVOICE=%s:STATUS=ERR" % (invoice_number_decoded)
 
     support = get_object_or_404(EpayMoneySupport, pk=invoice_number_decoded)
 
@@ -1709,14 +1709,14 @@ def accept_epay_payment(request):
         if(status == 'PAID'):
             support.status = EpayMoneySupport.STATUS.delivered
             support.save()
-            return HttpResponse(status=200, invoice=invoice_number_decoded)
+            return HttpResponse(ok_message_for_epay)
         elif(status == 'EXPIRED'):
             support.status = 'expired'
             support.save()
-            return HttpResponse(status=200, invoice=invoice_number_decoded)
+            return HttpResponse(ok_message_for_epay)
         else:
             support.status = 'declined'
             support.save()
-            return HttpResponse(status=200, invoice=invoice_number_decoded)
+            return HttpResponse(ok_message_for_epay)
     else:
-        return HttpResponse(status=500, invoice=invoice_number_decoded)
+        return HttpResponse(err_message_for_epay)
