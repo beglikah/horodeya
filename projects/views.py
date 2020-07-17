@@ -1683,6 +1683,9 @@ def accept_epay_payment(request):
     encodedParam = request.POST.get('encoded')
     checksum = request.POST.get('checksum')
 
+    a = BugReport(email=encodedParam, message=checksum)
+    a.save()
+
     encoded = base64.b64decode(encodedParam).decode('utf-8')
 
     epay_items = encoded.split(':')
