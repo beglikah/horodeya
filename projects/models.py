@@ -848,7 +848,8 @@ class LegalEntityDonatorData(Timestamped):
 
     name = models.CharField(_('name'), max_length=50, blank=False)
     type = models.CharField(_('type'), max_length=50, blank=False)
-    headquarters = CountryField(_('headquarters'), max_length=30, blank=False)
+    headquarters = CountryField(
+        _('headquarters'), max_length=30, blank=False, null=True)
     EIK = models.CharField(_('EIK'), max_length=50, blank=False)
     DDORegistration = models.BooleanField(_('DDORegistration'))
     phoneNumber = models.CharField(
