@@ -1121,7 +1121,10 @@ class AnnouncementDetails(AutoPermissionRequiredMixin, generic.DetailView):
 @permission_required('projects.add_timesupport', fn=objectgetter(Project, 'project_id'))
 def time_support_create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    return time_support_create_update(request, project)
+    if(request.user.donatorData or request.user.legalEntityDonatorData):
+        return time_support_create_update(request, project)
+    else:
+        return redirect('/projects/donator/create/?next=/projects/%s/timesupport/create/' % (project_id))
 
 
 def time_support_create_update(request, project, support=None):
@@ -1442,8 +1445,10 @@ def questions_update(request, project_id):
     template_name = 'projects/questions_form.html'
 
     if request.method == 'GET':
-        formset = cls(initial=initial, queryset=Question.objects.filter(
-            project=project).order_by('order'))
+        question_set = Question.objects.filter(project=project).exclude(
+            prototype__id=14).order_by('order')
+
+        formset = cls(initial=initial, queryset=question_set)
 
     elif request.method == 'POST':
         formset = cls(request.POST)

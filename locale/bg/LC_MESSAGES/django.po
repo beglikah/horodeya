@@ -943,7 +943,7 @@ msgstr "Виж кандидатури"
 #: .\projects\templates\projects\project_detail.html:125
 #: .\projects\templates\projects\project_stats.html:26
 msgid "Update volunteer types"
-msgstr "Промени позиции за вложители на труд"
+msgstr "Въведи труд"
 
 #: .\projects\templates\projects\project_detail.html:128
 #: .\projects\templates\projects\project_stats.html:30
@@ -975,7 +975,7 @@ msgstr "Виж дарения"
 #: .\projects\templates\projects\project_detail.html:156
 #: .\projects\templates\projects\project_stats.html:61
 msgid "Update necessities"
-msgstr "Промени нужди"
+msgstr "Въведи бюджет"
 
 #: .\projects\templates\projects\project_detail.html:166
 #: .\projects\templates\projects\support_form.html:9
@@ -1194,7 +1194,7 @@ msgstr "Приети"
 
 #: .\projects\templates\projects\timenecessity_list.html:13
 msgid "Update types"
-msgstr "Промени позиции"
+msgstr "Въведи труд"
 
 #: .\projects\templates\projects\timenecessity_list.html:22
 msgid "Questions"

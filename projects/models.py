@@ -826,7 +826,7 @@ class DonatorData(Timestamped):
             "add": rules.is_authenticated,
             "delete": rules.always_deny,
             "change": myself,
-            "view": rules.is_authenticated,
+            "view": rules.is_authenticated
         }
 
     phone = models.CharField(_('phone'), max_length=20, blank=False)
