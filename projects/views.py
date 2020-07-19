@@ -1,5 +1,8 @@
 import os
 import uuid
+import base64
+from hashlib import sha1
+import hmac
 
 from requests.exceptions import Timeout, ConnectionError
 
@@ -15,6 +18,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.html import format_html
 from django.forms import ModelForm, ValidationError, inlineformset_factory, modelformset_factory
+from django.views.decorators.csrf import csrf_exempt
 
 from django import forms
 from django.db.models import Q
@@ -26,9 +30,9 @@ from django.utils.translation import gettext as _
 
 from rules.contrib.views import AutoPermissionRequiredMixin, permission_required, objectgetter, PermissionRequiredMixin
 
-from projects.models import Project, Community, Report, MoneySupport, TimeSupport, User, Announcement, TimeNecessity, ThingNecessity, Question, QuestionPrototype, DonatorData, LegalEntityDonatorData, BugReport
+from projects.models import Project, Community, Report, MoneySupport, TimeSupport, User, Announcement, TimeNecessity, ThingNecessity, Question, QuestionPrototype, DonatorData, LegalEntityDonatorData, BugReport, EpayMoneySupport, Support
 
-from projects.forms import QuestionForm, PaymentForm, ProjectUpdateForm, BugReportForm
+from projects.forms import QuestionForm, PaymentForm, ProjectUpdateForm, BugReportForm, EpayMoneySupportForm
 
 from tempus_dominus.widgets import DateTimePicker, DatePicker
 
@@ -230,6 +234,26 @@ ThingNecessityFormset = inlineformset_factory(
         }
         ),
     },
+    extra=0)
+
+ThingNecessityFormsetWithRow = inlineformset_factory(
+    Project,
+    ThingNecessity,
+    fields=['name', 'description', 'count', 'price'],
+    widgets={
+        'count': forms.TextInput({
+            'style': 'width: 60px'
+        }
+        ),
+        'price': forms.TextInput({
+            'style': 'width: 60px'
+        }
+        ),
+        'description': forms.Textarea({
+            'rows': 1,
+        }
+        ),
+    },
     extra=1)
 
 
@@ -251,10 +275,16 @@ def necessity_update(request, project_id, type):
     project = get_object_or_404(Project, pk=project_id)
 
     if request.method == 'GET':
-        if(project.timenecessity_set.count() is 0):
-            formset = TimeNecessityFormsetWithRow
+        if (type == 'time'):
+            if(project.timenecessity_set.count() == 0):
+                formset = TimeNecessityFormsetWithRow
+            else:
+                formset = cls(instance=project)
         else:
-            formset = cls(instance=project)
+            if(project.thingnecessity_set.count() == 0):
+                formset = ThingNecessityFormsetWithRow
+            else:
+                formset = cls(instance=project)
 
     elif request.method == 'POST':
         formset = cls(request.POST, instance=project)
@@ -276,9 +306,11 @@ def necessity_update(request, project_id, type):
                             order += 1
                     form.save()
             if 'add-row' in request.POST:
-
-                formset = TimeNecessityFormsetWithRow(
-                    instance=project)  # за да добави празен ред
+                if (type == 'thing'):
+                    formset = ThingNecessityFormsetWithRow(
+                        instance=project)  # за да добави празен ред
+                else:
+                    formset = TimeNecessityFormsetWithRow(instance=project)
             else:
                 if type == 'time':
                     return redirect('projects:time_necessity_list', project.pk)
@@ -1449,29 +1481,14 @@ def questions_update(request, project_id):
 
 class DonatorDataCreate(AutoPermissionRequiredMixin, CreateView):
     model = DonatorData
-    fields = ['phone', 'citizenship', 'domicile', 'postAddress',
-              'TIN', 'passportData', 'birthdate', 'placeOfBirth',
-              'profession', 'website']
+    fields = ['phone', 'citizenship', 'postAddress',
+              'TIN']
     redirectUrl = ''
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         redirectUrl = self.request.GET.get('next')
         return context
-
-    def get_form(self, form_class=None):
-        form = super(DonatorDataCreate, self).get_form(form_class)
-        form.fields['birthdate'].widget = DatePicker(
-            attrs={
-                'style': 'width:120px',
-                'required': True
-            },
-            options={
-                'useCurrent': True,
-                'collapse': False,
-            },
-        )
-        return form
 
     def form_valid(self, form):
         user = self.request.user
@@ -1488,7 +1505,7 @@ class DonatorDataCreate(AutoPermissionRequiredMixin, CreateView):
 
 class LegalEntityDataCreate(AutoPermissionRequiredMixin, CreateView):
     model = LegalEntityDonatorData
-    fields = ['name', 'type', 'EIK',
+    fields = ['name', 'type', 'headquarters', 'EIK', 'postAddress', 'TIN',
               'DDORegistration', 'phoneNumber', 'website']
 
     def form_valid(self, form):
@@ -1598,3 +1615,93 @@ def administration(request):
 def received_bug_reports(request):
     bug_reports = BugReport.objects.all()
     return render(request, 'projects/bug_reports.html', {'reports': bug_reports})
+
+
+def create_epay_support(request, pk):
+    if(request.method == "POST"):
+        form = EpayMoneySupportForm(request.POST)
+        project = get_object_or_404(Project, pk=pk)
+        if form.is_valid():
+            form.instance.project = project
+            form.instance.user = request.user
+            support = form.save()
+            supportId = support.id
+            messages.add_message(request, messages.SUCCESS,
+                                 'Благодарим ви за дарението')
+            return redirect('/projects/pay_epay_support/%s' % (supportId))
+        else:
+            messages.add_message(request, messages.ERROR,
+                                 'Въведете валидна сума')
+            return redirect('/')
+
+
+def pay_epay_support(request, pk):
+    # if(request == 'GET'):
+    support = get_object_or_404(EpayMoneySupport, pk=pk)
+    context = {}
+
+    context['PAGE'] = 'paylogin'
+    context['MIN'] = 'D497918533'
+    context['INVOICE'] = support.id
+    context['AMOUNT'] = support.amount
+    context['EXP_TIME'] = '01.08.2020'
+    context['DESCR'] = 'Test'
+
+    context['data'] = ('MIN='+context['MIN'] + '\nINVOICE='+str(context['INVOICE']) + '\nAMOUNT=' +
+                       str(context['AMOUNT']) + '\nEXP_TIME='+context['EXP_TIME'] + '\nDESCR='+context['DESCR'])
+
+    context['ENCODED'] = base64.b64encode(context['data'].encode())
+    context['ENCODED2'] = context['ENCODED'].decode('utf-8')
+
+    key = (
+        'RPV28AWHKQKIXW55Q7D52EM8BN90U26MV0IZKR4K2IM4U2B5RVGUFKSA6PQA31T9').encode()
+    context['CHECKSUM'] = hmac.new(key, context['ENCODED'], sha1)
+
+    context['CHECKSUM2'] = context['CHECKSUM'].hexdigest()
+
+    return render(request, 'projects/epay_form.html', {'context': context})
+
+
+@csrf_exempt
+def accept_epay_payment(request):
+
+    encodedParam = request.POST.get('encoded')
+    checksum = request.POST.get('checksum')
+
+    encoded = base64.b64decode(encodedParam).decode('utf-8')
+
+    epay_items = encoded.split(':')
+
+    epay_item_currencies = []
+
+    for item in epay_items:
+        epay_item_currencies.append(item.split('=')[1])
+
+    invoice_number_decoded = epay_item_currencies[0]
+    status = epay_item_currencies[1]
+    pay_time = epay_item_currencies[2]
+    key = (
+        'RPV28AWHKQKIXW55Q7D52EM8BN90U26MV0IZKR4K2IM4U2B5RVGUFKSA6PQA31T9').encode()
+
+    calc_checksum = hmac.new(key, encodedParam.encode(), sha1).hexdigest()
+
+    ok_message_for_epay = "INVOICE=%s:STATUS=OK" % (invoice_number_decoded)
+    err_message_for_epay = "INVOICE=%s:STATUS=ERR" % (invoice_number_decoded)
+
+    support = get_object_or_404(EpayMoneySupport, pk=invoice_number_decoded)
+
+    if(calc_checksum == checksum):
+        if(status == 'PAID'):
+            support.status = EpayMoneySupport.STATUS.delivered
+            support.save()
+            return HttpResponse(ok_message_for_epay)
+        elif(status == 'EXPIRED'):
+            support.status = 'expired'
+            support.save()
+            return HttpResponse(ok_message_for_epay)
+        else:
+            support.status = 'declined'
+            support.save()
+            return HttpResponse(ok_message_for_epay)
+    else:
+        return HttpResponse(err_message_for_epay)

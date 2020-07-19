@@ -831,16 +831,10 @@ class DonatorData(Timestamped):
 
     phone = models.CharField(_('phone'), max_length=20, blank=False)
     citizenship = CountryField(_('citizenship'), max_length=30, blank=False)
-    domicile = CountryField(_('domicile'), max_length=30, blank=False)
-    postAddress = models.CharField(_('postAdress'), max_length=20, blank=False)
-    TIN = models.CharField(_('TIN'), max_length=10, blank=False)
-    passportData = models.CharField(
-        _('passportData'), max_length=30, blank=False)
-    birthdate = models.DateField(_('birthdate'), blank=False)
-    placeOfBirth = models.CharField(
-        _('placeOfBirth'), max_length=30, blank=False)
-    profession = models.CharField(_('profession'), max_length=30)
-    website = models.CharField(_('website'), max_length=30, blank=True)
+    postAddress = models.CharField(
+        _('postAdress'), max_length=200, blank=False)
+    TIN = models.CharField(_('TIN'), max_length=10,
+                           blank=True, default=None, null=True)
 
 
 class LegalEntityDonatorData(Timestamped):
@@ -854,13 +848,25 @@ class LegalEntityDonatorData(Timestamped):
 
     name = models.CharField(_('name'), max_length=50, blank=False)
     type = models.CharField(_('type'), max_length=50, blank=False)
-    EIK = models.CharField(max_length=50, blank=False)
+    headquarters = CountryField(
+        _('headquarters'), max_length=30, blank=False, null=True)
+    EIK = models.CharField(_('EIK'), max_length=50, blank=False)
     DDORegistration = models.BooleanField(_('DDORegistration'))
     phoneNumber = models.CharField(
         _('phoneNumber'), max_length=30, blank=False)
     website = models.CharField(_('website'), max_length=30, blank=True)
+    postAddress = models.CharField(
+        _('postAdress'), max_length=200, blank=True)
+    TIN = models.CharField(_('TIN'), max_length=10,
+                           blank=True, default=None, null=True)
+    website = models.CharField(_('website'), blank=True, max_length=100)
 
 
 class BugReport(Timestamped):
     email = models.EmailField(_('email'))
     message = models.TextField(_('message'))
+
+
+class EpayMoneySupport(Support):
+    amount = models.FloatField(verbose_name=_(
+        'How much do you wish to donate'))
