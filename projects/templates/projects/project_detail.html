@@ -27,7 +27,7 @@
   </li>
    <li class="nav-item flex-fill text-center ">
     <a class="nav-link text-white" href="{% url 'projects:update' project.pk %}">{% trans 'Add slack' %}</a>
-  </li> 
+  </li>
 {% elif can_be_admin %}
   <li class="nav-item flex-fill text-center ">
     <a class="nav-link text-white" href="{% url 'projects:details' object.pk %}">{% trans 'See as admin' %}</a>
@@ -71,9 +71,9 @@
       {% else %}
         <a class="btn btn-outline-primary mt-5" href="{% url 'projects:follow_project' object.pk %}">{% trans 'Follow the cause' %}</a>
       {% endif %}
-  
+
     </div>
-  
+
   </div>
   <div class=" mt-1">
     <h3>
@@ -124,11 +124,11 @@
       <a class="btn btn-primary mt-3" href="{% url 'projects:time_necessity_list' project.pk %}">{% trans 'See applications' %}</a>
       <a class="btn btn-primary mt-3" href="{% url 'projects:time_necessity_update' project.pk %}">{% trans 'Update volunteer types' %}</a>
     {% else %}
-       {%if project.time_still_needed is not 0 and project.question_set.count > 0 %}
+      {%if project.time_still_needed is not 0 and project.question_set.count > 0 %}
       <a class="btn btn-primary mt-3" href="{% url 'projects:time_support_create' object.pk %}">{% trans 'Volunteer' %}</a>
       {%else%}
-        <h6>{% trans 'No volunteers needed' %}</h6>
-     {%endif%}
+      <h6>{% trans 'No volunteers needed' %}</h6>
+      {%endif%}
     {% endif %}
   </div>
 
