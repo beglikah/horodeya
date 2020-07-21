@@ -1660,6 +1660,8 @@ def pay_epay_support(request, pk):
     context['AMOUNT'] = support.leva
     context['EXP_TIME'] = '01.08.2020'
     context['DESCR'] = 'Test'
+    context['user_id'] = request.user.id
+    context['project_id'] = support.id
 
     context['data'] = ('MIN='+context['MIN'] + '\nINVOICE='+str(context['INVOICE']) + '\nAMOUNT=' +
                        str(context['AMOUNT']) + '\nEXP_TIME='+context['EXP_TIME'] + '\nDESCR='+context['DESCR'])

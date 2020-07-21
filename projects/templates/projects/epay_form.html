@@ -1,5 +1,4 @@
-{% extends "base.html" %} 
-{% block content %} 
+{% extends "base.html" %} {% block content %}
 
 <form action="https://demo.epay.bg/" method="post" name="epay">
 	<input type="hidden" name="PAGE" value="{{context.PAGE}}" />
@@ -10,6 +9,16 @@
 	<input type="hidden" name="EXP_TIME" value="{{context.EXP_TIME}}" />
 	<input type="hidden" name="ENCODED" value="{{context.ENCODED}}" />
 	<input type="hidden" name="CHECKSUM" value="{{context.CHECKSUM}}" />
+	<input
+		type="hidden"
+		name="URL_OK"
+		value="https://horodeya.com/projects/accounts/{{context.user_id}}/support/money/list"
+	/>
+	<input
+		type="hidden"
+		name="URL_CANCEL"
+		value="https://horodeya.com/projects/{{context.project_id}}/"
+	/>
 	<input type="submit" value="Плати през Epay" />
 </form>
 {% endblock content %}
