@@ -1657,7 +1657,7 @@ def pay_epay_support(request, pk):
     context['PAGE'] = 'paylogin'
     context['MIN'] = 'D497918533'
     context['INVOICE'] = support.id
-    context['AMOUNT'] = support.amount
+    context['AMOUNT'] = support.leva
     context['EXP_TIME'] = '01.08.2020'
     context['DESCR'] = 'Test'
 
