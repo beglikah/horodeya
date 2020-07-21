@@ -88,7 +88,19 @@
 	<div class="">
     <div class="body">
         <h5>{{ object.description }}</h5>
-        <div class="accordion" id="shortLongText">
+        <div class="col-md-6 text-nowrap">
+          {% if project.location is not none %}
+            Местонахождение: {{ project.location }},
+          {% endif %}
+          {% if project.start_date is not none %}
+            Начална дата: {{ project.start_date }}, 
+          {% endif %}
+          {% if project.end_date is not none %}
+            Крайна дата: {{ project.end_date }}
+          {% endif %}
+        </div>
+      </div>
+      <div class="accordion" id="shortLongText">
         <div class="collapse show" id="shortText" data-parent="#shortLongText" >
         {{ object.text|linebreaks|truncatewords_html:50 }}
         {% if object.text|length > 50 %}

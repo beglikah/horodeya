@@ -733,14 +733,14 @@ def money_support_create(request, project_id=None):
     supporterType = request.GET.get('supportertype')
     if(supporterType == 'donator'):
         if(request.user.donatorData):
-            return money_support_crud(request, project_id=project_id)
+            return create_epay_support(request, pk=project_id)
         else:
-            return redirect('/projects/donator/create/?next=/projects/%s/moneysupport/create/' % (project_id))
+            return redirect('/projects/donator/create/?next=/projects/create_epay_support/%s' % (project_id))
     elif (supporterType == 'legalentitydonator'):
         if(request.user.legalEntityDonatorData):
-            return money_support_crud(request, project_id=project_id)
+            return create_epay_support(request, pk=project_id)
         else:
-            return redirect('/projects/legalentitydonator/create/?next=/projects/%s/moneysupport/create/' % (project_id))
+            return redirect('/projects/legalentitydonator/create/?next=/projects/create_epay_support/%s' % (project_id))
 
 
 @permission_required('projects.update_moneysupport', fn=objectgetter(MoneySupport, 'support_id'))
@@ -1121,7 +1121,10 @@ class AnnouncementDetails(AutoPermissionRequiredMixin, generic.DetailView):
 @permission_required('projects.add_timesupport', fn=objectgetter(Project, 'project_id'))
 def time_support_create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    return time_support_create_update(request, project)
+    if(request.user.donatorData or request.user.legalEntityDonatorData):
+        return time_support_create_update(request, project)
+    else:
+        return redirect('/projects/donator/create/?next=/projects/%s/timesupport/create/' % (project_id))
 
 
 def time_support_create_update(request, project, support=None):
@@ -1442,8 +1445,10 @@ def questions_update(request, project_id):
     template_name = 'projects/questions_form.html'
 
     if request.method == 'GET':
-        formset = cls(initial=initial, queryset=Question.objects.filter(
-            project=project).order_by('order'))
+        question_set = Question.objects.filter(project=project).exclude(
+            prototype__id=14).order_by('order')
+
+        formset = cls(initial=initial, queryset=question_set)
 
     elif request.method == 'POST':
         formset = cls(request.POST)
@@ -1637,6 +1642,7 @@ def create_epay_support(request, pk):
 
 def pay_epay_support(request, pk):
     # if(request == 'GET'):
+
     support = get_object_or_404(EpayMoneySupport, pk=pk)
     context = {}
 
@@ -1649,15 +1655,14 @@ def pay_epay_support(request, pk):
 
     context['data'] = ('MIN='+context['MIN'] + '\nINVOICE='+str(context['INVOICE']) + '\nAMOUNT=' +
                        str(context['AMOUNT']) + '\nEXP_TIME='+context['EXP_TIME'] + '\nDESCR='+context['DESCR'])
-
-    context['ENCODED'] = base64.b64encode(context['data'].encode())
-    context['ENCODED2'] = context['ENCODED'].decode('utf-8')
+    encoded = base64.b64encode(context['data'].encode())
+    context['ENCODED'] = endcoded.decode('utf-8')
 
     key = (
         'RPV28AWHKQKIXW55Q7D52EM8BN90U26MV0IZKR4K2IM4U2B5RVGUFKSA6PQA31T9').encode()
-    context['CHECKSUM'] = hmac.new(key, context['ENCODED'], sha1)
 
-    context['CHECKSUM2'] = context['CHECKSUM'].hexdigest()
+    checksum = hmac.new(key, context['ENCODED'], sha1)
+    context['CHECKSUM'] = checksum.hexdigest()
 
     return render(request, 'projects/epay_form.html', {'context': context})
 

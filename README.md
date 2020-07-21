@@ -64,3 +64,11 @@ manage.py compilemessages -l bg
 ```bash
 manage.py changepassword <user_name>
 ```
+
+```python
+from django.contrib.auth import get_user_model
+user = get_user_model()
+user.objects.all()
+u = user.objects.get(username='mavrov.georgi')
+u.set_password('123123')
+```
