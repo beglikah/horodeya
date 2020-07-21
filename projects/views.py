@@ -98,7 +98,7 @@ class ProjectForm(ModelForm):
                 },
                 options={
                     'useCurrent': True,
-                    'collapse': False,
+                    'collapse': True,
                 }
             ),
             'category': forms.RadioSelect(attrs=None, choices=COMMUNITY_ACTIVYTY_TYPES)

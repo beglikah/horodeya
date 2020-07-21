@@ -166,7 +166,7 @@ class User(AbstractUser, RulesModelMixin, metaclass=RulesModelBase):
     slack_channel = models.CharField(
         _('slack_channel'), max_length=100, null=True, blank=True)
     birthdate = models.DateField(
-        _('birthdate'), blank=False, null=True, default=None)
+        _('birthdate'), blank=False, null=True)
 
     def page_name(self):
         return "%s %s" % (gettext('User'), str(self))

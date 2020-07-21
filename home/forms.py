@@ -13,14 +13,6 @@ mark_safe_lazy = lazy(mark_safe)
 
 class NamesSignupForm(SignupForm):
 
-    class Meta:
-        widgets = {
-            'birthdate': DatePicker(attrs={
-                'style': 'width:120px',
-                'required': True
-            })
-        }
-
     field_order = ['first_name', 'second_name', 'last_name',
                    'birthdate', 'email', 'password1', 'accept_tos']
 
@@ -40,7 +32,17 @@ class NamesSignupForm(SignupForm):
     accept_tos = forms.BooleanField(
         label=mark_safe_lazy(translate_lazy('Accept <a href="/условия-за-ползване">Terms of Service</a>')))
 
-    birthdate = forms.DateField()
+    birthdate = forms.DateField(widget=DatePicker(
+        attrs={
+            'style': 'width:120px',
+            'required': True
+        },
+        options={
+            'useCurrent': True,
+            'collapse': False,
+        }
+    )
+    )
 
     def save(self, request):
 
