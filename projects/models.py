@@ -165,6 +165,8 @@ class User(AbstractUser, RulesModelMixin, metaclass=RulesModelBase):
     second_name = models.CharField(_('second_name'), max_length=30, blank=True)
     slack_channel = models.CharField(
         _('slack_channel'), max_length=100, null=True, blank=True)
+    birthdate = models.DateField(
+        _('birthdate'), blank=False, null=True)
 
     def page_name(self):
         return "%s %s" % (gettext('User'), str(self))
@@ -655,14 +657,11 @@ class MoneySupport(Support):
     necessity = models.ForeignKey(ThingNecessity, on_delete=models.PROTECT, related_name='money_supports',
                                   null=True, blank=True, verbose_name=_('Which necessity do you wish to donate to'))
     leva = models.FloatField(verbose_name=_('How much do you wish to donate'))
-    anonymous = models.BooleanField(default=False, verbose_name=_(
-        'I wish to remain anonymous'), help_text=_('Check if you want your name to be hidden'))
 
-    PAYMENT_METHODS = Choices(
-        ('BankTransfer', _('Bank Transfer')),
-        ('Revolut', _('Revolut')))
-    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS, verbose_name=_(
+    payment_method = models.CharField(max_length=20, verbose_name=_(
         'Choose a payment method'), default='Unspecified')
+
+    pay_time = models.DateTimeField(null=True, blank=True, editable=False)
 
     def get_absolute_url(self):
         return reverse('projects:money_support_details', kwargs={'pk': self.pk})
@@ -834,7 +833,7 @@ class DonatorData(Timestamped):
     postAddress = models.CharField(
         _('postAdress'), max_length=200, blank=False)
     TIN = models.CharField(_('TIN'), max_length=10,
-                           blank=True, default=None, null=True)
+                           blank=False, default=None, null=True)
 
 
 class LegalEntityDonatorData(Timestamped):

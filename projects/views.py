@@ -98,7 +98,7 @@ class ProjectForm(ModelForm):
                 },
                 options={
                     'useCurrent': True,
-                    'collapse': False,
+                    'collapse': True,
                 }
             ),
             'category': forms.RadioSelect(attrs=None, choices=COMMUNITY_ACTIVYTY_TYPES)
@@ -733,14 +733,14 @@ def money_support_create(request, project_id=None):
     supporterType = request.GET.get('supportertype')
     if(supporterType == 'donator'):
         if(request.user.donatorData):
-            return money_support_crud(request, project_id=project_id)
+            return create_epay_support(request, pk=project_id)
         else:
-            return redirect('/projects/donator/create/?next=/projects/%s/moneysupport/create/' % (project_id))
+            return redirect('/projects/donator/create/?next=/projects/create_epay_support/%s' % (project_id))
     elif (supporterType == 'legalentitydonator'):
         if(request.user.legalEntityDonatorData):
-            return money_support_crud(request, project_id=project_id)
+            return create_epay_support(request, pk=project_id)
         else:
-            return redirect('/projects/legalentitydonator/create/?next=/projects/%s/moneysupport/create/' % (project_id))
+            return redirect('/projects/legalentitydonator/create/?next=/projects/create_epay_support/%s' % (project_id))
 
 
 @permission_required('projects.update_moneysupport', fn=objectgetter(MoneySupport, 'support_id'))
@@ -1623,12 +1623,20 @@ def received_bug_reports(request):
 
 
 def create_epay_support(request, pk):
+    if(request.method == "GET"):
+        supporterType = request.GET.get('supportertype')
+        context = {}
+        context['pk'] = pk
+        context['supporterType'] = supporterType
+        return render(request, 'projects/epaymoneysupport_form.html', {'context': context})
+
     if(request.method == "POST"):
         form = EpayMoneySupportForm(request.POST)
         project = get_object_or_404(Project, pk=pk)
         if form.is_valid():
             form.instance.project = project
             form.instance.user = request.user
+            form.instance.payment_method = 'epay'
             support = form.save()
             supportId = support.id
             messages.add_message(request, messages.SUCCESS,
@@ -1642,27 +1650,29 @@ def create_epay_support(request, pk):
 
 def pay_epay_support(request, pk):
     # if(request == 'GET'):
-    support = get_object_or_404(EpayMoneySupport, pk=pk)
+
+    support = get_object_or_404(MoneySupport, pk=pk)
     context = {}
 
     context['PAGE'] = 'paylogin'
     context['MIN'] = 'D497918533'
     context['INVOICE'] = support.id
-    context['AMOUNT'] = support.amount
+    context['AMOUNT'] = support.leva
     context['EXP_TIME'] = '01.08.2020'
     context['DESCR'] = 'Test'
+    context['user_id'] = request.user.id
+    context['project_id'] = support.project.id
 
     context['data'] = ('MIN='+context['MIN'] + '\nINVOICE='+str(context['INVOICE']) + '\nAMOUNT=' +
                        str(context['AMOUNT']) + '\nEXP_TIME='+context['EXP_TIME'] + '\nDESCR='+context['DESCR'])
-
-    context['ENCODED'] = base64.b64encode(context['data'].encode())
-    context['ENCODED2'] = context['ENCODED'].decode('utf-8')
+    encoded = base64.b64encode(context['data'].encode())
+    context['ENCODED'] = encoded.decode('utf-8')
 
     key = (
         'RPV28AWHKQKIXW55Q7D52EM8BN90U26MV0IZKR4K2IM4U2B5RVGUFKSA6PQA31T9').encode()
-    context['CHECKSUM'] = hmac.new(key, context['ENCODED'], sha1)
 
-    context['CHECKSUM2'] = context['CHECKSUM'].hexdigest()
+    checksum = hmac.new(key, encoded, sha1)
+    context['CHECKSUM'] = checksum.hexdigest()
 
     return render(request, 'projects/epay_form.html', {'context': context})
 
@@ -1693,11 +1703,11 @@ def accept_epay_payment(request):
     ok_message_for_epay = "INVOICE=%s:STATUS=OK" % (invoice_number_decoded)
     err_message_for_epay = "INVOICE=%s:STATUS=ERR" % (invoice_number_decoded)
 
-    support = get_object_or_404(EpayMoneySupport, pk=invoice_number_decoded)
+    support = get_object_or_404(MoneySupport, pk=invoice_number_decoded)
 
     if(calc_checksum == checksum):
         if(status == 'PAID'):
-            support.status = EpayMoneySupport.STATUS.delivered
+            support.status = MoneySupport.STATUS.delivered
             support.save()
             return HttpResponse(ok_message_for_epay)
         elif(status == 'EXPIRED'):

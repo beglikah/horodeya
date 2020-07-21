@@ -92,21 +92,31 @@
 <div class="">
   <div class="body">
     <h5>{{ object.description }}</h5>
-    <div class="accordion" id="shortLongText">
-      <div class="collapse show" id="shortText" data-parent="#shortLongText">
-        {{ object.text|linebreaks|truncatewords_html:50 }}
-        {% if object.text|length > 50 %}
-        <a class='btn btn-link' data-toggle="collapse" href="#fullText">{% trans 'Show more' %}</a>
-
-        {% endif %}
-      </div>
-      <div class="collapse" id="fullText" data-parent="#shortLongText">
-        {{ object.text|linebreaks}}
-        <a class='btn btn-link' data-toggle="collapse" href="#shortText">{% trans 'Show less' %}</a>
-      </div>
+    <div class="col-md-6 text-nowrap">
+      {% if project.location is not none %}
+      Местонахождение: {{ project.location }},
+      {% endif %}
+      {% if project.start_date is not none %}
+      Начална дата: {{ project.start_date }},
+      {% endif %}
+      {% if project.end_date is not none %}
+      Крайна дата: {{ project.end_date }}
+      {% endif %}
     </div>
   </div>
-  <!-- тест -->
+  <div class="accordion" id="shortLongText">
+    <div class="collapse show" id="shortText" data-parent="#shortLongText">
+      {{ object.text|linebreaks|truncatewords_html:50 }}
+      {% if object.text|length > 50 %}
+      <a class='btn btn-link' data-toggle="collapse" href="#fullText">{% trans 'Show more' %}</a>
+
+      {% endif %}
+    </div>
+    <div class="collapse" id="fullText" data-parent="#shortLongText">
+      {{ object.text|linebreaks}}
+      <a class='btn btn-link' data-toggle="collapse" href="#shortText">{% trans 'Show less' %}</a>
+    </div>
+  </div>
 </div>
 
 <div id="volunteer" class="col-8 p-0 mt-3">
@@ -138,7 +148,6 @@
   {%endif%}
   {% endif %}
 </div>
-{% include "projects/epaymoneysupport_form.html" with object=project %}
 
 <div id="donate" class="col-8 mt-5 p-0">
   {% with object.thingnecessity_set.all as necessity_list %}

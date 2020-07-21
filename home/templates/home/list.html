@@ -75,7 +75,25 @@
       <div class="col-md-4 pr-4 pt-4">
         {% include "projects/project_stats.html" with project=project short=True only %}
       </div>
-    </div>
+      <div class="col-md-6">
+        {% if project.location is not none %}
+        <small class="text-muted text-nowrap">
+          Местонахождение: {{ project.location }},
+        </small>
+        {% endif %}
+        {% if project.start_date is not none %}
+        <small class="text-muted text-nowrap">
+          Начална дата: {{ project.start_date }}, 
+        </small>
+        {% endif %}
+        {% if project.end_date is not none %}
+        <small class="text-muted text-nowrap">
+          Крайна дата: {{ project.end_date }}
+            </small>
+        {% endif %}
+      </small>
+      </div>
+        </div>
   </div>
   {% endfor %}
 </div>
