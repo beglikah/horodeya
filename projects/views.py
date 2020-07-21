@@ -733,14 +733,14 @@ def money_support_create(request, project_id=None):
     supporterType = request.GET.get('supportertype')
     if(supporterType == 'donator'):
         if(request.user.donatorData):
-            return money_support_crud(request, project_id=project_id)
+            return create_epay_support(request, project_id=project_id)
         else:
-            return redirect('/projects/donator/create/?next=/projects/pay_epay_support/%s' % (project_id))
+            return redirect('/projects/donator/create/?next=/projects/create_epay_support/%s' % (project_id))
     elif (supporterType == 'legalentitydonator'):
         if(request.user.legalEntityDonatorData):
-            return money_support_crud(request, project_id=project_id)
+            return create_epay_support(request, project_id=project_id)
         else:
-            return redirect('/projects/legalentitydonator/create/?next=/projects/pay_epay_support/%s' % (project_id))
+            return redirect('/projects/legalentitydonator/create/?next=/projects/create_epay_support/%s' % (project_id))
 
 
 @permission_required('projects.update_moneysupport', fn=objectgetter(MoneySupport, 'support_id'))
@@ -1664,7 +1664,6 @@ def pay_epay_support(request, pk):
     checksum = hmac.new(key, context['ENCODED'], sha1)
     context['CHECKSUM'] = checksum.hexdigest()
 
-    return render(request, 'projects/epay_form.html', {'context': context})
     return render(request, 'projects/epay_form.html', {'context': context})
 
 
