@@ -6,27 +6,41 @@ from django.utils.translation import gettext as _
 
 from django.utils.functional import lazy
 from django.utils.translation import ugettext_lazy as translate_lazy
+from tempus_dominus.widgets import DateTimePicker, DatePicker
 
 mark_safe_lazy = lazy(mark_safe)
 
 
 class NamesSignupForm(SignupForm):
 
+    class Meta:
+        widgets = {
+            'birthdate': DatePicker(attrs={
+                'style': 'width:120px',
+                'required': True
+            })
+        }
+
     field_order = ['first_name', 'second_name', 'last_name',
-                   'email', 'password1', 'accept_tos']
+                   'birthdate', 'email', 'password1', 'accept_tos']
 
     # TODO add validators - no space allowed
     first_name = forms.CharField(
         label=_("First Name"),
         max_length=30)
+
     second_name = forms.CharField(
         label=_("Second Name"),
         max_length=30)
+
     last_name = forms.CharField(
         label=_("Last Name"),
         max_length=30)
+
     accept_tos = forms.BooleanField(
         label=mark_safe_lazy(translate_lazy('Accept <a href="/условия-за-ползване">Terms of Service</a>')))
+
+    birthdate = forms.DateField()
 
     def save(self, request):
 
