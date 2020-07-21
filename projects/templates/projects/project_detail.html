@@ -4,11 +4,9 @@
 {% load projects_tags %}
 {% load activity_tags %}
 {% load bootstrap4 %}
-
 {% block breadcrumbs %}
 {% include "projects/project_breadcrumb.html" with project=object active="active" only %}
 {% endblock %}
-
 {% block admin_tools %}
 {% if admin %}
 <li class="nav-item flex-fill text-center ">
@@ -36,7 +34,6 @@
 </li>
 {% endif %}
 {% endblock %}
-
 {% block content %}
 {% if can_be_admin %}
 {{ block.super }}
@@ -48,7 +45,6 @@
     document.getElementById('image').src = image;
   }
 </script>
-
 <div class="row mt-4">
   <div class="col-md-8">
     {% if object.gallery.public|length == 0 %}
@@ -68,7 +64,6 @@
       {% endfor %}
   </div>
   <div class="col-md-4 mt-4">
-
     {% include "projects/project_stats.html" with project=object %}
     {% if admin %}
     {% else %}
@@ -79,19 +74,26 @@
   </div>
 
 </div>
-<div class=" mt-1">
-  <h3>
-    {{ object.name }}
-    <small>
-      <a href="{{ project.community.get_absolute_url }}">{{project.community}}</a>
-    </small>
-  </h3>
-  <h5>Slack канал:{{object.slack_channel}}</h5>
-</div>
 
 <div class="">
   <div class="body">
     <h5>{{ object.description }}</h5>
+    <div class="accordion" id="shortLongText">
+      <div class="collapse show" id="shortText" data-parent="#shortLongText">
+        {{ object.text|linebreaks|truncatewords_html:50 }}
+        {% if object.text|length > 50 %}
+        <a class='btn btn-link' data-toggle="collapse" href="#fullText">{% trans 'Show more' %}</a>
+        {% endif %}
+      </div>
+      <div class="collapse" id="fullText" data-parent="#shortLongText">
+        {{ object.text|linebreaks}}
+        <a class='btn btn-link' data-toggle="collapse" href="#shortText">{% trans 'Show less' %}</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="">
+  <div class="body">
     <div class="col-md-6 text-nowrap">
       {% if project.location is not none %}
       Местонахождение: {{ project.location }},
@@ -104,50 +106,39 @@
       {% endif %}
     </div>
   </div>
-  <div class="accordion" id="shortLongText">
-    <div class="collapse show" id="shortText" data-parent="#shortLongText">
-      {{ object.text|linebreaks|truncatewords_html:50 }}
-      {% if object.text|length > 50 %}
-      <a class='btn btn-link' data-toggle="collapse" href="#fullText">{% trans 'Show more' %}</a>
-
-      {% endif %}
-    </div>
-    <div class="collapse" id="fullText" data-parent="#shortLongText">
-      {{ object.text|linebreaks}}
-      <a class='btn btn-link' data-toggle="collapse" href="#shortText">{% trans 'Show less' %}</a>
-    </div>
+  <div id="volunteer" class="col-8 p-0 mt-3">
+    {% with object.timenecessity_set.all as necessity_list %}
+    <h5>
+      {% blocktrans with count=object.time_still_needed %}
+      The cause needs {{count}} volunteers
+      {% endblocktrans %}
+    </h5>
+    <ul class="list-group list-group-flush">
+      {% for necessity in necessity_list %}
+      <li class="list-group-item">
+        {{necessity.name}}
+        <span class="float-right"> {{necessity.still_needed}}</span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endwith %}
+    {% if admin %}
+    <a class="btn btn-primary mt-3"
+      href="{% url 'projects:time_necessity_list' project.pk %}">{% trans 'See applications' %}</a>
+    <a class="btn btn-primary mt-3"
+      href="{% url 'projects:time_necessity_update' project.pk %}">{% trans 'Update volunteer types' %}</a>
+    {% else %}
+    {%if project.time_still_needed is not 0 and project.question_set. is not None %}
+    {{project.question_set.count }}
+    <a class="btn btn-primary mt-3"
+      href="{% url 'projects:time_support_create' object.pk %}">{% trans 'Volunteer' %}</a>
+    {%else%}
+    <h6>{% trans 'No volunteers needed' %}</h6>
+    {%endif%}
+    {% endif %}
   </div>
 </div>
 
-<div id="volunteer" class="col-8 p-0 mt-3">
-  {% with object.timenecessity_set.all as necessity_list %}
-  <h5>
-    {% blocktrans with count=object.time_still_needed %}
-    The cause needs {{count}} volunteers
-    {% endblocktrans %}
-  </h5>
-  <ul class="list-group list-group-flush">
-    {% for necessity in necessity_list %}
-    <li class="list-group-item">
-      {{necessity.name}}
-      <span class="float-right"> {{necessity.still_needed}}</span>
-    </li>
-    {% endfor %}
-  </ul>
-  {% endwith %}
-  {% if admin %}
-  <a class="btn btn-primary mt-3"
-    href="{% url 'projects:time_necessity_list' project.pk %}">{% trans 'See applications' %}</a>
-  <a class="btn btn-primary mt-3"
-    href="{% url 'projects:time_necessity_update' project.pk %}">{% trans 'Update volunteer types' %}</a>
-  {% else %}
-  {%if project.time_still_needed is not 0 and project.question_set.count > 0 %}
-  <a class="btn btn-primary mt-3" href="{% url 'projects:time_support_create' object.pk %}">{% trans 'Volunteer' %}</a>
-  {%else%}
-  <h6>{% trans 'No volunteers needed' %}</h6>
-  {%endif%}
-  {% endif %}
-</div>
 
 <div id="donate" class="col-8 mt-5 p-0">
   {% with object.thingnecessity_set.all as necessity_list %}
@@ -161,12 +152,10 @@
     <li class="list-group-item">
       {{necessity.name}} {% if necessity.count > 1 %} x {{necessity.count}} {% endif %}
       <span class="float-right">{{necessity.total_price_still_needed|leva}}</span>
-
     </li>
     {% endfor %}
   </ul>
   {% endwith %}
-
   {% if admin %}
   <a class="btn btn-primary mt-3"
     href="{% url 'projects:thing_necessity_list' project.pk %}">{% trans 'See donations' %}</a>
@@ -177,7 +166,6 @@
   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="margin-top:10px">
     {%trans 'Donate'%}
   </button>
-
   <!-- The Modal -->
   <div class="modal" id="myModal">
     <div class="modal-dialog">
@@ -189,7 +177,6 @@
             &times;
           </button>
         </div>
-
         <!-- Modal body -->
         <div class="modal-body">
           <a class="btn btn-primary mt-3"
@@ -197,7 +184,6 @@
           <a class="btn btn-primary mt-3"
             href="{% url 'projects:money_support_create' project.pk %}?supportertype=legalentitydonator">{% trans 'Support as legalentity' %}</a>
         </div>
-
         <!-- Modal footer -->
         <div class="modal-footer">
           <button type="button" class="btn btn-danger" data-dismiss="modal">
@@ -209,7 +195,6 @@
   </div>
   {% endif %}
 </div>
-
 <div id="reports" class="col-8 p-0 mt-5">
   <h5>{% trans 'Reports' %}</h5>
   <p>{% trans 'Regular reports allow for transparency and accountability. Read the reports from the cause.' %} </p>
@@ -245,7 +230,6 @@
   <a class="btn btn-primary" href="{% url 'projects:report_create' project.pk %}">{% trans 'Add new report' %}</a>
   {% endif %}
 </div>
-
 <h3 class="mt-5">{% trans 'Announcements' %}
   {% if admin %}
   {% else %}
@@ -254,17 +238,11 @@
   {% endif %}
 </h3>
 {% if admin %}
-<form method="post" class="form" action="{% url 'projects:announcement_create' object.pk %}">
-  {% csrf_token %}
-  {% bootstrap_form announcement_form layout='inline'%}
-  {% buttons %}
-  <button type="submit" class="btn btn-success">{% trans 'Publish' %}</button>
-  {% endbuttons %}
-</form>
+{% else %}
+<a class="btn btn-outline-primary"
+  href="{% url 'projects:follow_project' object.pk %}">{% trans 'Follow the cause' %}</a>
 {% endif %}
-
 {% for activity in timeline %}
 {% render_activity activity %}
 {% endfor %}
-
 {% endblock %}
