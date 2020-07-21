@@ -1655,14 +1655,12 @@ def pay_epay_support(request, pk):
     context['data'] = ('MIN='+context['MIN'] + '\nINVOICE='+str(context['INVOICE']) + '\nAMOUNT=' +
                        str(context['AMOUNT']) + '\nEXP_TIME='+context['EXP_TIME'] + '\nDESCR='+context['DESCR'])
 
-    context['ENCODED'] = base64.b64encode(context['data'].encode())
-    context['ENCODED2'] = context['ENCODED'].decode('utf-8')
+    context['ENCODED'] = base64.b64encode(
+        context['data'].encode()).decode('utf-8')
 
     key = (
         'RPV28AWHKQKIXW55Q7D52EM8BN90U26MV0IZKR4K2IM4U2B5RVGUFKSA6PQA31T9').encode()
-    context['CHECKSUM'] = hmac.new(key, context['ENCODED'], sha1)
-
-    context['CHECKSUM2'] = context['CHECKSUM'].hexdigest()
+    context['CHECKSUM'] = hmac.new(key, context['ENCODED'], sha1).hexdigest()
 
     return render(request, 'projects/epay_form.html', {'context': context})
 
