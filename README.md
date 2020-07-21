@@ -58,3 +58,9 @@ manage.py compilemessages -l bg
 ```bash
 ./manage.sh dumpdata --natural-foreign --format yaml -o fixtures/dev.yaml -e auth.Permission -e sessions -e admin.logentry --exclude contenttypes
 ```
+
+### Смяна на парола за даден потребител
+
+```bash
+manage.py changepassword <user_name>
+```
