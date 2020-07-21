@@ -735,12 +735,12 @@ def money_support_create(request, project_id=None):
         if(request.user.donatorData):
             return money_support_crud(request, project_id=project_id)
         else:
-            return redirect('/projects/donator/create/?next=/projects/%s/moneysupport/create/' % (project_id))
+            return redirect('/projects/donator/create/?next=/projects/pay_epay_support/%s' % (project_id))
     elif (supporterType == 'legalentitydonator'):
         if(request.user.legalEntityDonatorData):
             return money_support_crud(request, project_id=project_id)
         else:
-            return redirect('/projects/legalentitydonator/create/?next=/projects/%s/moneysupport/create/' % (project_id))
+            return redirect('/projects/legalentitydonator/create/?next=/projects/pay_epay_support/%s' % (project_id))
 
 
 @permission_required('projects.update_moneysupport', fn=objectgetter(MoneySupport, 'support_id'))
@@ -1642,6 +1642,7 @@ def create_epay_support(request, pk):
 
 def pay_epay_support(request, pk):
     # if(request == 'GET'):
+
     support = get_object_or_404(EpayMoneySupport, pk=pk)
     context = {}
 
@@ -1654,14 +1655,16 @@ def pay_epay_support(request, pk):
 
     context['data'] = ('MIN='+context['MIN'] + '\nINVOICE='+str(context['INVOICE']) + '\nAMOUNT=' +
                        str(context['AMOUNT']) + '\nEXP_TIME='+context['EXP_TIME'] + '\nDESCR='+context['DESCR'])
-
-    context['ENCODED'] = base64.b64encode(
-        context['data'].encode()).decode('utf-8')
+    encoded = base64.b64encode(context['data'].encode())
+    context['ENCODED'] = endcoded.decode('utf-8')
 
     key = (
         'RPV28AWHKQKIXW55Q7D52EM8BN90U26MV0IZKR4K2IM4U2B5RVGUFKSA6PQA31T9').encode()
-    context['CHECKSUM'] = hmac.new(key, context['ENCODED'], sha1).hexdigest()
 
+    checksum = hmac.new(key, context['ENCODED'], sha1)
+    context['CHECKSUM'] = checksum.hexdigest()
+
+    return render(request, 'projects/epay_form.html', {'context': context})
     return render(request, 'projects/epay_form.html', {'context': context})
 
 
