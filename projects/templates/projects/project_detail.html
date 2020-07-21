@@ -6,163 +6,166 @@
 {% load bootstrap4 %}
 
 {% block breadcrumbs %}
-    {% include "projects/project_breadcrumb.html" with project=object active="active" only %}
+{% include "projects/project_breadcrumb.html" with project=object active="active" only %}
 {% endblock %}
 
 {% block admin_tools %}
 {% if admin %}
-  <li class="nav-item flex-fill text-center ">
-    <a class="nav-link text-white" href="{% url 'projects:details' object.pk %}?show_admin=false">{% trans 'See as regular user' %}</a>
-  </li>
-  <li class="nav-item flex-fill text-center ">
-    <a class="nav-link text-white" href="{% url 'projects:time_necessity_list' object.pk %}">{% trans 'Volunteers' %}</a> </li>
-  <li class="nav-item flex-fill text-center ">
-    <a class="nav-link text-white" href="{% url 'projects:thing_necessity_list' object.pk %}">{% trans 'Donations' %}</a>
-  </li>
-  <li class="nav-item flex-fill text-center ">
-    <a class="nav-link text-white" href="{% url 'projects:report_create' object.pk %}">{% trans 'New report' %}</a>
-  </li>
-  <li class="nav-item flex-fill text-center ">
-    <a class="nav-link text-white" href="{% url 'projects:gallery_update' project.pk %}">{% trans 'Update images' %}</a>
-  </li>
-   <li class="nav-item flex-fill text-center ">
-    <a class="nav-link text-white" href="{% url 'projects:update' project.pk %}">{% trans 'Add slack' %}</a>
-  </li> 
+<li class="nav-item flex-fill text-center ">
+  <a class="nav-link text-white"
+    href="{% url 'projects:details' object.pk %}?show_admin=false">{% trans 'See as regular user' %}</a>
+</li>
+<li class="nav-item flex-fill text-center ">
+  <a class="nav-link text-white" href="{% url 'projects:time_necessity_list' object.pk %}">{% trans 'Volunteers' %}</a>
+</li>
+<li class="nav-item flex-fill text-center ">
+  <a class="nav-link text-white" href="{% url 'projects:thing_necessity_list' object.pk %}">{% trans 'Donations' %}</a>
+</li>
+<li class="nav-item flex-fill text-center ">
+  <a class="nav-link text-white" href="{% url 'projects:report_create' object.pk %}">{% trans 'New report' %}</a>
+</li>
+<li class="nav-item flex-fill text-center ">
+  <a class="nav-link text-white" href="{% url 'projects:gallery_update' project.pk %}">{% trans 'Update images' %}</a>
+</li>
+<li class="nav-item flex-fill text-center ">
+  <a class="nav-link text-white" href="{% url 'projects:update' project.pk %}">{% trans 'Add slack' %}</a>
+</li>
 {% elif can_be_admin %}
-  <li class="nav-item flex-fill text-center ">
-    <a class="nav-link text-white" href="{% url 'projects:details' object.pk %}">{% trans 'See as admin' %}</a>
-  </li>
+<li class="nav-item flex-fill text-center ">
+  <a class="nav-link text-white" href="{% url 'projects:details' object.pk %}">{% trans 'See as admin' %}</a>
+</li>
 {% endif %}
 {% endblock %}
 
 {% block content %}
-  {% if can_be_admin %}
-    {{ block.super }}
-  {% endif %}
-  <script>
-    function changeImage(btn, image) {
-      $('.thumbnails').removeClass('active')
-      $(btn).addClass('active');
-      document.getElementById('image').src=image;
-    }
-  </script>
+{% if can_be_admin %}
+{{ block.super }}
+{% endif %}
+<script>
+  function changeImage(btn, image) {
+    $('.thumbnails').removeClass('active')
+    $(btn).addClass('active');
+    document.getElementById('image').src = image;
+  }
+</script>
 
-  <div class="row mt-4">
-    <div class="col-md-8">
-      {% if object.gallery.public|length == 0 %}
-        {% if admin %}
-          <a class="btn btn-link" href="{% url 'projects:gallery_update' object.id %}">{% trans "Add image" %}</a>
-        {% endif %}
-      {% else %}
-        {% with object.gallery.public|first as image %}
-          <img id="image" src="{{image.get_details_url}}" alt="{{image.title}}" class="card-img">
-        {% endwith %}
-      {% endif %}
-      {% for photo in object.gallery.public|slice:":7" %}
-        <button class="btn btn-light thumbnails {% if forloop.first %} active {% endif %}" onclick="changeImage(this, '{{ photo.get_details_url }}')">
-          <img src="{{ photo.get_thumbnail_url }}" class="thumbnail" alt="{{ photo.title }}">
-        </a>
+<div class="row mt-4">
+  <div class="col-md-8">
+    {% if object.gallery.public|length == 0 %}
+    {% if admin %}
+    <a class="btn btn-link" href="{% url 'projects:gallery_update' object.id %}">{% trans "Add image" %}</a>
+    {% endif %}
+    {% else %}
+    {% with object.gallery.public|first as image %}
+    <img id="image" src="{{image.get_details_url}}" alt="{{image.title}}" class="card-img">
+    {% endwith %}
+    {% endif %}
+    {% for photo in object.gallery.public|slice:":7" %}
+    <button class="btn btn-light thumbnails {% if forloop.first %} active {% endif %}"
+      onclick="changeImage(this, '{{ photo.get_details_url }}')">
+      <img src="{{ photo.get_thumbnail_url }}" class="thumbnail" alt="{{ photo.title }}">
+      </a>
       {% endfor %}
-    </div>
-    <div class="col-md-4 mt-4">
-
-      {% include "projects/project_stats.html" with project=object %}
-      {% if admin %}
-      {% else %}
-        <a class="btn btn-outline-primary mt-5" href="{% url 'projects:follow_project' object.pk %}">{% trans 'Follow the cause' %}</a>
-      {% endif %}
-  
-    </div>
-  
   </div>
-  <div class=" mt-1">
-    <h3>
-      {{ object.name }}
-      <small>
-        <a href="{{ project.community.get_absolute_url }}">{{project.community}}</a>
-      </small>
-    </h3>
-          <h5>Slack канал:{{object.slack_channel}}</h5>
+  <div class="col-md-4 mt-4">
+
+    {% include "projects/project_stats.html" with project=object %}
+    {% if admin %}
+    {% else %}
+    <a class="btn btn-outline-primary mt-5"
+      href="{% url 'projects:follow_project' object.pk %}">{% trans 'Follow the cause' %}</a>
+    {% endif %}
+
   </div>
 
-	<div class="">
-    <div class="body">
-        <h5>{{ object.description }}</h5>
-        <div class="accordion" id="shortLongText">
-        <div class="collapse show" id="shortText" data-parent="#shortLongText" >
+</div>
+<div class=" mt-1">
+  <h3>
+    {{ object.name }}
+    <small>
+      <a href="{{ project.community.get_absolute_url }}">{{project.community}}</a>
+    </small>
+  </h3>
+  <h5>Slack канал:{{object.slack_channel}}</h5>
+</div>
+
+<div class="">
+  <div class="body">
+    <h5>{{ object.description }}</h5>
+    <div class="accordion" id="shortLongText">
+      <div class="collapse show" id="shortText" data-parent="#shortLongText">
         {{ object.text|linebreaks|truncatewords_html:50 }}
         {% if object.text|length > 50 %}
-        <a class='btn btn-link' data-toggle="collapse"href="#fullText">{% trans 'Show more' %}</a>
+        <a class='btn btn-link' data-toggle="collapse" href="#fullText">{% trans 'Show more' %}</a>
 
         {% endif %}
-        </div>
-        <div class="collapse" id="fullText" data-parent="#shortLongText">
-          {{ object.text|linebreaks}}
-          <a class='btn btn-link' data-toggle="collapse" href="#shortText">{% trans 'Show less' %}</a>
-        </div>
+      </div>
+      <div class="collapse" id="fullText" data-parent="#shortLongText">
+        {{ object.text|linebreaks}}
+        <a class='btn btn-link' data-toggle="collapse" href="#shortText">{% trans 'Show less' %}</a>
       </div>
     </div>
-	</div>
-
-  <div id="volunteer" class="col-8 p-0 mt-3">
-    {% with object.timenecessity_set.all as necessity_list %}
-    <h5>
-      {% blocktrans with count=object.time_still_needed %}
-        The cause needs {{count}} volunteers
-      {% endblocktrans %}
-    </h5>
-    <ul class="list-group list-group-flush">
-      {% for necessity in necessity_list %}
-      <li class="list-group-item">
-        {{necessity.name}}
-        <span class="float-right"> {{necessity.still_needed}}</span>
-      </li>
-      {% endfor %}
-    </ul>
-    {% endwith %}
-    {% if admin %}
-      <a class="btn btn-primary mt-3" href="{% url 'projects:time_necessity_list' project.pk %}">{% trans 'See applications' %}</a>
-      <a class="btn btn-primary mt-3" href="{% url 'projects:time_necessity_update' project.pk %}">{% trans 'Update volunteer types' %}</a>
-    {% else %}
-       {%if project.time_still_needed is not 0 and project.question_set.count > 0 %}
-      <a class="btn btn-primary mt-3" href="{% url 'projects:time_support_create' object.pk %}">{% trans 'Volunteer' %}</a>
-      {%else%}
-        <h6>{% trans 'No volunteers needed' %}</h6>
-     {%endif%}
-    {% endif %}
   </div>
-  {% include "projects/epaymoneysupport_form.html" with object=project %}
+  <!-- тест -->
+</div>
 
-  <div id="donate" class="col-8 mt-5 p-0">
-    {% with object.thingnecessity_set.all as necessity_list %}
-    <h5>
-      {% blocktrans with count=object.things_still_needed price=object.money_still_needed|leva %}
-      The cause needs {{count}} things costing {{price}}
-      {% endblocktrans %}
-    </h5>
-    <ul class="list-group list-group-flush">
-      {% for necessity in necessity_list %}
-      <li class="list-group-item">
-        {{necessity.name}} {% if necessity.count > 1 %} x {{necessity.count}} {% endif %}
-        <span class="float-right">{{necessity.total_price_still_needed|leva}}</span>
+<div id="volunteer" class="col-8 p-0 mt-3">
+  {% with object.timenecessity_set.all as necessity_list %}
+  <h5>
+    {% blocktrans with count=object.time_still_needed %}
+    The cause needs {{count}} volunteers
+    {% endblocktrans %}
+  </h5>
+  <ul class="list-group list-group-flush">
+    {% for necessity in necessity_list %}
+    <li class="list-group-item">
+      {{necessity.name}}
+      <span class="float-right"> {{necessity.still_needed}}</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endwith %}
+  {% if admin %}
+  <a class="btn btn-primary mt-3"
+    href="{% url 'projects:time_necessity_list' project.pk %}">{% trans 'See applications' %}</a>
+  <a class="btn btn-primary mt-3"
+    href="{% url 'projects:time_necessity_update' project.pk %}">{% trans 'Update volunteer types' %}</a>
+  {% else %}
+  {%if project.time_still_needed is not 0 and project.question_set.count > 0 %}
+  <a class="btn btn-primary mt-3" href="{% url 'projects:time_support_create' object.pk %}">{% trans 'Volunteer' %}</a>
+  {%else%}
+  <h6>{% trans 'No volunteers needed' %}</h6>
+  {%endif%}
+  {% endif %}
+</div>
+{% include "projects/epaymoneysupport_form.html" with object=project %}
 
-      </li>
-      {% endfor %}
-    </ul>
-    {% endwith %}
+<div id="donate" class="col-8 mt-5 p-0">
+  {% with object.thingnecessity_set.all as necessity_list %}
+  <h5>
+    {% blocktrans with count=object.things_still_needed price=object.money_still_needed|leva %}
+    The cause needs {{count}} things costing {{price}}
+    {% endblocktrans %}
+  </h5>
+  <ul class="list-group list-group-flush">
+    {% for necessity in necessity_list %}
+    <li class="list-group-item">
+      {{necessity.name}} {% if necessity.count > 1 %} x {{necessity.count}} {% endif %}
+      <span class="float-right">{{necessity.total_price_still_needed|leva}}</span>
 
-    {% if admin %}
-      <a class="btn btn-primary mt-3" href="{% url 'projects:thing_necessity_list' project.pk %}">{% trans 'See donations' %}</a>
-      <a class="btn btn-primary mt-3" href="{% url 'projects:thing_necessity_update' project.pk %}">{% trans 'Update necessities' %}</a>
-    {% else %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% endwith %}
+
+  {% if admin %}
+  <a class="btn btn-primary mt-3"
+    href="{% url 'projects:thing_necessity_list' project.pk %}">{% trans 'See donations' %}</a>
+  <a class="btn btn-primary mt-3"
+    href="{% url 'projects:thing_necessity_update' project.pk %}">{% trans 'Update necessities' %}</a>
+  {% else %}
   <!-- Button to Open the Modal -->
-  <button
-    type="button"
-    class="btn btn-primary"
-    data-toggle="modal"
-    data-target="#myModal"
-    style="margin-top:10px"
-  >
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="margin-top:10px">
     {%trans 'Donate'%}
   </button>
 
@@ -180,16 +183,10 @@
 
         <!-- Modal body -->
         <div class="modal-body">
-          <a
-            class="btn btn-primary mt-3"
-            href="{% url 'projects:money_support_create' project.pk %}?supportertype=donator"
-            >{% trans 'Support as donator' %}</a
-          >
-          <a
-            class="btn btn-primary mt-3"
-            href="{% url 'projects:money_support_create' project.pk %}?supportertype=legalentitydonator"
-            >{% trans 'Support as legalentity' %}</a
-          >
+          <a class="btn btn-primary mt-3"
+            href="{% url 'projects:money_support_create' project.pk %}?supportertype=donator">{% trans 'Support as donator' %}</a>
+          <a class="btn btn-primary mt-3"
+            href="{% url 'projects:money_support_create' project.pk %}?supportertype=legalentitydonator">{% trans 'Support as legalentity' %}</a>
         </div>
 
         <!-- Modal footer -->
@@ -201,63 +198,64 @@
       </div>
     </div>
   </div>
-    {% endif %}
-  </div>
-
-  <div id="reports" class="col-8 p-0 mt-5">
-    <h5>{% trans 'Reports' %}</h5>
-    <p>{% trans 'Regular reports allow for transparency and accountability. Read the reports from the cause.' %} </p>
-    <table class="table mb-0">
-      <thead>
-        <tr>
-          <th scope='col'>{% trans 'Description' %}</th>
-          <th scope='col'>{% trans 'Published' %}</th>
-          <th scope='col' style="width:30px">{# Действието за четене #}</th>
-        </tr>
-      </thead>
-      {% with latest_reports=object.latest_reports %}
-        {% for report in latest_reports.0 %}
-        <tr>
-          <td>{{report.name}}</td>
-          <td>{{report.published_at}}</td>
-          <td>
-            <a class="btn-link" href="{{report.get_absolute_url}}">{% trans 'Read' %}</a></td>
-        </tr>
-        {% endfor %}
-        <tr>
-          {% if latest_reports.0 %}
-          <td colspan="3">
-            <a class="btn-link" href="{% url 'projects:report_list' project.pk %}"> {% trans 'see all' %} </a>
-          </td>
-          {%else%}
-          <td>Няма  подадени отчети</td>
-        </tr>
-        {%endif%}
-    {% endwith %}
-    </table>
-    {% if admin %}
-      <a class="btn btn-primary" href="{% url 'projects:report_create' project.pk %}">{% trans 'Add new report' %}</a>
-    {% endif %}
-  </div>
-
-  <h3 class="mt-5">{% trans 'Announcements' %}
-    {% if admin %}
-    {% else %}
-      <a class="btn btn-outline-primary" href="{% url 'projects:follow_project' object.pk %}">{% trans 'Follow the cause' %}</a>
-    {% endif %}
-  </h3>
-  {% if admin %}
-  <form method="post" class="form" action="{% url 'projects:announcement_create' object.pk %}" >
-    {% csrf_token %}
-    {% bootstrap_form announcement_form layout='inline'%}
-    {% buttons %}
-    <button type="submit" class="btn btn-success">{% trans 'Publish' %}</button>
-    {% endbuttons %}
-  </form>
   {% endif %}
+</div>
 
-  {% for activity in timeline %}
-    {% render_activity activity %}
-  {% endfor %}
+<div id="reports" class="col-8 p-0 mt-5">
+  <h5>{% trans 'Reports' %}</h5>
+  <p>{% trans 'Regular reports allow for transparency and accountability. Read the reports from the cause.' %} </p>
+  <table class="table mb-0">
+    <thead>
+      <tr>
+        <th scope='col'>{% trans 'Description' %}</th>
+        <th scope='col'>{% trans 'Published' %}</th>
+        <th scope='col' style="width:30px">{# Действието за четене #}</th>
+      </tr>
+    </thead>
+    {% with latest_reports=object.latest_reports %}
+    {% for report in latest_reports.0 %}
+    <tr>
+      <td>{{report.name}}</td>
+      <td>{{report.published_at}}</td>
+      <td>
+        <a class="btn-link" href="{{report.get_absolute_url}}">{% trans 'Read' %}</a></td>
+    </tr>
+    {% endfor %}
+    <tr>
+      {% if latest_reports.0 %}
+      <td colspan="3">
+        <a class="btn-link" href="{% url 'projects:report_list' project.pk %}"> {% trans 'see all' %} </a>
+      </td>
+      {%else%}
+      <td>Няма подадени отчети</td>
+    </tr>
+    {%endif%}
+    {% endwith %}
+  </table>
+  {% if admin %}
+  <a class="btn btn-primary" href="{% url 'projects:report_create' project.pk %}">{% trans 'Add new report' %}</a>
+  {% endif %}
+</div>
+
+<h3 class="mt-5">{% trans 'Announcements' %}
+  {% if admin %}
+  {% else %}
+  <a class="btn btn-outline-primary"
+    href="{% url 'projects:follow_project' object.pk %}">{% trans 'Follow the cause' %}</a>
+  {% endif %}
+</h3>
+{% if admin %}
+<form method="post" class="form" action="{% url 'projects:announcement_create' object.pk %}">
+  {% csrf_token %}
+  {% bootstrap_form announcement_form layout='inline'%}
+  {% buttons %}
+  <button type="submit" class="btn btn-success">{% trans 'Publish' %}</button>
+  {% endbuttons %}
+</form>
+{% endif %}
+
+{% for activity in timeline %}
+{% render_activity activity %}
+{% endfor %}
 
 {% endblock %}
