@@ -4,7 +4,7 @@ from django.utils.translation import get_language
 from projects.models import Answer, MoneySupport
 from django.utils.text import slugify
 from projects.templatetags.projects_tags import leva
-from projects.models import Project, Community, Question, BugReport, EpayMoneySupport
+from projects.models import Project, Community, Question, BugReport, EpayMoneySupport, MoneySupport
 from django.core.exceptions import ValidationError
 
 
@@ -118,5 +118,5 @@ class BugReportForm(forms.ModelForm):
 class EpayMoneySupportForm(forms.ModelForm):
 
     class Meta:
-        model = EpayMoneySupport
-        fields = ['amount']
+        model = MoneySupport
+        fields = ['leva', 'supportType']

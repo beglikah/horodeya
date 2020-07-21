@@ -1,7 +1,11 @@
 {% extends "base.html" %}
-<form action="/projects/create_epay_support/{{object.id}}" method="post">
+{% block content  %}
+<form action="/projects/create_epay_support/{{context.pk}}" method="post">
 	{% csrf_token %}
 	<label for="message">Въведете сума</label>
-	<input name="amount" type="number" required />
+	<input name="leva" type="number" required />
+    <input name="supportType" type="hidden" value={{context.supporterType}}>
 	<input type="submit" value="Дари" />
 </form>
+{% endblock content %}
+

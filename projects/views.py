@@ -1623,12 +1623,20 @@ def received_bug_reports(request):
 
 
 def create_epay_support(request, pk):
+    if(request.method == "GET"):
+        supporterType = request.GET.get('supportertype')
+        context = {}
+        context['pk'] = pk
+        context['supporterType'] = supporterType
+        return render(request, 'projects/epaymoneysupport_form.html', {'context': context})
+
     if(request.method == "POST"):
         form = EpayMoneySupportForm(request.POST)
         project = get_object_or_404(Project, pk=pk)
         if form.is_valid():
             form.instance.project = project
             form.instance.user = request.user
+            form.instance.payment_method = 'epay'
             support = form.save()
             supportId = support.id
             messages.add_message(request, messages.SUCCESS,
@@ -1643,7 +1651,7 @@ def create_epay_support(request, pk):
 def pay_epay_support(request, pk):
     # if(request == 'GET'):
 
-    support = get_object_or_404(EpayMoneySupport, pk=pk)
+    support = get_object_or_404(MoneySupport, pk=pk)
     context = {}
 
     context['PAGE'] = 'paylogin'
@@ -1656,12 +1664,12 @@ def pay_epay_support(request, pk):
     context['data'] = ('MIN='+context['MIN'] + '\nINVOICE='+str(context['INVOICE']) + '\nAMOUNT=' +
                        str(context['AMOUNT']) + '\nEXP_TIME='+context['EXP_TIME'] + '\nDESCR='+context['DESCR'])
     encoded = base64.b64encode(context['data'].encode())
-    context['ENCODED'] = endcoded.decode('utf-8')
+    context['ENCODED'] = encoded.decode('utf-8')
 
     key = (
         'RPV28AWHKQKIXW55Q7D52EM8BN90U26MV0IZKR4K2IM4U2B5RVGUFKSA6PQA31T9').encode()
 
-    checksum = hmac.new(key, context['ENCODED'], sha1)
+    checksum = hmac.new(key, encoded, sha1)
     context['CHECKSUM'] = checksum.hexdigest()
 
     return render(request, 'projects/epay_form.html', {'context': context})
@@ -1693,11 +1701,11 @@ def accept_epay_payment(request):
     ok_message_for_epay = "INVOICE=%s:STATUS=OK" % (invoice_number_decoded)
     err_message_for_epay = "INVOICE=%s:STATUS=ERR" % (invoice_number_decoded)
 
-    support = get_object_or_404(EpayMoneySupport, pk=invoice_number_decoded)
+    support = get_object_or_404(MoneySupport, pk=invoice_number_decoded)
 
     if(calc_checksum == checksum):
         if(status == 'PAID'):
-            support.status = EpayMoneySupport.STATUS.delivered
+            support.status = MoneySupport.STATUS.delivered
             support.save()
             return HttpResponse(ok_message_for_epay)
         elif(status == 'EXPIRED'):
