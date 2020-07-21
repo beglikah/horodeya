@@ -733,12 +733,12 @@ def money_support_create(request, project_id=None):
     supporterType = request.GET.get('supportertype')
     if(supporterType == 'donator'):
         if(request.user.donatorData):
-            return create_epay_support(request, project_id=project_id)
+            return create_epay_support(request, pk=project_id)
         else:
             return redirect('/projects/donator/create/?next=/projects/create_epay_support/%s' % (project_id))
     elif (supporterType == 'legalentitydonator'):
         if(request.user.legalEntityDonatorData):
-            return create_epay_support(request, project_id=project_id)
+            return create_epay_support(request, pk=project_id)
         else:
             return redirect('/projects/legalentitydonator/create/?next=/projects/create_epay_support/%s' % (project_id))
 
