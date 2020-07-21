@@ -59,7 +59,13 @@ manage.py compilemessages -l bg
 ./manage.sh dumpdata --natural-foreign --format yaml -o fixtures/dev.yaml -e auth.Permission -e sessions -e admin.logentry --exclude contenttypes
 ```
 
+### Смяна на парола за даден потребител
+
+```bash
+manage.py changepassword <user_name>
 ```
+
+```python
 from django.contrib.auth import get_user_model
 user = get_user_model()
 user.objects.all()
