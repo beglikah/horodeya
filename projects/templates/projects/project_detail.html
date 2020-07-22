@@ -162,11 +162,13 @@
   <a class="btn btn-primary mt-3"
     href="{% url 'projects:thing_necessity_update' project.pk %}">{% trans 'Update necessities' %}</a>
   {% else %}
+    <a class="btn btn-primary mt-3"
+            href="{% url 'projects:money_support_create' project.pk %}?supportertype=donator">Дари</a>
   <!-- Button to Open the Modal -->
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="margin-top:10px">
+  {% comment %}<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="margin-top:10px">
     {%trans 'Donate'%}
   </button>
-  <!-- The Modal -->
+   <!-- The Modal -->
   <div class="modal" id="myModal">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -192,7 +194,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> {% endcomment %}
   {% endif %}
 </div>
 <div id="reports" class="col-8 p-0 mt-5">

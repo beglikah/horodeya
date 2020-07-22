@@ -1365,9 +1365,11 @@ def user_photo_update(request, user_id):
             if form.cleaned_data.get('delete'):
                 messages.success(request, _('Image deleted'))
             else:
-                user.photo = neat_photo('user', str(
-                    user_id), request.FILES['file'])
-                user.save()
+                photoFile = request.FILES.get('file')
+                if(photoFile):
+                    user.photo = neat_photo('user', str(
+                        user_id), photoFile)
+                    user.save()
 
                 messages.success(request, _('Image uploaded'))
             next = request.GET.get('next')
@@ -1702,21 +1704,25 @@ def accept_epay_payment(request):
 
     ok_message_for_epay = "INVOICE=%s:STATUS=OK" % (invoice_number_decoded)
     err_message_for_epay = "INVOICE=%s:STATUS=ERR" % (invoice_number_decoded)
+    no_message_for_epay = "INVOICE=%s:STATUS=NO" % (invoice_number_decoded)
 
-    support = get_object_or_404(MoneySupport, pk=invoice_number_decoded)
+    support = MoneySupport.objects.filter(id=invoice_number_decoded)
 
-    if(calc_checksum == checksum):
-        if(status == 'PAID'):
-            support.status = MoneySupport.STATUS.delivered
-            support.save()
-            return HttpResponse(ok_message_for_epay)
-        elif(status == 'EXPIRED'):
-            support.status = 'expired'
-            support.save()
-            return HttpResponse(ok_message_for_epay)
+    if(support):
+        if(calc_checksum == checksum):
+            if(status == 'PAID'):
+                support.status = MoneySupport.STATUS.delivered
+                support.save()
+                return HttpResponse(ok_message_for_epay)
+            elif(status == 'EXPIRED'):
+                support.status = 'expired'
+                support.save()
+                return HttpResponse(ok_message_for_epay)
+            else:
+                support.status = 'declined'
+                support.save()
+                return HttpResponse(ok_message_for_epay)
         else:
-            support.status = 'declined'
-            support.save()
-            return HttpResponse(ok_message_for_epay)
+            return HttpResponse(err_message_for_epay)
     else:
-        return HttpResponse(err_message_for_epay)
+        return HttpResponse(no_message_for_epay)

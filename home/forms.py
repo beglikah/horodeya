@@ -4,6 +4,7 @@ from django import forms
 
 from django.utils.translation import gettext as _
 
+
 from django.utils.functional import lazy
 from django.utils.translation import ugettext_lazy as translate_lazy
 from tempus_dominus.widgets import DateTimePicker, DatePicker
@@ -32,9 +33,9 @@ class NamesSignupForm(SignupForm):
     accept_tos = forms.BooleanField(
         label=mark_safe_lazy(translate_lazy('Accept <a href="/условия-за-ползване">Terms of Service</a>')))
 
-    birthdate = forms.DateField(widget=DatePicker(
+    birthdate = forms.DateField(label=_('birthdate'), widget=DateTimePicker(
         attrs={
-            'style': 'width:120px',
+            'style': 'width:50',
             'required': True
         },
         options={

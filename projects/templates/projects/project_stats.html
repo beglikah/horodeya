@@ -61,8 +61,10 @@
     >{% trans 'Update necessities' %}</a
   >
   {% else %}
+    <a class="btn btn-primary mt-3"
+            href="{% url 'projects:money_support_create' project.pk %}?supportertype=donator">Дари</a>
   <!-- Button to Open the Modal -->
-  <button
+  {% comment %} <button
     type="button"
     class="btn btn-primary"
     data-toggle="modal"
@@ -106,7 +108,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> {% endcomment %}
 
   {% endif %}
    {% endif %}
