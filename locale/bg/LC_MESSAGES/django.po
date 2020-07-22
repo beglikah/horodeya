@@ -657,10 +657,8 @@ msgid "Do you have a comment"
 msgstr "Искате ли да коментирате"
 
 #: .\projects\models.py:584
-#, fuzzy
-#| msgid "Mark as delivered"
 msgid "delivered"
-msgstr "Отбележи като изпълнено"
+msgstr "Получено"
 
 #: .\projects\models.py:586
 #, fuzzy

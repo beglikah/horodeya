@@ -1725,4 +1725,5 @@ def accept_epay_payment(request):
         else:
             return HttpResponse(err_message_for_epay)
     else:
+        support.status = MoneySupport.STATUS.declined
         return HttpResponse(no_message_for_epay)
