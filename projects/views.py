@@ -1690,41 +1690,34 @@ def accept_epay_payment(request):
     epay_items = encoded.split(':')
 
     epay_item_currencies = []
-
     for item in epay_items:
         epay_item_currencies.append(item.split('=')[1])
 
     invoice_number_decoded = epay_item_currencies[0]
     status = epay_item_currencies[1]
     pay_time = epay_item_currencies[2]
+
     key = (
         'RPV28AWHKQKIXW55Q7D52EM8BN90U26MV0IZKR4K2IM4U2B5RVGUFKSA6PQA31T9').encode()
 
-    calc_checksum_value = hmac.new(key, encodedParam.encode(), sha1)
-    calc_checksum = calc_checksum_value.hexdigest()
+    calc_checksum = hmac.new(key, encodedParam.encode(), sha1).hexdigest()
 
     ok_message_for_epay = "INVOICE=%s:STATUS=OK" % (invoice_number_decoded)
     err_message_for_epay = "INVOICE=%s:STATUS=ERR" % (invoice_number_decoded)
-    no_message_for_epay = "INVOICE=%s:STATUS=NO" % (invoice_number_decoded)
 
-    support = MoneySupport.objects.filter(pk=invoice_number_decoded)
+    support = get_object_or_404(MoneySupport, pk=invoice_number_decoded)
 
-    if(support):
-        if(calc_checksum == checksum):
-            if(status == 'PAID'):
-                support.status = MoneySupport.STATUS.delivered
-                support.save()
-                return HttpResponse(ok_message_for_epay)
-            elif(status == 'EXPIRED'):
-                support.status = 'expired'
-                support.save()
-                return HttpResponse(ok_message_for_epay)
-            else:
-                support.status = 'declined'
-                support.save()
-                return HttpResponse(ok_message_for_epay)
+    if(calc_checksum == checksum):
+        if(status == 'PAID'):
+            support.status = MoneySupport.STATUS.delivered
+            support.save()
+            return HttpResponse(ok_message_for_epay)
+        elif(status == 'EXPIRED'):
+            support.status = 'expired'
+            support.save()
+            return HttpResponse(ok_message_for_epay)
         else:
-            return HttpResponse(err_message_for_epay)
+            support.status = 'declined'
+            support.save()
     else:
-        support.status = MoneySupport.STATUS.declined
-        return HttpResponse(no_message_for_epay)
+        return HttpResponse(err_message_for_epay)
