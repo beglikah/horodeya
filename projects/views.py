@@ -1700,7 +1700,8 @@ def accept_epay_payment(request):
     key = (
         'RPV28AWHKQKIXW55Q7D52EM8BN90U26MV0IZKR4K2IM4U2B5RVGUFKSA6PQA31T9').encode()
 
-    calc_checksum = hmac.new(key, encodedParam.encode(), sha1).hexdigest()
+    calc_checksum_value = hmac.new(key, encodedParam.encode(), sha1)
+    calc_checksum = calc_checksum_value.hexdigest()
 
     ok_message_for_epay = "INVOICE=%s:STATUS=OK" % (invoice_number_decoded)
     err_message_for_epay = "INVOICE=%s:STATUS=ERR" % (invoice_number_decoded)
