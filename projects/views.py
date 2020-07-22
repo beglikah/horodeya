@@ -1706,7 +1706,7 @@ def accept_epay_payment(request):
     err_message_for_epay = "INVOICE=%s:STATUS=ERR" % (invoice_number_decoded)
     no_message_for_epay = "INVOICE=%s:STATUS=NO" % (invoice_number_decoded)
 
-    support = MoneySupport.objects.filter(id=invoice_number_decoded)
+    support = MoneySupport.objects.filter(pk=invoice_number_decoded)
 
     if(support):
         if(calc_checksum == checksum):
