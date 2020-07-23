@@ -18,4 +18,4 @@ anymail_webhook_secret: '{{vault_anymail_webhook_secret}}'
 sendgrid_api_key: '{{vault_sendgrid_api_key}}'
 stream_api_key: '{{vault_stream_api_key}}'
 stream_api_secret: '{{vault_stream_api_secret}}'
-epay_key:{{epay_key}}
+epay_key:'{{epay_key}}'
