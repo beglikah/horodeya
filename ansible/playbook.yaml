@@ -10,9 +10,9 @@
         uwsgi_vassals:
           - name: horodeya
             plugin: python3
-            chdir: '{{root}}'
+            chdir: "{{root}}"
             module: horodeya.wsgi
-            home: '{{root}}venv'
+            home: "{{root}}venv"
             env: |
               DB_HOST=localhost
               env = SECRET_KEY={{secret_key}}
@@ -26,6 +26,7 @@
               env = DB_NAME={{db_name}}
               env = DB_USER={{db_user}}
               env = DB_PASSWORD={{db_password}}
+              env= EPAY_KEY={{epay_key}}
             processes: 4
             socket: 127.0.0.1:8000
             uid: horodeya
@@ -38,7 +39,7 @@
         nginx_vhosts:
           - listen: "443 ssl"
             server_name: "horodeya.com"
-            root: '{{root}}'
+            root: "{{root}}"
             #error_page: ""
             #access_log: ""
             #error_log: ""

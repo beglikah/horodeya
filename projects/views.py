@@ -53,6 +53,8 @@ from notifications.signals import notify
 from notifications.models import Notification
 from django.utils.translation import gettext, gettext_lazy as _
 from django.db import IntegrityError
+from datetime import datetime
+from datetime import timedelta
 
 
 def short_random():
@@ -1660,8 +1662,9 @@ def pay_epay_support(request, pk):
     context['MIN'] = 'D497918533'
     context['INVOICE'] = support.id
     context['AMOUNT'] = support.leva
-    context['EXP_TIME'] = '01.08.2020'
-    context['DESCR'] = 'Test'
+    context['EXP_TIME'] = (
+        datetime.today()+timedelta(days=3)).strftime('%d.%m.%Y')
+    context['DESCR'] = support.project.name
     context['user_id'] = request.user.id
     context['project_id'] = support.project.id
 
@@ -1670,8 +1673,7 @@ def pay_epay_support(request, pk):
     encoded = base64.b64encode(context['data'].encode())
     context['ENCODED'] = encoded.decode('utf-8')
 
-    key = (
-        'RPV28AWHKQKIXW55Q7D52EM8BN90U26MV0IZKR4K2IM4U2B5RVGUFKSA6PQA31T9').encode()
+    key = os.getenv('EPAY_KEY').encode()
 
     checksum = hmac.new(key, encoded, sha1)
     context['CHECKSUM'] = checksum.hexdigest()
