@@ -917,7 +917,7 @@ def support_change_accept(request, pk, type, accepted):
                 }
                 txt_msg = render_to_string('email-support-accepted-time.txt', context=ctx)
                 email = EmailMultiAlternatives(notification_message,
-                                                txt_msg
+                                                txt_msg,
                                                 'no-reply@horodeya.com',
                                                 [user_recipient.email])
                 email.send()
@@ -967,7 +967,7 @@ def support_delivered(request, pk, type):
             }
             txt_msg = render_to_string('email-support-delivered-money.txt', context=ctx)
             email = EmailMultiAlternatives(notification_message,
-                                            txt_msg
+                                            txt_msg,
                                             'no-reply@horodeya.com',
                                             [user_recipient.email])
             email.send()
@@ -1624,7 +1624,7 @@ class ProjectVerify(AutoPermissionRequiredMixin, UserPassesTestMixin, UpdateView
                     verb=notification_message)
         recipients_list = [user['email'] for user in community_members]
         email = EmailMultiAlternatives(notification_message,
-                                        txt_msg
+                                        txt_msg,
                                         'no-reply@horodeya.com',
                                         recipients_list)
         email.send()
