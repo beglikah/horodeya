@@ -2,7 +2,6 @@ from django.utils import timezone
 import datetime
 
 from django.db import models
-from django.utils import timezone
 from django.urls import reverse
 from django.utils.translation import get_language
 
@@ -853,7 +852,6 @@ class LegalEntityDonatorData(Timestamped):
     DDORegistration = models.BooleanField(_('DDORegistration'))
     phoneNumber = models.CharField(
         _('phoneNumber'), max_length=30, blank=False)
-    website = models.CharField(_('website'), max_length=30, blank=True)
     postAddress = models.CharField(
         _('postAdress'), max_length=200, blank=False)
     TIN = models.CharField(_('TIN'), max_length=10,
