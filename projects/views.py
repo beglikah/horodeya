@@ -1699,8 +1699,7 @@ def accept_epay_payment(request):
     status = epay_item_currencies[1]
     pay_time = epay_item_currencies[2]
 
-    key = (
-        'RPV28AWHKQKIXW55Q7D52EM8BN90U26MV0IZKR4K2IM4U2B5RVGUFKSA6PQA31T9').encode()
+    key = os.getenv('EPAY_KEY').encode()
 
     calc_checksum = hmac.new(key, encodedParam.encode(), sha1).hexdigest()
 
