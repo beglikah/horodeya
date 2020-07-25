@@ -1634,10 +1634,10 @@ class ProjectVerify(AutoPermissionRequiredMixin, UserPassesTestMixin, UpdateView
         project = form.save(commit=False)
         community_id = project.community_id
         community_members = User.objects.filter(
-            communities__id=community_id)
+            communities__id=community_id, is_active=True)
 
         ctx = {
-            'project_name': project_name
+            'project_name': project.name
         }
         if(project.verified_status == 'accepted'):
             notification_message = 'Задругата %s беше одобрена' % (project)
@@ -1649,7 +1649,8 @@ class ProjectVerify(AutoPermissionRequiredMixin, UserPassesTestMixin, UpdateView
 
         notify.send(self.request.user, recipient=community_members,
                     verb=notification_message)
-        recipients_list = [user['email'] for user in community_members]
+
+        recipients_list = community_members.values_list('email', flat=True)
         email = EmailMultiAlternatives(notification_message,
                                         txt_msg,
                                         'no-reply@horodeya.com',
