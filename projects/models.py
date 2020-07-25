@@ -859,6 +859,18 @@ class LegalEntityDonatorData(Timestamped):
     website = models.CharField(_('website'), blank=True, max_length=100)
 
 
+class TicketQR(Timestamped):
+    project = models.ForeignKey(Project, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    validation_code = models.TextField(_('validation_code'))
+    validated_at = models.DateTimeField(_('validated_at'), null=True)
+
+    def set_validated(self):
+        self.validated_at = timezone.now()
+        self.save()
+        return self.validated_at
+
+
 class BugReport(Timestamped):
     email = models.EmailField(_('email'))
     message = models.TextField(_('message'))

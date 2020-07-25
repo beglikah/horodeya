@@ -32,7 +32,7 @@ from django.utils.translation import gettext as _
 
 from rules.contrib.views import AutoPermissionRequiredMixin, permission_required, objectgetter, PermissionRequiredMixin
 
-from projects.models import Project, Community, Report, MoneySupport, TimeSupport, User, Announcement, TimeNecessity, ThingNecessity, Question, QuestionPrototype, DonatorData, LegalEntityDonatorData, BugReport, EpayMoneySupport, Support
+from projects.models import Project, Community, Report, MoneySupport, TimeSupport, User, Announcement, TimeNecessity, ThingNecessity, Question, QuestionPrototype, DonatorData, LegalEntityDonatorData, BugReport, EpayMoneySupport, Support, TicketQR
 
 from projects.forms import QuestionForm, PaymentForm, ProjectUpdateForm, BugReportForm, EpayMoneySupportForm
 
@@ -58,6 +58,8 @@ from django.db import IntegrityError
 from datetime import datetime
 from datetime import timedelta
 
+from easy_pdf.rendering import render_to_pdf
+from django.utils.crypto import get_random_string
 
 def short_random():
     return str(uuid.uuid4()).split('-')[0]
@@ -971,6 +973,31 @@ def support_delivered(request, pk, type):
                                             'no-reply@horodeya.com',
                                             [user_recipient.email])
             email.send()
+        else:
+            ticket_code = get_random_string(length=16)
+            ticket = TicketQR(
+                project=project,
+                user=user_recipient,
+                validation_code=ticket_code
+            )
+            ticket.save()
+            email2 = EmailMultiAlternatives('Here is your ticket for the event',
+                                            'Scan this QR code to validate your entry.',
+                                            'no-reply@horodeya.com',
+                                            [user_recipient.email])
+            context = {
+                'ticket_code': ticket_code,
+                'url': request.build_absolute_uri('/check-qr?ticket=' + ticket_code)
+            }
+            ticket_pdf = render_to_pdf(
+                'email/ticket-pdf.html',
+                context,
+                # encoding='utf-8'
+            )
+            email2.attach('ticket.pdf', ticket_pdf, 'application/pdf')
+            # msg = render_to_string('email-ticket.html', context=context)
+            # email.attach_alternative(msg, "text/html")
+            email2.send()
 
         messages.success(request, _('Support marked as delivered'))
 

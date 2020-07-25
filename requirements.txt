@@ -50,3 +50,6 @@ botocore==1.14.5
 django-storages==1.9.1
 django-notifications-hq==1.6.0
 django-qr-code==1.2.0
+reportlab==3.5.46
+xhtml2pdf==0.2.4
+django-easy-pdf==0.1.1

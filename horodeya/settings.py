@@ -98,7 +98,8 @@ INSTALLED_APPS = [
 
     'django.contrib.humanize',
     'notifications',
-    'qr_code'
+    'qr_code',
+    'easy_pdf',
 ]
 
 if not TEST:
