@@ -915,7 +915,7 @@ def support_change_accept(request, pk, type, accepted):
                 ctx = {
                     'project_name': project_name
                 }
-                txt_msg = render_to_string('email-support-accepted-time.txt', context=ctx)
+                txt_msg = render_to_string('email/support-accepted-time.txt', context=ctx)
                 email = EmailMultiAlternatives(notification_message,
                                                 txt_msg,
                                                 'no-reply@horodeya.com',
@@ -965,7 +965,7 @@ def support_delivered(request, pk, type):
             ctx = {
                 'project_name': project_name
             }
-            txt_msg = render_to_string('email-support-delivered-money.txt', context=ctx)
+            txt_msg = render_to_string('email/support-delivered-money.txt', context=ctx)
             email = EmailMultiAlternatives(notification_message,
                                             txt_msg,
                                             'no-reply@horodeya.com',
@@ -1614,11 +1614,11 @@ class ProjectVerify(AutoPermissionRequiredMixin, UserPassesTestMixin, UpdateView
         }
         if(project.verified_status == 'accepted'):
             notification_message = 'Задругата %s беше одобрена' % (project)
-            txt_msg = render_to_string('email-project-accepted.txt', context=ctx)
+            txt_msg = render_to_string('email/project-accepted.txt', context=ctx)
 
         elif(project.verified_status == 'rejected'):
             notification_message = 'Задругата %s беше отхвърлена' % (project)
-            txt_msg = render_to_string('email-project-rejected.txt', context=ctx)
+            txt_msg = render_to_string('email/project-rejected.txt', context=ctx)
 
         notify.send(self.request.user, recipient=community_members,
                     verb=notification_message)
