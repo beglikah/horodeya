@@ -963,42 +963,6 @@ def support_delivered(request, pk, type):
         notify.send(request.user, recipient=user_recipient,
                     verb=notification_message)
 
-        if support.supportType in ['money', 'm']:
-            ctx = {
-                'project_name': project_name
-            }
-            txt_msg = render_to_string('email/support-delivered-money.txt', context=ctx)
-            email = EmailMultiAlternatives(notification_message,
-                                            txt_msg,
-                                            'no-reply@horodeya.com',
-                                            [user_recipient.email])
-            email.send()
-        else:
-            ticket_code = get_random_string(length=16)
-            ticket = TicketQR(
-                project=project,
-                user=user_recipient,
-                validation_code=ticket_code
-            )
-            ticket.save()
-            email2 = EmailMultiAlternatives('Here is your ticket for the event',
-                                            'Scan this QR code to validate your entry.',
-                                            'no-reply@horodeya.com',
-                                            [user_recipient.email])
-            context = {
-                'ticket_code': ticket_code,
-                'url': request.build_absolute_uri('/check-qr?ticket=' + ticket_code)
-            }
-            ticket_pdf = render_to_pdf(
-                'email/ticket-pdf.html',
-                context,
-                # encoding='utf-8'
-            )
-            email2.attach('ticket.pdf', ticket_pdf, 'application/pdf')
-            # msg = render_to_string('email-ticket.html', context=context)
-            # email.attach_alternative(msg, "text/html")
-            email2.send()
-
         messages.success(request, _('Support marked as delivered'))
 
     return redirect(support)
@@ -1778,6 +1742,33 @@ def accept_epay_payment(request):
         if(status == 'PAID'):
             support.status = MoneySupport.STATUS.delivered
             support.save()
+
+            ticket = TicketQR(
+                project=support.project,
+                user=support.user,
+                validation_code=get_random_string(length=16)
+            )
+            ticket.save()
+
+            txt_subject = 'Вашето дарение към %s беше получено' % (support.project.name)
+            txt_msg = render_to_string('email/support-delivered-money.txt',
+                                        context={ 'project_name': support.project.name })
+            email = EmailMultiAlternatives(txt_subject,
+                                            txt_msg,
+                                            'no-reply@horodeya.com',
+                                            [support.user.email])
+            ctx_pdf = {
+                'ticket_code': ticket.validation_code,
+                'url': request.build_absolute_uri('/check-qr?ticket=' + ticket.validation_code)
+            }
+            ticket_pdf = render_to_pdf(
+                'email/ticket-pdf.html',
+                context=ctx_pdf,
+                # encoding='utf-8'
+            )
+            email.attach('ticket.pdf', ticket_pdf, 'application/pdf')
+            email.send()
+
             return HttpResponse(ok_message_for_epay)
         elif(status == 'EXPIRED'):
             support.status = 'expired'
