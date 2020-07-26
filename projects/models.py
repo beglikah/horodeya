@@ -2,7 +2,6 @@ from django.utils import timezone
 import datetime
 
 from django.db import models
-from django.utils import timezone
 from django.urls import reverse
 from django.utils.translation import get_language
 
@@ -853,12 +852,23 @@ class LegalEntityDonatorData(Timestamped):
     DDORegistration = models.BooleanField(_('DDORegistration'))
     phoneNumber = models.CharField(
         _('phoneNumber'), max_length=30, blank=False)
-    website = models.CharField(_('website'), max_length=30, blank=True)
     postAddress = models.CharField(
         _('postAdress'), max_length=200, blank=False)
     TIN = models.CharField(_('TIN'), max_length=10,
                            blank=False, default=None, null=True)
     website = models.CharField(_('website'), blank=True, max_length=100)
+
+
+class TicketQR(Timestamped):
+    project = models.ForeignKey(Project, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    validation_code = models.TextField(_('validation_code'))
+    validated_at = models.DateTimeField(_('validated_at'), null=True)
+
+    def set_validated(self):
+        self.validated_at = timezone.now()
+        self.save()
+        return self.validated_at
 
 
 class BugReport(Timestamped):

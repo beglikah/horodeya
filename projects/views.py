@@ -7,11 +7,13 @@ import hmac
 from requests.exceptions import Timeout, ConnectionError
 
 from django.utils import timezone
+from django.core.mail import EmailMultiAlternatives
 
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
@@ -30,7 +32,7 @@ from django.utils.translation import gettext as _
 
 from rules.contrib.views import AutoPermissionRequiredMixin, permission_required, objectgetter, PermissionRequiredMixin
 
-from projects.models import Project, Community, Report, MoneySupport, TimeSupport, User, Announcement, TimeNecessity, ThingNecessity, Question, QuestionPrototype, DonatorData, LegalEntityDonatorData, BugReport, EpayMoneySupport, Support
+from projects.models import Project, Community, Report, MoneySupport, TimeSupport, User, Announcement, TimeNecessity, ThingNecessity, Question, QuestionPrototype, DonatorData, LegalEntityDonatorData, BugReport, EpayMoneySupport, Support, TicketQR
 
 from projects.forms import QuestionForm, PaymentForm, ProjectUpdateForm, BugReportForm, EpayMoneySupportForm
 
@@ -56,6 +58,8 @@ from django.db import IntegrityError
 from datetime import datetime
 from datetime import timedelta
 
+from easy_pdf.rendering import render_to_pdf
+from django.utils.crypto import get_random_string
 
 def short_random():
     return str(uuid.uuid4()).split('-')[0]
@@ -909,6 +913,17 @@ def support_change_accept(request, pk, type, accepted):
         if result == accepted:
             notify.send(request.user, recipient=user_recipient,
                         verb=notification_message)
+            if type == 'time':
+                ctx = {
+                    'project_name': project_name
+                }
+                txt_msg = render_to_string('email/support-accepted-time.txt', context=ctx)
+                email = EmailMultiAlternatives(notification_message,
+                                                txt_msg,
+                                                'no-reply@horodeya.com',
+                                                [user_recipient.email])
+                email.send()
+
             messages.success(request, _('Support accepted')
                              if accepted else _('Support declined'))
         else:
@@ -1583,14 +1598,29 @@ class ProjectVerify(AutoPermissionRequiredMixin, UserPassesTestMixin, UpdateView
         project = form.save(commit=False)
         community_id = project.community_id
         community_members = User.objects.filter(
-            communities__id=community_id)
+            communities__id=community_id, is_active=True)
 
+        ctx = {
+            'project_name': project.name
+        }
         if(project.verified_status == 'accepted'):
-            notify.send(self.request.user, recipient=community_members,
-                        verb='Задругата %s беше одобрена' % (project))
+            notification_message = 'Задругата %s беше одобрена' % (project)
+            txt_msg = render_to_string('email/project-accepted.txt', context=ctx)
+
         elif(project.verified_status == 'rejected'):
-            notify.send(self.request.user, recipient=community_members,
-                        verb='Задругата %s беше отхвърлена' % (project))
+            notification_message = 'Задругата %s беше отхвърлена' % (project)
+            txt_msg = render_to_string('email/project-rejected.txt', context=ctx)
+
+        notify.send(self.request.user, recipient=community_members,
+                    verb=notification_message)
+
+        recipients_list = community_members.values_list('email', flat=True)
+        email = EmailMultiAlternatives(notification_message,
+                                        txt_msg,
+                                        'no-reply@horodeya.com',
+                                        recipients_list)
+        email.send()
+
         return super().form_valid(form)
 
 
@@ -1712,6 +1742,33 @@ def accept_epay_payment(request):
         if(status == 'PAID'):
             support.status = MoneySupport.STATUS.delivered
             support.save()
+
+            ticket = TicketQR(
+                project=support.project,
+                user=support.user,
+                validation_code=get_random_string(length=16)
+            )
+            ticket.save()
+
+            txt_subject = 'Вашето дарение към %s беше получено' % (support.project.name)
+            txt_msg = render_to_string('email/support-delivered-money.txt',
+                                        context={ 'project_name': support.project.name })
+            email = EmailMultiAlternatives(txt_subject,
+                                            txt_msg,
+                                            'no-reply@horodeya.com',
+                                            [support.user.email])
+            ctx_pdf = {
+                'ticket_code': ticket.validation_code,
+                'url': request.build_absolute_uri('/check-qr?ticket=' + ticket.validation_code)
+            }
+            ticket_pdf = render_to_pdf(
+                'email/ticket-pdf.html',
+                context=ctx_pdf,
+                # encoding='utf-8'
+            )
+            email.attach('ticket.pdf', ticket_pdf, 'application/pdf')
+            email.send()
+
             return HttpResponse(ok_message_for_epay)
         elif(status == 'EXPIRED'):
             support.status = 'expired'

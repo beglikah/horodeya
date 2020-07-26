@@ -36,6 +36,7 @@ urlpatterns = [
     path('accounts/profile/<int:pk>', home_views.account, name='account'),
     path('accounts/', include('allauth.urls')),
     path('projects/', include('projects.urls')),
+    path('qr_code/', include('qr_code.urls', namespace="qr_code")),
     path('admin/', admin.site.urls),
     re_path(r'^photologue/', include('photologue.urls', namespace='photologue')),
     re_path(r'^cms/', include(wagtailadmin_urls)),

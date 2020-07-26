@@ -1,0 +1,32 @@
+{% extends "easy_pdf/base.html" %}
+
+{% load qr_code %}
+
+{% block extra_style %}
+  <meta charset="utf-8" />
+  <style type="text/css">
+    body {
+        font-family: "Helvetica", "sans-serif";
+        color: #333333;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div id="content">
+    <p>Hello, this is your ticket for the event:</p>
+    <dl>
+      <dt>URL:</dt>
+      <dd>{{ url }}</dd>
+      <dt>Code:</dt>
+      <dd>{{ ticket_code }}</dd>
+      <dt>Date:</dt>
+      <dd>15.08.2020</dd>
+      <dt>Location:</dt>
+      <dd>Near the dam</dd>
+    </dl>
+    <div>
+      {% qr_from_text url size="s" border="3" image_format="png" error_correction="M" %}
+    </div>
+  </div>
+{% endblock %}
