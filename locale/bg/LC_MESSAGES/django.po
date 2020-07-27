@@ -416,7 +416,7 @@ msgstr "Излез"
 
 #: .\home\templates\base.html:106
 msgid "Sign in / Sign up"
-msgstr ""
+msgstr "Влез/Регистрирай се"
 
 #: .\home\templates\home\account.html:12
 #: .\projects\templates\projects\community_detail.html:11

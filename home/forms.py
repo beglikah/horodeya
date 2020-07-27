@@ -33,17 +33,7 @@ class NamesSignupForm(SignupForm):
     accept_tos = forms.BooleanField(
         label=mark_safe_lazy(translate_lazy('Accept <a href="/условия-за-ползване">Terms of Service</a>')))
 
-    birthdate = forms.DateField(label=_('birthdate'), widget=DateTimePicker(
-        attrs={
-            'style': 'width:50',
-            'required': True
-        },
-        options={
-            'useCurrent': True,
-            'collapse': False,
-        }
-    )
-    )
+    birthdate = forms.DateField()
 
     def save(self, request):
 
@@ -52,5 +42,6 @@ class NamesSignupForm(SignupForm):
         user.first_name = request.POST['first_name']
         user.last_name = request.POST['last_name']
         user.second_name = request.POST['second_name']
+        user.birthdate = request.POST['birthdate']
         user.save()
         return user
