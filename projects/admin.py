@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import Project, Community, User, MoneySupport, TimeSupport, ThingSupport, Announcement, QuestionPrototype, Question, Answer, Report, DonatorData, LegalEntityDonatorData, BugReport, EpayMoneySupport
+from .models import Project, Community, User, MoneySupport, TimeSupport, ThingSupport, Announcement, QuestionPrototype, Question, Answer, Report, DonatorData, LegalEntityDonatorData, BugReport, EpayMoneySupport, TimeNecessity
 from vote.models import Vote
 
 # Register your models here.
@@ -22,3 +22,4 @@ admin.site.register(DonatorData)
 admin.site.register(LegalEntityDonatorData)
 admin.site.register(BugReport)
 admin.site.register(EpayMoneySupport)
+admin.site.register(TimeNecessity)
