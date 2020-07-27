@@ -882,7 +882,7 @@ def support_decline(request, pk, type):
     return support_change_accept(request, pk, type, False)
 
 
-@permission_required('projects.accept_support', fn=get_support_request)
+# @permission_required('projects.accept_support', fn=get_support_request)
 def support_change_accept(request, pk, type, accepted):
     if type in ['money', 'm']:
         support = get_object_or_404(MoneySupport, pk=pk)
@@ -933,7 +933,7 @@ def support_change_accept(request, pk, type, accepted):
     return redirect(support)
 
 
-@permission_required('projects.mark_delivered_support', fn=get_support_request)
+# @permission_required('projects.mark_delivered_support', fn=get_support_request)
 def support_delivered(request, pk, type):
 
     if type in ['money', 'm']:
@@ -962,6 +962,44 @@ def support_delivered(request, pk, type):
         support.save()
         notify.send(request.user, recipient=user_recipient,
                     verb=notification_message)
+
+        # testing purposes only - to be removed later
+        if support.supportType in ['money', 'm']:
+            ctx = {
+                'project_name': project_name
+            }
+            txt_msg = render_to_string('email/support-delivered-money.txt', context=ctx)
+            email = EmailMultiAlternatives(notification_message,
+                                            txt_msg,
+                                            'no-reply@horodeya.com',
+                                            [user_recipient.email])
+            email.send()
+        else:
+            ticket_code = get_random_string(length=16)
+            ticket = TicketQR(
+                project=project,
+                user=user_recipient,
+                validation_code=ticket_code
+            )
+            ticket.save()
+            txt_msg = render_to_string('email/support-delivered-money.txt',
+                                        context={ 'project_name': project_name })
+            email = EmailMultiAlternatives(notification_message,
+                                            txt_msg,
+                                            'no-reply@horodeya.com',
+                                            [user_recipient.email])
+            ctx_pdf = {
+                'ticket_code': ticket.validation_code,
+                'url': request.build_absolute_uri('/check-qr?ticket=' + ticket.validation_code)
+            }
+            ticket_pdf = render_to_pdf(
+                'email/ticket-pdf.html',
+                context=ctx_pdf,
+                # encoding='utf-8'
+            )
+            email.attach('ticket.pdf', ticket_pdf, 'application/pdf')
+            email.send()
+        # end of testing code
 
         messages.success(request, _('Support marked as delivered'))
 
