@@ -239,11 +239,6 @@
     href="{% url 'projects:follow_project' object.pk %}">{% trans 'Follow the cause' %}</a>
   {% endif %}
 </h3>
-{% if admin %}
-{% else %}
-<a class="btn btn-outline-primary"
-  href="{% url 'projects:follow_project' object.pk %}">{% trans 'Follow the cause' %}</a>
-{% endif %}
 {% for activity in timeline %}
 {% render_activity activity %}
 {% endfor %}
