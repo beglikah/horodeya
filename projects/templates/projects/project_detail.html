@@ -122,7 +122,7 @@
     {% with object.timenecessity_set.all as necessity_list %}
     <h5>
       {% blocktrans with count=object.time_still_needed %}
-      Задругата се нуждае от  {{count}} вложители на труд
+              The cause needs {{count}} volunteers
       {% endblocktrans %}
     </h5>
     <ul class="list-group list-group-flush">
@@ -156,7 +156,7 @@
   {% with object.thingnecessity_set.all as necessity_list %}
   <h5>
     {% blocktrans with count=object.things_still_needed price=object.money_still_needed|leva %}
-    Задругата се нуждае от  {{count}} неща струващи {{price}}
+          The cause needs {{count}} things costing {{price}}
     {% endblocktrans %}
   </h5>
   <ul class="list-group list-group-flush">
