@@ -33,7 +33,7 @@ class NamesSignupForm(SignupForm):
     accept_tos = forms.BooleanField(
         label=mark_safe_lazy(translate_lazy('Accept <a href="/условия-за-ползване">Terms of Service</a>')))
 
-    birthdate = forms.DateField()
+    birthdate = forms.DateField(label=_('birthdate'))
 
     def save(self, request):
 
