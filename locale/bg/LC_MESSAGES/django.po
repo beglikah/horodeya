@@ -914,10 +914,6 @@ msgstr "Покажи още"
 msgid "Show less"
 msgstr "Скрий"
 
-#: .\projects\templates\projects\project_detail.html:117
-#, python-format
-msgid "The cause needs %(count)s volunteers\n"
-msgstr ""Задругата има нужда от %(count) вложители на труд\n"
 
 
 #: .\projects\templates\projects\project_detail.html:131
@@ -941,9 +937,7 @@ msgstr "Вложи труд"
 msgid "No volunteers needed"
 msgstr "Няма нужда от вложители на труд"
 
-#: .\projects\templates\projects\project_detail.html:147
-msgid "The cause needs %(count)s things costing %(price)s\n"
-msgstr " Задругата има нужда от %(count)s неща на стойност %(price)s\n"
+
 
 
 #: .\projects\templates\projects\project_detail.html:161

@@ -121,9 +121,7 @@
   <div id="volunteer" class="col-8 p-0 mt-3">
     {% with object.timenecessity_set.all as necessity_list %}
     <h5>
-      {% blocktrans with count=object.time_still_needed %}
-              The cause needs {{count}} volunteers
-      {% endblocktrans %}
+              Задругата се нуждае от {{object.time_still_needed}} вложители на труд
     </h5>
     <ul class="list-group list-group-flush">
       {% for necessity in necessity_list %}
@@ -155,9 +153,7 @@
 <div id="donate" class="col-8 mt-5 p-0">
   {% with object.thingnecessity_set.all as necessity_list %}
   <h5>
-    {% blocktrans with count=object.things_still_needed price=object.money_still_needed|leva %}
-          The cause needs {{count}} things costing {{price}}
-    {% endblocktrans %}
+         Задругата се нуждае от  {{object.things_still_needed}} неща струващи {{object.money_still_needed|leva}}
   </h5>
   <ul class="list-group list-group-flush">
     {% for necessity in necessity_list %}
