@@ -61,6 +61,7 @@ from datetime import timedelta
 from easy_pdf.rendering import render_to_pdf
 from django.utils.crypto import get_random_string
 
+
 def short_random():
     return str(uuid.uuid4()).split('-')[0]
 
@@ -917,11 +918,12 @@ def support_change_accept(request, pk, type, accepted):
                 ctx = {
                     'project_name': project_name
                 }
-                txt_msg = render_to_string('email/support-accepted-time.txt', context=ctx)
+                txt_msg = render_to_string(
+                    'email/support-accepted-time.txt', context=ctx)
                 email = EmailMultiAlternatives(notification_message,
-                                                txt_msg,
-                                                'no-reply@horodeya.com',
-                                                [user_recipient.email])
+                                               txt_msg,
+                                               'no-reply@horodeya.com',
+                                               [user_recipient.email])
                 email.send()
 
             messages.success(request, _('Support accepted')
@@ -1605,20 +1607,22 @@ class ProjectVerify(AutoPermissionRequiredMixin, UserPassesTestMixin, UpdateView
         }
         if(project.verified_status == 'accepted'):
             notification_message = 'Задругата %s беше одобрена' % (project)
-            txt_msg = render_to_string('email/project-accepted.txt', context=ctx)
+            txt_msg = render_to_string(
+                'email/project-accepted.txt', context=ctx)
 
         elif(project.verified_status == 'rejected'):
             notification_message = 'Задругата %s беше отхвърлена' % (project)
-            txt_msg = render_to_string('email/project-rejected.txt', context=ctx)
+            txt_msg = render_to_string(
+                'email/project-rejected.txt', context=ctx)
 
         notify.send(self.request.user, recipient=community_members,
                     verb=notification_message)
 
         recipients_list = community_members.values_list('email', flat=True)
         email = EmailMultiAlternatives(notification_message,
-                                        txt_msg,
-                                        'no-reply@horodeya.com',
-                                        recipients_list)
+                                       txt_msg,
+                                       'no-reply@horodeya.com',
+                                       recipients_list)
         email.send()
 
         return super().form_valid(form)
@@ -1634,15 +1638,16 @@ def bug_report_create(request):
 
     if(request.method == "POST"):
         form = BugReportForm(request.POST)
+        redirect_url = request.POST.get('next')
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS,
                                  'Благодарим ви за обратната връзка')
-            return HttpResponseRedirect('/')
+            return redirect(redirect_url)
         else:
             messages.add_message(request, messages.ERROR,
-                                 'Въведете валиден имейл адрес')
-            return HttpResponseRedirect('/')
+                                 "Въведете валиден имейл адрес")
+            return redirect(redirect_url)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -1750,13 +1755,14 @@ def accept_epay_payment(request):
             )
             ticket.save()
 
-            txt_subject = 'Вашето дарение към %s беше получено' % (support.project.name)
+            txt_subject = 'Вашето дарение към %s беше получено' % (
+                support.project.name)
             txt_msg = render_to_string('email/support-delivered-money.txt',
-                                        context={ 'project_name': support.project.name })
+                                       context={'project_name': support.project.name})
             email = EmailMultiAlternatives(txt_subject,
-                                            txt_msg,
-                                            'no-reply@horodeya.com',
-                                            [support.user.email])
+                                           txt_msg,
+                                           'no-reply@horodeya.com',
+                                           [support.user.email])
             ctx_pdf = {
                 'ticket_code': ticket.validation_code,
                 'url': request.build_absolute_uri('/check-qr?ticket=' + ticket.validation_code)

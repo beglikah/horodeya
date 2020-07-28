@@ -74,7 +74,16 @@
   </div>
 
 </div>
-
+  <div class=" mt-1">
+    <h2>
+      {{ object.name }}
+      <small>
+        <a href="{{ project.community.get_absolute_url }}">{{project.community}}</a>
+      </small>
+    </h2>{%if object.slack_channel is not None %}
+          <h5>Slack канал:{{object.slack_channel}}</h5>
+          {%endif%}
+  </div>
 <div class="">
   <div class="body">
     <h5>{{ object.description }}</h5>
@@ -98,19 +107,22 @@
       {% if project.location is not none %}
       Местонахождение: {{ project.location }},
       {% endif %}
+      <br/>
       {% if project.start_date is not none %}
       Начална дата: {{ project.start_date }},
       {% endif %}
+           <br/>
       {% if project.end_date is not none %}
       Крайна дата: {{ project.end_date }}
       {% endif %}
+
     </div>
   </div>
   <div id="volunteer" class="col-8 p-0 mt-3">
     {% with object.timenecessity_set.all as necessity_list %}
     <h5>
       {% blocktrans with count=object.time_still_needed %}
-      The cause needs {{count}} volunteers
+      Задругата се нуждае от  {{count}} вложители на труд
       {% endblocktrans %}
     </h5>
     <ul class="list-group list-group-flush">
@@ -144,7 +156,7 @@
   {% with object.thingnecessity_set.all as necessity_list %}
   <h5>
     {% blocktrans with count=object.things_still_needed price=object.money_still_needed|leva %}
-    The cause needs {{count}} things costing {{price}}
+    Задругата се нуждае от  {{count}} неща струващи {{price}}
     {% endblocktrans %}
   </h5>
   <ul class="list-group list-group-flush">
@@ -234,6 +246,13 @@
 </div>
 <h3 class="mt-5">{% trans 'Announcements' %}
   {% if admin %}
+    <form method="post" class="form" action="{% url 'projects:announcement_create' object.pk %}" >
+    {% csrf_token %}
+    {% bootstrap_form announcement_form layout='inline'%}
+    {% buttons %}
+    <button type="submit" class="btn btn-primary">{% trans 'Publish' %}</button>
+    {% endbuttons %}
+  </form>
   {% else %}
   <a class="btn btn-outline-primary"
     href="{% url 'projects:follow_project' object.pk %}">{% trans 'Follow the cause' %}</a>
