@@ -26,7 +26,8 @@
               env = DB_NAME={{db_name}}
               env = DB_USER={{db_user}}
               env = DB_PASSWORD={{db_password}}
-              env= EPAY_KEY={{epay_key}}
+              env = EPAY_MIN={{epay_min}}
+              env = EPAY_KEY={{epay_key}}
             processes: 4
             socket: 127.0.0.1:8000
             uid: horodeya

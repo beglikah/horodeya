@@ -62,7 +62,7 @@ from django.db import IntegrityError
 from datetime import datetime
 from datetime import timedelta
 
-from easy_pdf.rendering import render_to_pdf
+from weasyprint import HTML as weasyHTML
 from django.utils.crypto import get_random_string
 
 mark_safe_lazy = lazy(mark_safe)
@@ -1704,7 +1704,7 @@ def pay_epay_support(request, pk):
     context = {}
 
     context['PAGE'] = 'paylogin'
-    context['MIN'] = '6438272803'
+    context['MIN'] = os.getenv('EPAY_MIN')
     context['INVOICE'] = support.id
     context['AMOUNT'] = support.leva
     context['EXP_TIME'] = (
@@ -1777,12 +1777,9 @@ def accept_epay_payment(request):
                 'ticket_code': ticket.validation_code,
                 'url': request.build_absolute_uri('/check-qr?ticket=' + ticket.validation_code)
             }
-            ticket_pdf = render_to_pdf(
-                'email/ticket-pdf.html',
-                context=ctx_pdf,
-                # encoding='utf-8'
-            )
-            email.attach('ticket.pdf', ticket_pdf, 'application/pdf')
+            html_string = render_to_string('email/ticket-pdf.html', context=ctx_pdf)
+            ticket_html = weasyHTML(string=html_string, base_url=request.build_absolute_uri())
+            email.attach('ticket.pdf', ticket_html.write_pdf(), 'application/pdf')
             email.send()
 
             return HttpResponse(ok_message_for_epay)

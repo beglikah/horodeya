@@ -1,32 +1,30 @@
-{% extends "easy_pdf/base.html" %}
-
-{% load qr_code %}
-
-{% block extra_style %}
-  <meta charset="utf-8" />
-  <style type="text/css">
-    body {
-        font-family: "Helvetica", "sans-serif";
-        color: #333333;
-    }
-  </style>
-{% endblock %}
-
-{% block content %}
-  <div id="content">
-    <p>Hello, this is your ticket for the event:</p>
-    <dl>
-      <dt>URL:</dt>
-      <dd>{{ url }}</dd>
-      <dt>Code:</dt>
-      <dd>{{ ticket_code }}</dd>
-      <dt>Date:</dt>
-      <dd>15.08.2020</dd>
-      <dt>Location:</dt>
-      <dd>Near the dam</dd>
-    </dl>
-    <div>
-      {% qr_from_text url size="s" border="3" image_format="png" error_correction="M" %}
+<html>
+  {% load static %}
+  {% load qr_code %}
+  <head>
+    <title>Ticket</title>
+    <style type="text/css">
+      body {
+          font-family: "Helvetica", "sans-serif";
+          color: #333333;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="content">
+      <!--
+      <div style="margin: 10px auto;">
+        <img src="{% static 'media/beglika2020.jpg' %}" alt="Beglika 2020" style="width:auto; height: auto;" />
+      </div>
+      <h1>{% static 'media/beglika2020.jpg' %}</h1>
+      -->
+      <h1>Beglika2020 > COMMUNITY FAIR</h1>
+      <h2>Motto > CHOICE : SOURCE</h2>
+      <p>12th edition > 16-23 AUGUST  </p>
+      <p>Beglika Dam > BULGARIA</p>
+      <p>Ticket Code > {{ ticket_code }}</p>
+      <div style="margin: 10px auto;">
+        {% qr_from_text url size="s" border="3" image_format="png" error_correction="M" %}
+      </div>
     </div>
-  </div>
-{% endblock %}
+  </body>
