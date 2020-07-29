@@ -134,6 +134,8 @@ class Community(Timestamped):
         _('facebook_page'), max_length=100, null=True, blank=True)
     slack_channel = models.CharField(
         _('slack_channel'), max_length=100, null=True, blank=True)
+    privacy_policy = models.BooleanField(default=False)
+    platform_policy = models.BooleanField(default=False)
 
     def page_name(self):
         return "%s %s" % (gettext('Community'), self.name)
@@ -166,6 +168,8 @@ class User(AbstractUser, RulesModelMixin, metaclass=RulesModelBase):
         _('slack_channel'), max_length=100, null=True, blank=True)
     birthdate = models.DateField(
         _('birthdate'), blank=False, null=True)
+    privacy_policy = models.BooleanField(default=False)
+    platform_policy = models.BooleanField(default=False)
 
     def page_name(self):
         return "%s %s" % (gettext('User'), str(self))
