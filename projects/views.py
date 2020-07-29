@@ -26,6 +26,10 @@ from django import forms
 from django.db.models import Q
 
 from django.urls import reverse_lazy
+from django.utils.functional import lazy
+from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy as translate_lazy
+
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from django.utils.translation import gettext as _
@@ -60,6 +64,8 @@ from datetime import timedelta
 
 from easy_pdf.rendering import render_to_pdf
 from django.utils.crypto import get_random_string
+
+mark_safe_lazy = lazy(mark_safe)
 
 
 def short_random():
@@ -426,7 +432,7 @@ class ProjectDelete(AutoPermissionRequiredMixin, DeleteView):
 
 
 COMMUNITY_FIELDS = ['name', 'type', 'bulstat', 'DDORegistration', 'phone', 'email', 'mission',
-                    'numberOfSupporters', 'previousExperience', 'activityType', 'website', 'facebook_page']
+                    'numberOfSupporters', 'previousExperience', 'activityType', 'website', 'facebook_page', 'privacy_policy', 'platform_policy']
 
 
 class CommunityCreate(AutoPermissionRequiredMixin, CreateView):
@@ -437,6 +443,10 @@ class CommunityCreate(AutoPermissionRequiredMixin, CreateView):
         form = super(CommunityCreate, self).get_form(form_class)
         form.fields['activityType'].widget = forms.RadioSelect(
             attrs=None, choices=COMMUNITY_ACTIVYTY_TYPES)
+        form.fields['privacy_policy'] = forms.BooleanField(required=True, label=mark_safe_lazy(
+            translate_lazy('Прочетох и разбрах съдържанието на<a target="_blank" href="https://horodeya.com/%D0%BF%D0%BE%D0%BB%D0%B8%D1%82%D0%B8%D0%BA%D0%B0-%D0%B7%D0%B0-%D0%BF%D0%BE%D0%B2%D0%B5%D1%80%D0%B8%D1%82%D0%B5%D0%BB%D0%BD%D0%BE%D1%81%D1%82/">  Политика за поверителност на Платформата.</a>')))
+        form.fields['platform_policy'] = forms.BooleanField(required=True, label=mark_safe_lazy(translate_lazy(
+            'Прочетох и разбрах съдържанието на<a target="_blank" href="https://horodeya.com/%D1%83%D1%81%D0%BB%D0%BE%D0%B2%D0%B8%D1%8F-%D0%B7%D0%B0-%D0%BF%D0%BE%D0%BB%D0%B7%D0%B2%D0%B0%D0%BD%D0%B5/"> Условията за работа с Платформата </a>и приемам същите.')))
         form.fields['type'].widget.attrs['readonly'] = True
         return form
 
