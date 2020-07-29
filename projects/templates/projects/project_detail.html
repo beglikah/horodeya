@@ -90,7 +90,7 @@
     <h5>{{ object.description }}</h5>
     <div class="accordion" id="shortLongText">
       <div class="collapse show" id="shortText" data-parent="#shortLongText">
-        {{ object.text|linebreaks|truncatewords_html:50 }}
+        {{ object.text|linebreaks|truncatewords_html:15 }}
         {% if object.text|length > 50 %}
         <a class='btn btn-link' data-toggle="collapse" href="#fullText">{% trans 'Show more' %}</a>
         {% endif %}
