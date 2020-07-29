@@ -33,7 +33,7 @@
   <ul class="list-group list-group-flush">
   {% for report in unpublished_reports %}
     <li class="list-group-item">
-      <a href="{% url 'projects:report_details' report.pk %}">{{ report }}</a>
+      <a href="{% url 'projects:report_details' report.pk %}">{{ report.name }}</a>
     </li>
   {% endfor %}
   </ul>
@@ -45,7 +45,7 @@
   <ul>
   {% for report in reports %}
     <li>
-      <a href="{% url 'projects:report_details' report.pk %}">{{ report }}</a>
+      <a href="{% url 'projects:report_details' report.pk %}">{{ report.name }}</a>
       {% vote_exists report user.pk as voted%}
       {% if voted %}
         <span>Гласувано</span>
