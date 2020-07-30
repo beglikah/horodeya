@@ -78,16 +78,16 @@
       <div class="col-md-8 ml-1">
         {% if project.location is not none %}
         <small class="text-nowrap">
-          Местонахождение: {{ project.location }},
+          Местонахождение: {{ project.location }}
         </small>
         {% endif %}
         {% if project.start_date is not none %}
-        <small class=" text-nowrap">
-          Начална дата: {{ project.start_date }}, 
+        <small  class=" text-nowrap ml-1">
+          Начална дата: {{ project.start_date }} 
         </small>
         {% endif %}
         {% if project.end_date is not none %}
-        <small class="text-nowrap">
+        <small class="text-nowrap ml-1">
           Крайна дата: {{ project.end_date }}
             </small>
         {% endif %}
