@@ -422,10 +422,6 @@ msgstr ""
 "Ако този линк не е изцяло активен го копирайте и отворете в браузъра си!\n"
 "В случай, че не сте правили тази регистрация не продължавайте.\n"
 "При въпроси, може да се свържете с нас на e-mail admin@horodeya.org\n"
-"\n"
-"Благодарим!\n"
-"Фондация \"Хородея\"\n"
-"https://horodeya.com/"
 
 #: venv/lib/python3.7/site-packages/allauth/templates/account/email/email_confirmation_message.txt:7
 #, python-format
