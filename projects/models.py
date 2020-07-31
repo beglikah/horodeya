@@ -573,6 +573,16 @@ class ThingNecessity(Timestamped):
 class Support(Timestamped):
 
     class Meta:
+        rules_permissions = {
+            "add": rules.is_authenticated,
+            "delete": myself & ~is_accepted,
+            "change": (myself & ~is_accepted) | member_of_community,
+            "view": myself | member_of_community,
+            "accept": member_of_community,
+            "mark_delivered": member_of_community,
+            "list": member_of_community
+        }
+
         abstract = True
 
     project = models.ForeignKey(Project, on_delete=models.PROTECT)
