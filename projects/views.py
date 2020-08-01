@@ -1758,13 +1758,6 @@ def accept_epay_payment(request):
             support.status = MoneySupport.STATUS.delivered
             support.save()
 
-            ticket = TicketQR(
-                project=support.project,
-                user=support.user,
-                validation_code=get_random_string(length=16)
-            )
-            ticket.save()
-
             txt_subject = 'Вашето дарение към %s беше получено' % (
                 support.project.name)
             txt_msg = render_to_string('email/support-delivered-money.txt',
@@ -1773,13 +1766,23 @@ def accept_epay_payment(request):
                                            txt_msg,
                                            'no-reply@horodeya.com',
                                            [support.user.email])
-            ctx_pdf = {
-                'ticket_code': ticket.validation_code,
-                'url': request.build_absolute_uri('/check-qr?ticket=' + ticket.validation_code)
-            }
-            html_string = render_to_string('email/ticket-pdf.html', context=ctx_pdf)
-            ticket_html = weasyHTML(string=html_string, base_url=request.build_absolute_uri())
-            email.attach('ticket.pdf', ticket_html.write_pdf(), 'application/pdf')
+
+            # only send tickets for Beglika 2020 for now
+            if (support.project.id == 34):
+                ticket = TicketQR(
+                    project=support.project,
+                    user=support.user,
+                    validation_code=get_random_string(length=16)
+                )
+                ticket.save()
+                ctx_pdf = {
+                    'ticket_code': ticket.validation_code,
+                    'url': request.build_absolute_uri('/check-qr?ticket=' + ticket.validation_code)
+                }
+                html_string = render_to_string('email/ticket-pdf.html', context=ctx_pdf)
+                ticket_html = weasyHTML(string=html_string, base_url=request.build_absolute_uri())
+                email.attach('ticket.pdf', ticket_html.write_pdf(), 'application/pdf')
+
             email.send()
 
             return HttpResponse(ok_message_for_epay)
