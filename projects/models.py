@@ -739,7 +739,7 @@ class Answer(Timestamped):
             "view": myself | member_of_community,
             "list": myself & member_of_community
         }
-        unique_together = ['project', 'question']
+        unique_together = ['project', 'question', 'user']
 
     project = models.ForeignKey('Project', on_delete=models.CASCADE)
     question = models.ForeignKey('Question', on_delete=models.CASCADE)
