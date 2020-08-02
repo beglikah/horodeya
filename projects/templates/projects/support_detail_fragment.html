@@ -34,5 +34,12 @@
     <li class="list-group-item">
       {% trans "Comment" %}:<br> {{ object.comment }}
     </li>
+
+    {% for answer in object.ordered_answers.all %}
+    <li class="list-group-item">
+      {{ answer.question }}:
+      {{ answer.answer }}
+    </li>
+    {% endfor %}
   </ul>
 </div>

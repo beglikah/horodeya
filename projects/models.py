@@ -780,7 +780,7 @@ class TimeSupport(Support):
         return "%s: %s" % (self.necessity, self.user.first_name)
 
     def ordered_answers(self):
-        return self.answer_set.order_by('question__order')
+        return self.user.answer_set.filter(project=self.necessity.project).order_by('question__order')
 
 
 class QuestionPrototype(Timestamped):
