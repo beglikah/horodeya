@@ -15,6 +15,7 @@ def question_key(question):
 class QuestionForm(forms.Form):
     def __init__(self, *args, **kwargs):
         questions = kwargs.pop('questions')
+        self.user = kwargs.pop('user')
         if 'answers' in kwargs:
             answers = kwargs.pop('answers')
         else:
@@ -63,6 +64,7 @@ class QuestionForm(forms.Form):
                 answer, created = Answer.objects.update_or_create(
                     project=project,
                     question=self.questions[question],
+                    user=self.user,
                     defaults={'answer': value})
 
 

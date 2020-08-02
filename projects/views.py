@@ -1161,7 +1161,7 @@ def time_support_create_update(request, project, support=None):
     context['project'] = project
     queryset = TimeSupport.objects.filter(project=project, user=request.user)
     applied_necessities = set(map(lambda ts: ts.necessity, queryset.all()))
-    answers = project.answer_set.all()
+    answers = project.answer_set.filter(user=request.user).all()
 
     community_id = project.community_id
     community_members = User.objects.filter(
@@ -1195,7 +1195,7 @@ def time_support_create_update(request, project, support=None):
         formset = TimeSupportFormset(
             queryset=queryset,
             initial=initial)
-        question_form = QuestionForm(questions=questions, answers=answers)
+        question_form = QuestionForm(questions=questions, answers=answers, user=request.user)
 
     elif request.method == 'POST':
         formset = TimeSupportFormset(
@@ -1203,7 +1203,7 @@ def time_support_create_update(request, project, support=None):
             queryset=queryset,
             initial=None)
 
-        question_form = QuestionForm(request.POST, questions=questions)
+        question_form = QuestionForm(request.POST, questions=questions, user=request.user)
 
         selected_necessities = request.POST.getlist('necessity')
         selected_necessities = list(map(int, selected_necessities))

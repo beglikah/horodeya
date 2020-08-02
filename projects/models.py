@@ -744,9 +744,9 @@ class Answer(Timestamped):
     project = models.ForeignKey('Project', on_delete=models.CASCADE)
     question = models.ForeignKey('Question', on_delete=models.CASCADE)
     answer = models.TextField(_('answer'), null=False, blank=True)
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
 
 # TODO notify in feed
-
 
 class TimeSupport(Support):
     class Meta:
