@@ -45,7 +45,6 @@ def is_site_admin(user, object):
 def member_of_community(user, object):
     return user.member_of(determine_community(object).id)
 
-
 @rules.predicate
 def admin_of_community(user, object):
     return user == determine_community(object).admin

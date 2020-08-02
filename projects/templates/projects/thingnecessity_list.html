@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+{% load rules %}
 {% load i18n %}
 {% load humanize %}
 {% load projects_tags %}
@@ -15,7 +16,8 @@
 {% endblock %}
 
 {% block content %}
-{% if project.community.admin.pk == user.pk %}
+{% has_perm 'projects.change_thingnecessity' user project as can_change %}
+{% if can_change %}
   {{ block.super }}
 {% endif %}
 
