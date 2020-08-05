@@ -10,7 +10,9 @@
 {% endblock %}
 
 {% block admin_tools %}
+{%if necessity_list.count > 0 %}
 <a href="{% url 'projects:volunteer_questions_update' project.pk %}" class="nav-item nav-link text-white">{% trans 'Update questions' %}</a>
+{%endif%}
   <a href="{% url 'projects:time_necessity_update' project_id=project.pk %}" class="nav-item nav-link text-white">{% trans 'Update types' %}</a>
 {% endblock %}
 
