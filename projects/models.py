@@ -45,6 +45,7 @@ def is_site_admin(user, object):
 def member_of_community(user, object):
     return user.member_of(determine_community(object).id)
 
+
 @rules.predicate
 def admin_of_community(user, object):
     return user == determine_community(object).admin
@@ -224,7 +225,7 @@ class Project(Timestamped):
         rules_permissions = {
             "add": rules.is_authenticated,
             "delete": admin_of_community,
-            "change": is_site_admin,
+            "change": admin_of_community,
             "view": rules.always_allow,
             "follow": rules.is_authenticated
         }
@@ -747,6 +748,7 @@ class Answer(Timestamped):
     user = models.ForeignKey('User', on_delete=models.CASCADE)
 
 # TODO notify in feed
+
 
 class TimeSupport(Support):
     class Meta:
