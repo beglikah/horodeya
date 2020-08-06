@@ -698,14 +698,14 @@ msgstr "Потвърди твоята е-поща"
 
 #: venv/lib/python3.7/site-packages/allauth/templates/account/verification_sent.html:10
 msgid ""
-"We have sent an e-mail to you for verification."
-"Follow the link provided to finalize the signup process."
-"Please contact us if you do not receive it within a few minutes."
+"We have sent an e-mail to you for verification. Follow the link provided to "
+"finalize the signup process. Please contact us if you do not receive it "
+"within a few minutes."
 msgstr ""
-"Пратихме ти е-писмо за потвърждение."
-"Последвай връзката там за да завършиш записването.\n"
-"Ако ползваш: abv.bg, yahoo.com, outlook.com, се регистрирай с друг и-мейл!\n"
-"Моля свържи се нас ако не го получиш до няколко минути."
+"Пратихме ти е-писмо за потвърждение. Последвай връзката там за да "
+"завършиш записването.\n"
+"Ако ползваш: abv.bg, yahoo.com, outlook.com, се регистрирай с друг и-мейл! Моля свържи се нас ако не го получиш "
+"до няколко минути."
 
 #: venv/lib/python3.7/site-packages/allauth/templates/account/verified_email_required.html:12
 msgid ""
