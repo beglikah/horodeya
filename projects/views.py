@@ -936,9 +936,11 @@ def support_change_accept(request, pk, type, accepted):
             if support.STATUS == support.STATUS.accepted:
                 notification_message = 'Вашата заявка за доброволстване към %s беше приета' % (
                     project_name)
+                email_txt_filename = 'email/support-accepted-time.txt'
             else:
                 notification_message = 'Вашата заявка за доброволстване към %s беше отхвърлена' % (
                     project_name)
+                email_txt_filename = 'email/support-declined-time.txt'
         else:
             notification_message = 'Вашето дарение към %s беше прието' % (
                 project_name)
@@ -951,8 +953,7 @@ def support_change_accept(request, pk, type, accepted):
                 ctx = {
                     'project_name': project_name
                 }
-                txt_msg = render_to_string(
-                    'email/support-accepted-time.txt', context=ctx)
+                txt_msg = render_to_string(email_txt_filename, context=ctx)
                 email = EmailMultiAlternatives(notification_message,
                                                txt_msg,
                                                'no-reply@horodeya.com',
