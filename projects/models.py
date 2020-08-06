@@ -225,7 +225,7 @@ class Project(Timestamped):
         rules_permissions = {
             "add": rules.is_authenticated,
             "delete": admin_of_community,
-            "change": admin_of_community,
+            "change": member_of_community,
             "view": rules.always_allow,
             "follow": rules.is_authenticated
         }

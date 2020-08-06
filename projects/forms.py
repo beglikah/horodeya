@@ -110,6 +110,16 @@ class ProjectUpdateForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
 
+class ProjectUpdateTextForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ['text']
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+
+
 class BugReportForm(forms.ModelForm):
 
     class Meta:

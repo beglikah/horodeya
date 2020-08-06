@@ -38,7 +38,7 @@ from rules.contrib.views import AutoPermissionRequiredMixin, permission_required
 
 from projects.models import Project, Community, Report, MoneySupport, TimeSupport, User, Announcement, TimeNecessity, ThingNecessity, Question, QuestionPrototype, DonatorData, LegalEntityDonatorData, BugReport, EpayMoneySupport, Support, TicketQR
 
-from projects.forms import QuestionForm, PaymentForm, ProjectUpdateForm, BugReportForm, EpayMoneySupportForm
+from projects.forms import QuestionForm, PaymentForm, ProjectUpdateForm, BugReportForm, EpayMoneySupportForm, ProjectUpdateTextForm
 
 from tempus_dominus.widgets import DateTimePicker, DatePicker
 
@@ -410,6 +410,25 @@ class ProjectCreate(AutoPermissionRequiredMixin, UserPassesTestMixin, CreateView
 class ProjectUpdate(AutoPermissionRequiredMixin, UpdateView):
     model = Project
     form_class = ProjectUpdateForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+    def form_valid(self, form):
+        user = self.request.user
+        community = form.instance.community
+        if community.admin != user:
+            form.add_error('community', 'You must be the admin of the community entity. Admin for %s is %s' % (
+                community, community.admin))
+            return super().form_invalid(form)
+        return super().form_valid(form)
+
+
+class ProjectTextUpdate(AutoPermissionRequiredMixin, UpdateView):
+    model = Project
+    form_class = ProjectUpdateTextForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -914,8 +933,12 @@ def support_change_accept(request, pk, type, accepted):
         project_name = project.name
 
         if type == 'time':
-            notification_message = 'Вашата заявка за доброволстване към %s беше приета' % (
-                project_name)
+            if support.STATUS == support.STATUS.accepted:
+                notification_message = 'Вашата заявка за доброволстване към %s беше приета' % (
+                    project_name)
+            else:
+                notification_message = 'Вашата заявка за доброволстване към %s беше отхвърлена' % (
+                    project_name)
         else:
             notification_message = 'Вашето дарение към %s беше прието' % (
                 project_name)
@@ -1195,7 +1218,8 @@ def time_support_create_update(request, project, support=None):
         formset = TimeSupportFormset(
             queryset=queryset,
             initial=initial)
-        question_form = QuestionForm(questions=questions, answers=answers, user=request.user)
+        question_form = QuestionForm(
+            questions=questions, answers=answers, user=request.user)
 
     elif request.method == 'POST':
         formset = TimeSupportFormset(
@@ -1203,7 +1227,8 @@ def time_support_create_update(request, project, support=None):
             queryset=queryset,
             initial=None)
 
-        question_form = QuestionForm(request.POST, questions=questions, user=request.user)
+        question_form = QuestionForm(
+            request.POST, questions=questions, user=request.user)
 
         selected_necessities = request.POST.getlist('necessity')
         selected_necessities = list(map(int, selected_necessities))
@@ -1779,9 +1804,12 @@ def accept_epay_payment(request):
                     'ticket_code': ticket.validation_code,
                     'url': request.build_absolute_uri('/check-qr?ticket=' + ticket.validation_code)
                 }
-                html_string = render_to_string('email/ticket-pdf.html', context=ctx_pdf)
-                ticket_html = weasyHTML(string=html_string, base_url=request.build_absolute_uri())
-                email.attach('ticket.pdf', ticket_html.write_pdf(), 'application/pdf')
+                html_string = render_to_string(
+                    'email/ticket-pdf.html', context=ctx_pdf)
+                ticket_html = weasyHTML(
+                    string=html_string, base_url=request.build_absolute_uri())
+                email.attach('ticket.pdf', ticket_html.write_pdf(),
+                             'application/pdf')
 
             email.send()
 
