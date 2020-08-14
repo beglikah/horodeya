@@ -35,8 +35,9 @@
         onDecode(content) {
           this.decodedContent = content
           if (content.indexOf('https://horodeya.com') === 0) {
-            // fetch(content)
-            fetch(window.location.href.substr(0, 29) + content.substr(20))
+            fetch(content)
+            // comment above and uncomment below when using ngrok:
+            // fetch(window.location.href.substr(0, 29) + content.substr(20))
               .then(response => {
                 if (response.status === 200) {
                   return response.json()
