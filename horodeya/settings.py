@@ -99,6 +99,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'notifications',
     'qr_code',
+    'check_qr',
 ]
 
 if not TEST:

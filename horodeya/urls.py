@@ -37,6 +37,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('projects/', include('projects.urls')),
     path('qr_code/', include('qr_code.urls', namespace="qr_code")),
+    path('check-qr/', include('check_qr.urls')),
     path('admin/', admin.site.urls),
     re_path(r'^photologue/', include('photologue.urls', namespace='photologue')),
     re_path(r'^cms/', include(wagtailadmin_urls)),
