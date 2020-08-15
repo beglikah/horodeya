@@ -1,10 +1,11 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.decorators import login_required
 from projects.models import TicketQR
 
 def check_qr(request):
-
-    # request.user.is_authenticated ?
+    if not request.user.is_authenticated:
+      return JsonResponse({ 'success': False, 'error': 'Please login before scanning qr codes.' })
 
     ticket_code = request.GET.get('ticket', '')
 
@@ -35,5 +36,6 @@ def check_qr(request):
 
     return JsonResponse(response)
 
+@login_required
 def qr_reader(request):
   return render(request, 'reader.html')
