@@ -26,7 +26,7 @@ django-taggit==1.2.0
 django-tempus-dominus==5.1.2.9
 django-treebeard==4.3
 django-vote==2.1.7
-djangorestframework==3.10.3
+djangorestframework==3.11.2
 docutils==0.15.2
 draftjs-exporter==2.1.7
 ExifRead==2.1.2
