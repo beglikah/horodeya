@@ -58,7 +58,7 @@ stream-python==3.1.1
 swapper==1.1.2.post1
 tinycss2==1.0.2
 Unidecode==1.1.1
-urllib3==1.25.7
+urllib3==1.26.5
 wagtail==2.7
 WeasyPrint==51
 webencodings==0.5.1
