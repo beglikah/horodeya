@@ -125,4 +125,20 @@
 }
 /*39d279*/
 /*f2f2f2*/
+@media (max-width: 576px) {
+  .col-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 992px) {
+  .col-5,
+  .col-7,
+  .card {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
 

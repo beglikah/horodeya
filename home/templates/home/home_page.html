@@ -16,8 +16,7 @@
       <div class="card mx-auto" style="width: 40rem; border:5px solid; border-color:#ffe817">
         <div class="card-body">
           <h5 class="card-title font-weight-light">Сътрудничество в Задруги</h5>
-          <h6 class="card-subtitle mb-2 text-muted font-weight-light">Включи се в обществено полезни дейности с труд,
-            ресурси и средства.
+          <h6 class="card-subtitle mb-2 text-muted font-weight-light">Съ-твори Беглика Подкрепи Задруга - дари труд или средства.
           </h6>
           <a href="/задруги/" class="card-link" style="text-decoration: underline; color:black">Научи повече</a>
         </div>
@@ -26,7 +25,7 @@
     <div class="col-md-12 text-center" style="padding-top:30px; padding-bottom:30px;">
       Доверието помежду ни расте пропорционално на прозрачността на сътрудничеството ни.
     </div>
-    <div class="col-md-4" style="padding:20px">
+<!--    <div class="col-md-4" style="padding:20px">
       <div class="float-left" style="width:10%">
         <img class="img-fluid" src="{% static 'media/icon-triangle.png' %}">
       </div>
@@ -85,12 +84,45 @@
     <div class="col-md-12 text-center" style="padding-top:30px; padding-bottom:30px;">
       Размяната в ДАР и личният БАЛ ще бъдат въвеждани поетапно с изграждането на съответните функционалности в
       платформата.
+    </div>-->
+    <div class="col-md-4" style="padding:20px">
+      <div class="float-left" style="width:10%">
+        <img class="img-fluid" src="{% static 'media/icon-circle.png' %}">
+      </div>
+      <div class="float-left" style="width:90%; padding:5px;">
+        <p><strong>Мисията на Хородея</strong> е да подпомогне самоуправлението на Беглика, като изгради Общност на свързване и подкрепа.</p>
+      </div>
     </div>
+    <div class="col-md-4" style="padding:20px">
+      <div class="float-left" style="width:10%">
+        <img class="img-fluid" src="{% static 'media/icon-square.png' %}">
+      </div>
+      <div class="float-left" style="width:90%; padding:5px;">
+        <p><strong>Беглика</strong> се осъществява от Задруги. Всяка Задруга се инициира от нестопанска организация.
+        </p>
+      </div>
+    </div>
+    <div class="col-md-4" style="padding:20px">
+      <div class="float-left" style="width:10%">
+        <img class="img-fluid" src="{% static 'media/icon-triangle.png' %}">
+      </div>
+      <div class="float-left" style="width:90%; padding:5px;">
+        <p><strong>Всеки </strong>
+            може да дари в Задруга труд или средства и така да подкрепи съ-творяването на Беглика.
+        </p>
+      </div>
+    </div>
+    <!--
+    <div class="col-md-12 text-center" style="padding-top:30px; padding-bottom:30px;">
+      Размяната в ДАР и личният БАЛ ще бъдат въвеждани поетапно с изграждането на съответните функционалности в
+      платформата.
+    </div>-->
+
   </div>
 </div>
 <!--<div class="body">
 	<div class="row mt-4">
-     
+
         {% for block in page.body %}
         {% if block.block_type == 'text' %}
         <div class="row mb-3 mt-3 justify-content-center p-4">
@@ -101,7 +133,7 @@
         {% include_block block %}
         {% endif %}
         {% endfor %}
-      
+
     </div>
       {% comment %} {% for activity in timeline %}
       <div class='row justify-content-center mt-5'>
@@ -112,6 +144,9 @@
         {% empty %}
           <p class="text-center">{% trans 'Nothing happened recently' %}</p>
         {% endfor %} {% endcomment %}
-    
 
-</div>//--> {% endblock %}
+
+</div>//-->
+{%  block main %}{% endblock %}
+
+{% endblock %}

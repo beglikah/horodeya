@@ -83,7 +83,7 @@
           <li><a class="nav-link justify-content-end {% active задруги %}" href="/projects/feed">Известия</a></li>
           {%endif%}
 
-          <li><a class="nav-link {% active задруги %}" href="/задруги/">{% trans 'Causes' %}</a></li>
+          <li><a class="nav-link  {% active задруги %}" href="/задруги/">Задруги</a></li>
 
           {%if user.is_superuser%}
           <li><a class="nav-link " href="/projects/administration">Администрация</a></li>
@@ -183,13 +183,6 @@
                 <h2 class="font-weight-lighter">Научи
                   повече</h2>
                 <div class="font-weight-lighter">Модел на Хородея</div>
-              </a>
-            </div>
-            <div class="col-md-3 text-center">
-              <a href="/ела-в-slack/" class="dark-links">
-                <img style="width:150px;" src="{% static 'media/join-slack.png' %}">
-                <h2 class="font-weight-lighter">Ела в Slack</h2>
-                <div class="font-weight-lighter">Работна среда за Задруги</div>
               </a>
             </div>
             <div class="col-md-3 text-center">
