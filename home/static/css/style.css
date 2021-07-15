@@ -142,9 +142,3 @@
   }
 }
 
-@media (min-width: 992px) {
-  .col-md-3 {
-    flex: 0 0 33.33%;
-    max-width: 33.33%;
-  }
-}

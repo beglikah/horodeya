@@ -186,10 +186,17 @@
               </a>
             </div>
             <div class="col-md-3 text-center">
+                <a href="/ела-в-slack/" class="dark-links">
+                    <img style="width:150px;" src="{% static 'media/join-slack.png' %}">
+                    <h2 class="font-weight-lighter">Ела в Slack</h2>
+                    <div class="font-weight-lighter">Работна среда за Задруги</div>
+                </a>
+            </div>
+            <div class="col-md-3 text-center">
               <a href="/projects/community/" class="dark-links">
                 <img style="width:150px;" src="{% static 'media/join-communities.png' %}">
-                <h2 class="font-weight-lighter">Общности</h2>
-                <div class="font-weight-lighter">Регистрирани обединения</div>
+                <h2 class="font-weight-lighter">Организации</h2>
+                <div class="font-weight-lighter">Управляващи задругите</div>
               </a>
             </div>
             <div class="col-md-3 text-center">
@@ -207,7 +214,7 @@
   <footer class="footer">
     <div class="container-fluid">
       <div class="row footer-background pt-2">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <ul class="list-group list-group-flush">
             <a class="list-group-item no-border" href="/условия-за-ползване">Условия за работа с
               платформата</a>
@@ -215,7 +222,7 @@
             <a class="list-group-item no-border" href="/политика-за-бисквитки">Политика за бисквитки</a>
           </ul>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <p class="font-weight-bold footer-titles">Свържeте се с нас</p>
           <p>
             Това е Бета версия на Хородея, предназначена за
@@ -223,7 +230,7 @@
             и отстраняване на бъгове.
           </p>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
           {% include 'projects/bugreport_form.html' %}
         </div>
         <div class="col-md-12 mt-5 mb-3">
