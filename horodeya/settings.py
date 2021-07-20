@@ -118,8 +118,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    # Wagtail http://docs.wagtail.io/en/v2.6.2/getting_started/integrating_into_django.html
-    'wagtail.core.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 
@@ -142,7 +140,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'horodeya.wsgi.application'
+#WSGI_APPLICATION = 'horodeya.wsgi.application'
 
 
 # Database
