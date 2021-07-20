@@ -703,8 +703,9 @@ msgid ""
 "within a few minutes."
 msgstr ""
 "Пратихме ти е-писмо за потвърждение. Последвай връзката там за да "
-"завършиш записването. Моля свържи се нас ако не го получиш "
-"до няколко минути."
+"завършиш записването.\n"
+"Моля свържи се нас ако не го получиш до няколко минути."
+"Ако ползваш: abv.bg, yahoo.com, outlook.com, се регистрирай с друг и-мейл! "
 
 #: venv/lib/python3.7/site-packages/allauth/templates/account/verified_email_required.html:12
 msgid ""

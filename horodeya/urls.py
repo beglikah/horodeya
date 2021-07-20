@@ -24,21 +24,29 @@ from wagtail.core import urls as wagtail_urls
 
 from home import views as home_views
 
+import notifications.urls
+from django.conf.urls import url
+
 urlpatterns = [
-    path('accounts/profile/notifications', home_views.notifications, name='notifications'),
+    path('accounts/profile/notifications',
+         home_views.notifications, name='notifications'),
     path('i18n/', include('django.conf.urls.i18n')),
-    path('accounts/profile/update/<int:pk>', home_views.UserUpdate.as_view(), name='user_update'),
     path('anymail/', include('anymail.urls')),
     path('accounts/profile/', home_views.account, name='my_account'),
     path('accounts/profile/<int:pk>', home_views.account, name='account'),
     path('accounts/', include('allauth.urls')),
     path('projects/', include('projects.urls')),
+    path('qr_code/', include('qr_code.urls', namespace="qr_code")),
+    path('check-qr/', include('check_qr.urls')),
     path('admin/', admin.site.urls),
     re_path(r'^photologue/', include('photologue.urls', namespace='photologue')),
     re_path(r'^cms/', include(wagtailadmin_urls)),
     re_path(r'^documents/', include(wagtaildocs_urls)),
     re_path(r'', include(wagtail_urls)),
-]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # path('accounts/profile/update/<int:pk>', home_views.UserUpdate.as_view(), name='user_update'),
+    url('^inbox/notifications/',
+        include(notifications.urls, namespace='notifications')),
+]
 
 if settings.DEBUG:
     import debug_toolbar

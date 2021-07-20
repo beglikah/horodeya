@@ -3,50 +3,82 @@
 {% load static %}
 
 {% block breadcrumbs %}
-{% include 'projects/community_breadcrumb.html' with object=object active="active" only %}
+{% include 'projects/community_breadcrumb.html' with object=object active="active" only%}
 {% endblock %}
 
 {% block admin_tools %}
-  <li class="nav-item">
-    <a class="nav-link text-white" href="{% url 'projects:community_update' object.pk %}">{% trans 'Update' %}</a>
-  </li>
-  <a class="nav-link text-white" href="{% url 'projects:community_member_list' object.pk %}">{% trans 'Update members' %}</a>
+<a class="nav-link text-white"
+  href="{% url 'projects:community_photo_update' object.id %}">{% trans "Update photo" %}</a>
+<li class="nav-item">
+  <a class="nav-link text-white" href="{% url 'projects:community_update' object.pk %}">{% trans 'Add slack' %}</a>
+</li>
+<a class="nav-link text-white"
+  href="{% url 'projects:community_member_list' object.pk %}">{% trans 'Update members' %}</a>
 {% endblock %}
 
 {% block content %}
 
 {% if object.admin == user %}
-  {{ block.super }}
+{{ block.super }}
 {% endif %}
 
-<div class="card mt-3 mx-auto" style="max-width: 720;">
+<div class="card mt-3 mx-auto" style="max-width: 720px;">
   <div class="row no-gutters">
     <div class="col-md-4">
-      <img src="holder.js/240x240" class="card-img">
+      {% if object.photo %}
+      <img class="card-img" src="{{ object.photo.get_profile_url }}" alt="{{object.name}}"></img>
+      {% else %}
+      <a href="{% url 'projects:community_photo_update' object.id %}">{% trans "Add photo" %}</a>
+      {% endif %}
     </div>
     <div class="col-md-8">
       <div class="card-body">
         <h5 class="card-title">{{ object.name }}</h5>
       </div>
-        <ul class="list-group list-group-flush">
-          {% if object.bulstat %}
-          <li class="list-group-item">
-            {% trans 'Bulstat' %}: {{ object.bulstat }}
-          </li>
+      <ul class="list-group list-group-flush">
+        {% if object.bulstat %}
+        <li class="list-group-item">
+          {% trans 'Bulstat' %}: {{ object.bulstat }}
+        </li>
+        {% endif %}
+        <li class="list-group-item">
+          {% trans 'Email' %}: {{ object.email }}
+        </li>
+        <li class="list-group-item">
+          Телефон: {{ object.phone }}
+        </li>
+        <li class="list-group-item">
+          Администратор: <a href="{{ object.admin.get_absolute_url }}"> {{ object.admin }}</a>
+        </li>
+        {% comment %} <li class="list-group-item">
+          Плащане: {{ object.payment | linebreaks }}
+        </li> {% endcomment %}
+        <li class="list-group-item">
+          Slack канал : {{ object.slack_channel}}
+        </li>
+        <li class="list-group-item">
+          Членове:
+          {% for user in object.user_set.all %}
+          <a href="{% url 'account' user.pk %}">{{ user }}</a>
+          {% if not forloop.last %}
+          |
           {% endif %}
-          <li class="list-group-item">
-            {% trans 'Email' %}: {{ object.email }}
-          </li>
-          <li class="list-group-item">
-            Телефон: {{ object.phone }}
-          </li>
-          <li class="list-group-item">
-            Администратор: <a href="{{ object.admin.get_absolute_url }}"> {{ object.admin }}</a>
-          </li>
-          <li class="list-group-item">
-            Плащане: {{ object.payment | linebreaks }}
-          </li>
+          {% endfor %}
+        </li>
+        <li class="list-group-item">
+          Задруги:
+          {% for project in object.projects %}
+          <a href="{% url 'projects:details' project.pk %}">{{ project }}</a>
+          {% if not forloop.last %}
+          |
+          {% endif %}
+          {% endfor %}
+        </li>
+      </ul>
     </div>
+  </div>
 </div>
-
+<div class="text-center"><a class="btn btn-primary" style="background-color:#4C145C; border-color:#4C145C; margin:20px"
+    href="/projects/create/cause">Създай Задруга</a>
+</div>
 {% endblock %}

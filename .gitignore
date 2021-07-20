@@ -10,7 +10,7 @@ __pycache__/
 .Python
 build/
 develop-eggs/
-dist/
+#dist/
 downloads/
 eggs/
 .eggs/
@@ -123,3 +123,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Windows developer related
+.vscode/settings.json
+media/photologue/photos/cache/CACHEDIR.TAG
+
+manage.sh
+media

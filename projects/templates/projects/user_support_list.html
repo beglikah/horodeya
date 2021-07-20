@@ -12,7 +12,7 @@
     {% if type == 'time' %}
       {% trans "Volunteering" %}
     {% else %}
-      {% trans "Donations" %}
+      Статус на даренията
     {% endif %}
   </li>
 
@@ -28,7 +28,7 @@
         {% endblocktrans %}
       {% else %}
         {% blocktrans with name=account.first_name%}
-          {{name}}'s donations 
+          {{name}}'s Статус на даренията 
         {% endblocktrans %}
       {% endif%}
     </h4>

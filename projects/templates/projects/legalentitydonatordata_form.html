@@ -1,0 +1,34 @@
+
+
+
+
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load bootstrap4 %}
+
+{% block content %}
+<h5 style="margin-bottom:50px">Създаване на профил юридическо лице</h5>
+{{form.media}}
+
+<form method="post" class="form">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    {% buttons %}
+    <button type="submit" class="btn btn-primary">
+      {% block savetext %}
+        {% trans 'Save' %}
+      {% endblock %}
+    </button>
+    {% if form.instance.pk %}
+      {% block delete %}
+        {% if delete_label %}
+          <a class="btn btn-danger" href="{% url delete_label form.instance.pk %}">{% trans "Delete" %}</a>
+        {% endif %}
+      {% endblock %}
+    {% endif %}
+    {% endbuttons %}
+</form>
+{% endblock %}
+
+

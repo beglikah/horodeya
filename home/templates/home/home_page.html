@@ -1,31 +1,152 @@
 {% extends "base.html" %}
-
 {% load wagtailcore_tags %}
+{% load static wagtailuserbar %}
 {% load i18n %}
 {% load activity_tags %}
-
 {% block jumbotron %}
-<div class="jumbotron jumbotron-fluid paral jumbotron-bg-cover">
-</div>
+<!--<div class="jumbotron jumbotron-fluid paral jumbotron-bg-cover"></div>//-->
+<img class="img-fluid" src="{% static 'media/horodeya-home-heroshot.jpg' %}" />
 {% endblock %}
-
 {% block content %}
-  {% block breadcrumbs_container %}
-  {% endblock %}
-	<div class="row mt-4">
-    <div class="col-8 mx-auto">
-      <div class="body">
-        {% include_block page.body %}
+{% block breadcrumbs_container %}
+{% endblock %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12" style="padding-top:60px; padding-bottom:30px;">
+      <div class="card mx-auto" style="width: 40rem; border:5px solid; border-color:#ffe817">
+        <div class="card-body">
+          <h5 class="card-title font-weight-light">Сътрудничество в Задруги</h5>
+          <h6 class="card-subtitle mb-2 text-muted font-weight-light">Съ-твори Беглика Подкрепи Задруга - дари труд или средства.
+          </h6>
+          <a href="/задруги/" class="card-link" style="text-decoration: underline; color:black">Научи повече</a>
+        </div>
       </div>
-      
-      {% if user.is_authenticated %}
-        {% for activity in timeline %}
-          {% render_activity activity %}
-        {% empty %}
-          <p class="text-center">{% trans 'Follow some causes/businesses to see their activity here' %}</p>
-        {% endfor %}
-      {% endif %}
     </div>
+    <div class="col-md-12 text-center" style="padding-top:30px; padding-bottom:30px;">
+      Доверието помежду ни расте пропорционално на прозрачността на сътрудничеството ни.
+    </div>
+<!--    <div class="col-md-4" style="padding:20px">
+      <div class="float-left" style="width:10%">
+        <img class="img-fluid" src="{% static 'media/icon-triangle.png' %}">
+      </div>
+      <div class="float-left" style="width:90%; padding:5px;">
+        <p>В основата на <strong>Хородея</strong> са Общностите и техните задруги.</p>
+        <p><strong>Общност</strong> е всяка официално регистрирана организация имаща профил в платформата. Общностите
+          са всички хора и проекти около една организация.</p>
+      </div>
+    </div>
+    <div class="col-md-4" style="padding:20px">
+      <div class="float-left" style="width:10%">
+        <img class="img-fluid" src="{% static 'media/icon-hexagon.png' %}">
+      </div>
+      <div class="float-left" style="width:90%; padding:5px;">
+        <p><strong>Задруга</strong> е всеки проект в рамките на Хородея. Всеки участник в платформата може да инициира
+          Задруга или да вложи своя принос в Задруга</p>
+      </div>
+    </div>
+    <div class="col-md-4" style="padding:20px">
+      <div class="float-left" style="width:10%">
+        <img class="img-fluid" src="{% static 'media/icon-square.png' %}">
+      </div>
+      <div class="float-left" style="width:90%; padding:5px;">
+        <p><strong>Вложения:</strong> в една Задруга може да бъде вложено всичко, от което тя има нужда - труд,
+          консултации, информация, подкрепа, парични средства и др.</p>
+      </div>
+    </div>
+    <div class="col-md-4" style="padding:20px">
+      <div class="float-left" style="width:10%">
+        <img class="img-fluid" src="{% static 'media/icon-circle.png' %}">
+      </div>
+      <div class="float-left" style="width:90%; padding:5px;">
+        <p><strong>ДАР:</strong> Вложеният принос от всеки се регистрира и срещу него има право да получи ДАР -
+          дигитален инструмент за размяна в Хородея. С помощта на ДАР ще обменяме продукти, услуги и знание в рамките
+          на платформата.</p>
+      </div>
+    </div>
+    <div class="col-md-4" style="padding:20px">
+      <div class="float-left" style="width:10%">
+        <img class="img-fluid" src="{% static 'media/icon-square.png' %}">
+      </div>
+      <div class="float-left" style="width:90%; padding:5px;">
+        <p><strong>Доверието</strong> в стопанските ни взаимоотношения се основава на прозрачност и взаимоуважение.
+        </p>
+      </div>
+    </div>
+    <div class="col-md-4" style="padding:20px">
+      <div class="float-left" style="width:10%">
+        <img class="img-fluid" src="{% static 'media/icon-triangle.png' %}">
+      </div>
+      <div class="float-left" style="width:90%; padding:5px;">
+        <p><strong>БАЛ:</strong> система за обратни връзки, подпомага ефикасността в работата и решенията ни, като
+          отчита личен БАЛ на всеки участник.</p>
+      </div>
+    </div>
+    <div class="col-md-12 text-center" style="padding-top:30px; padding-bottom:30px;">
+      Размяната в ДАР и личният БАЛ ще бъдат въвеждани поетапно с изграждането на съответните функционалности в
+      платформата.
+    </div>-->
+    <div class="col-md-4" style="padding:20px">
+      <div class="float-left" style="width:10%">
+        <img class="img-fluid" src="{% static 'media/icon-circle.png' %}">
+      </div>
+      <div class="float-left" style="width:90%; padding:5px;">
+        <p><strong>Мисията на Хородея</strong> е да подпомогне самоуправлението на Беглика, като изгради Общност на свързване и подкрепа.</p>
+      </div>
+    </div>
+    <div class="col-md-4" style="padding:20px">
+      <div class="float-left" style="width:10%">
+        <img class="img-fluid" src="{% static 'media/icon-square.png' %}">
+      </div>
+      <div class="float-left" style="width:90%; padding:5px;">
+        <p><strong>Беглика</strong> се осъществява от Задруги. Всяка Задруга се инициира от нестопанска организация.
+        </p>
+      </div>
+    </div>
+    <div class="col-md-4" style="padding:20px">
+      <div class="float-left" style="width:10%">
+        <img class="img-fluid" src="{% static 'media/icon-triangle.png' %}">
+      </div>
+      <div class="float-left" style="width:90%; padding:5px;">
+        <p><strong>Всеки </strong>
+            може да дари в Задруга труд или средства и така да подкрепи съ-творяването на Беглика.
+        </p>
+      </div>
+    </div>
+    <!--
+    <div class="col-md-12 text-center" style="padding-top:30px; padding-bottom:30px;">
+      Размяната в ДАР и личният БАЛ ще бъдат въвеждани поетапно с изграждането на съответните функционалности в
+      платформата.
+    </div>-->
+
   </div>
 </div>
+<!--<div class="body">
+	<div class="row mt-4">
+
+        {% for block in page.body %}
+        {% if block.block_type == 'text' %}
+        <div class="row mb-3 mt-3 justify-content-center p-4">
+          <div class="col-md-8 pl-4"> <p>{{ block.value }}</p></div>
+        </div>
+        {% else %}
+      </div>
+        {% include_block block %}
+        {% endif %}
+        {% endfor %}
+
+    </div>
+      {% comment %} {% for activity in timeline %}
+      <div class='row justify-content-center mt-5'>
+        <div class="col-md-8">
+          {% render_activity activity %}
+          </div>
+        </div>
+        {% empty %}
+          <p class="text-center">{% trans 'Nothing happened recently' %}</p>
+        {% endfor %} {% endcomment %}
+
+
+</div>//-->
+{%  block main %}{% endblock %}
+
 {% endblock %}

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div id="app">
+    <p>
+      Резултат: <span :style="resultStyle">{( result )}</span>
+      <pre>{( requestResult )}</pre>
+    </p>
+    <p>
+      QR Стойност: <b>{( decodedContent )}</b>
+    </p>
+    <p class="error">
+      {( errorMessage )}
+    </p>
+
+    <qrcode-stream @decode="onDecode" @init="onInit"></qrcode-stream>
+  </div>
+
+  <script src="https://unpkg.com/vue@2.6.11/dist/vue.min.js"></script>
+  <script src="https://unpkg.com/vue-qrcode-reader@2.3.3/dist/vue-qrcode-reader.browser.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      delimiters: ['{(', ')}'],
+      data() {
+        return {
+          result: 'Сканирай код',
+          resultStyle: '',
+          requestResult: '',
+          decodedContent: '',
+          errorMessage: '',
+        }
+      },
+      methods: {
+        onDecode(content) {
+          this.decodedContent = content
+          if (content.indexOf('https://horodeya.com') === 0) {
+            fetch(content)
+            // comment above and uncomment below when using ngrok:
+            // fetch(window.location.href.substr(0, 29) + content.substr(20))
+              .then(response => {
+                if (response.status === 200) {
+                  return response.json()
+                } else {
+                  return {
+                    success: false,
+                    error: 'QR code not found in database.'
+                  }
+                }
+              })
+              .then(data => {
+                if (data.success) {
+                  this.result = 'VALID'
+                  this.resultStyle = 'font-weight: bold; color: #0f0;'
+                  this.requestResult = JSON.stringify(data, null, 2)
+                  this.errorMessage = ''
+                } else {
+                  this.result = 'NOT VALID'
+                  this.resultStyle = 'font-weight: bold; color: #f00;'
+                  this.requestResult = JSON.stringify(data, null, 2)
+                  this.errorMessage = data.error
+                }
+              })
+          }
+        },
+        onInit(promise) {
+          promise.then(() => {
+            console.log('Successfully initilized! Ready for scanning now!')
+          })
+            .catch(error => {
+            if (error.name === 'NotAllowedError') {
+              this.errorMessage = 'Hey! I need access to your camera'
+            } else if (error.name === 'NotFoundError') {
+              this.errorMessage = 'Do you even have a camera on your device?'
+            } else if (error.name === 'NotSupportedError') {
+              this.errorMessage = 'Seems like this page is served in non-secure context (HTTPS, localhost or file://)'
+            } else if (error.name === 'NotReadableError') {
+              this.errorMessage = 'Couldn\'t access your camera. Is it already in use?'
+            } else if (error.name === 'OverconstrainedError') {
+              this.errorMessage = 'Constraints don\'t match any installed camera. Did you asked for the front camera although there is none?'
+            } else {
+              this.errorMessage = 'UNKNOWN ERROR: ' + error.message
+            }
+          })
+        }
+      }
+    })
+  </script>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load notifications_tags %}
+{% block breadcrumbs %}
+<li class="breadcrumb-item active" aria-current="page">Съобщения</li>
+{% endblock %}
+
+{%block  content %}
+
+<a  style='margin-right:20px' href="/projects/notifications">Непрочетени съобщения:{% notifications_unread %}</a>
+<a href="/projects/notifications_read">Прочетени съобщения</a>
+
+ {%for notf in notifications%}
+ <h6 style="margin-top:20px;margin-bottom:20px;">{{notf.verb}} -преди {{notf.timestamp|timesince}}-<a href='/projects/notifications/{{notf.id}}/mark_read'>Прочетено</a></h6>
+ {%endfor%}
+
+{% notifications_unread as unread_count %}
+{% if unread_count %}
+<a href="/projects/notifications_mark_read">Маркирай всички съобщения, като прочетени</a>
+{%endif%}
+
+{%endblock content %}
+

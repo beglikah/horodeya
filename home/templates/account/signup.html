@@ -1,4 +1,4 @@
-{% extends "account/base.html" %}
+{% extends "base.html" %}
 
 {% load i18n %}
 
@@ -11,7 +11,7 @@
 
 {% load bootstrap4 %}
 
-<form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+<form class="signup"  id="signup_form" method="post" action="{% url 'account_signup' %}" autocomplete="off">
   {% csrf_token %}
   {% bootstrap_form form %}
   {% if redirect_field_value %}
@@ -21,5 +21,9 @@
   <button type="submit" class="btn btn-primary">{% trans "Sign Up" %} &raquo;</button>
   {% endbuttons %}
 </form>
-
+ <script>
+    $(function () {
+      $("#id_birthdate").datepicker({date:new Date(1990,0, 1),format:'yyyy-mm-dd'});
+    });
+  </script>
 {% endblock %}

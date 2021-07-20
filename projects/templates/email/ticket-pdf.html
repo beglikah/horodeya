@@ -1,0 +1,31 @@
+<html>
+  {% load static %}
+  {% load qr_code %}
+  <head>
+    <title>Ticket</title>
+    <style type="text/css">
+      body {
+          font-family: "Helvetica", "sans-serif";
+          color: #333333;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="content">
+      <!--
+      <div style="margin: 10px auto;">
+        <img src="{% static 'media/beglika2020.jpg' %}" alt="Beglika 2020" style="width:auto; height: auto;" />
+      </div>
+      <h1>{% static 'media/beglika2020.jpg' %}</h1>
+      -->
+      <h1>Beglika2020 > COMMUNITY FAIR</h1>
+      <h2>Motto > CHOICE : SOURCE</h2>
+      <p>12th edition > 16-23 AUGUST  </p>
+      <p>Beglika Dam > BULGARIA</p>
+      <p>Ticket Code > {{ ticket_code }}</p>
+      <div style="margin: 10px auto;">
+        {% qr_from_text url size="s" border="3" image_format="png" error_correction="M" %}
+      </div>
+      <footer>Beglika Foundation > http://beglika.org/</footer>
+    </div>
+  </body>

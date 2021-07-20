@@ -8,12 +8,27 @@ from ..models import Support
 register = template.Library()
 
 @register.simple_tag
-def member_of(user, legal_entity_pk):
-    return user.is_authenticated and user.member_of(legal_entity_pk)
+def member_of(user, community_pk):
+    return user.is_authenticated and user.member_of(community_pk)
 
 @register.simple_tag
 def vote_exists(report, user_pk):
     return report.votes.exists(user_pk, action=UP) or report.votes.exists(user_pk, action=DOWN)
+
+@register.simple_tag
+def format_answer(answer):
+    type = answer.question.prototype.type
+    if type in ['CharField', 'TextField']:
+        return answer.answer
+    #TODO
+    if type == 'FileField':
+        return answer.answer
+    if type == 'ChoiceField':
+        return [gettext_lazy('Yes'), gettext_lazy('No')][int(answer.answer)-1]
+    if type == 'Necessities':
+        return ""
+
+    return "not implemented"
 
 @register.filter
 def leva(value):

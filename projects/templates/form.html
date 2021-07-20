@@ -1,15 +1,19 @@
 {% extends "base.html" %}
 
 {% load i18n %}
+{% load bootstrap4 %}
 
 {% block content %}
-{% load bootstrap4 %}
 {{form.media}}
 <form method="post" class="form">
     {% csrf_token %}
     {% bootstrap_form form %}
     {% buttons %}
-    <button type="submit" class="btn btn-primary">{% trans 'Save' %}</button>
+    <button type="submit" class="btn btn-primary">
+      {% block savetext %}
+        {% trans 'Save' %}
+      {% endblock %}
+    </button>
     {% if form.instance.pk %}
       {% block delete %}
         {% if delete_label %}

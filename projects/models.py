@@ -2,8 +2,8 @@ from django.utils import timezone
 import datetime
 
 from django.db import models
-from django.utils import timezone
 from django.urls import reverse
+from django.utils.translation import get_language
 
 from django.core.validators import MaxValueValidator
 
@@ -20,9 +20,12 @@ from stream_django.activity import Activity
 
 from requests.exceptions import ConnectionError
 
-from django.utils.translation import gettext_lazy
+from django.utils.translation import gettext, gettext_lazy as _
 
 from photologue.models import Photo, Gallery
+
+from django_countries.fields import CountryField
+
 
 def determine_community(object):
     if isinstance(object, Project):
@@ -32,13 +35,21 @@ def determine_community(object):
 
     return object
 
+
+@rules.predicate
+def is_site_admin(user, object):
+    return user.is_superuser
+
+
 @rules.predicate
 def member_of_community(user, object):
     return user.member_of(determine_community(object).id)
 
+
 @rules.predicate
 def admin_of_community(user, object):
     return user == determine_community(object).admin
+
 
 @rules.predicate
 def myself(user, user2):
@@ -47,13 +58,16 @@ def myself(user, user2):
 
     return user == user2.user
 
+
 @rules.predicate
 def has_a_community(user):
     return user.communities.count() > 0
 
+
 @rules.predicate
 def is_accepted(user, support):
     return support.status == support.STATUS.accepted
+
 
 class Timestamped(RulesModelMixin, models.Model, metaclass=RulesModelBase):
     created_at = models.DateTimeField(editable=False)
@@ -69,6 +83,16 @@ class Timestamped(RulesModelMixin, models.Model, metaclass=RulesModelBase):
     class Meta:
         abstract = True
 
+
+COMMUNITY_ACTIVYTY_TYPES = [('Creativity', ' Проекти от областта на науката или изкуството, които развиват градивната енергия на индивида и неговата сила за себе реализация.'),
+                            ('Education', 'Проекти, стъпили на принципа на висшата справедливост и въплащение на благородни мисли и желания в живота на човека, при което интуитивните и творческите му способности достигат нови нива.'),
+                            ('Art', ' Проекти в областта на културата, които събуждат естественото ни чувство за споделяне и придават финес на взаимоотношенията в обществото.'),
+                            ('Administration', 'Проекти, свързани със системи за създаване и прилагане на правила за истинно и честно социално взаимодействие. Механизми за разрешаване на спорове.'),
+                            ('Willpower', 'Проекти, които развиват смелост, устрем, воля за победа, воля за индивидуална и колективна изява, като спорт и туризъм.'),
+                            ('Health', 'Проекти, които следват естествения ритъм на човешкия организъм и са мост между Висшия и конкретния ум.'),
+                            ('Food', 'Проекти развиващи това, което най-пряко влияе върху нашите бит и ежедневие, допринасят за оцеляването и изхранването на обществото.')]
+
+
 class Community(Timestamped):
     class Meta:
         rules_permissions = {
@@ -79,20 +103,49 @@ class Community(Timestamped):
             "leave": member_of_community & ~admin_of_community
         }
 
-    name = models.CharField(max_length=100)
-    text = models.TextField()
-    bulstat = models.DecimalField(blank=True, null=True, max_digits=20, decimal_places=0)
-    email = models.EmailField()
-    phone = models.DecimalField(max_digits=20, decimal_places=0)
+    name = models.CharField(max_length=100, blank=False,
+                            verbose_name=_('Name'))
+    type = models.CharField(_('type'), max_length=50, default='НПО')
+    DDORegistration = models.BooleanField(_('DDORegistration'), default=False)
+    mission = models.TextField(_('mission'), default=None, null=True)
+    numberOfSupporters = models.IntegerField(
+        _('numberOfSupporters'), default=0)
+    previousExperience = models.TextField(_('previousExperience'), blank=True)
+    activityType = models.CharField(_('activityType'),
+                                    choices=COMMUNITY_ACTIVYTY_TYPES, max_length=50, default='Art')
+    website = models.CharField(_('website'), max_length=100, blank=True)
+    text = models.TextField(_('text'))
+    bulstat = models.DecimalField(_('bulstat'),
+                                  blank=True, null=True, max_digits=15, decimal_places=0)
+    email = models.EmailField(_('email'))
+    phone = models.DecimalField(_('phone'),
+                                null=True, max_digits=20, decimal_places=0)
     admin = models.ForeignKey('User', on_delete=models.PROTECT)
-    payment = models.TextField()
+    bank_account_iban = models.CharField(blank=True, null=True, max_length=34)
+    bank_account_bank_code = models.CharField(
+        blank=True, null=True, max_length=34)
+    bank_account_name = models.CharField(blank=True, null=True, max_length=100)
     bal = models.IntegerField(default=20, validators=[MaxValueValidator(100)])
+    photo = models.ForeignKey(
+        Photo, on_delete=models.SET_NULL, blank=True, null=True)
+    revolut_phone = models.DecimalField(
+        blank=True, null=True, max_digits=20, decimal_places=0)
+    facebook_page = models.CharField(
+        _('facebook_page'), max_length=100, null=True, blank=True)
+    slack_channel = models.CharField(
+        _('slack_channel'), max_length=100, null=True, blank=True)
+    privacy_policy = models.BooleanField(default=False)
+    platform_policy = models.BooleanField(default=False)
+
+    def page_name(self):
+        return "%s %s" % (gettext('Community'), self.name)
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
         return reverse('projects:community_details', kwargs={'pk': self.pk})
+
 
 class User(AbstractUser, RulesModelMixin, metaclass=RulesModelBase):
     class Meta:
@@ -105,6 +158,21 @@ class User(AbstractUser, RulesModelMixin, metaclass=RulesModelBase):
 
     communities = models.ManyToManyField(Community)
     bal = models.IntegerField(default=20, validators=[MaxValueValidator(100)])
+    photo = models.ForeignKey(Photo, on_delete=models.SET_NULL, null=True)
+    donatorData = models.OneToOneField(
+        'DonatorData', on_delete=models.PROTECT, null=True)
+    legalEntityDonatorData = models.OneToOneField(
+        'LegalEntityDonatorData', on_delete=models.PROTECT, null=True)
+    second_name = models.CharField(_('second_name'), max_length=30, blank=True)
+    slack_channel = models.CharField(
+        _('slack_channel'), max_length=100, null=True, blank=True)
+    birthdate = models.DateField(
+        _('birthdate'), blank=False, null=True)
+    privacy_policy = models.BooleanField(default=False)
+    platform_policy = models.BooleanField(default=False)
+
+    def page_name(self):
+        return "%s %s" % (gettext('User'), str(self))
 
     def __str__(self):
         return '%s %s' % (self.first_name, self.last_name)
@@ -121,11 +189,41 @@ class User(AbstractUser, RulesModelMixin, metaclass=RulesModelBase):
     def total_votes_count(self):
         return len(Report.votes.all(self.pk, UP)) + len(Report.votes.all(self.pk, DOWN))
 
-#TODO notify user on new project added
+# TODO notify user on new project added
+
+
+CATEGORY_TYPES = [('Creativity', 'Наука и творчество'),
+                  ('Education', 'Просвета и възпитание'),
+                  ('Art', 'Култура и артистичност'),
+                  ('Administration', 'Администрация и финанси'),
+                  ('Willpower', 'Спорт и туризъм'),
+                  ('Health', 'Бит и здравеопазване'),
+                  ('Food', 'Земеделие и изхранване')]
+
+REPORT_TIMESPAN_CHOICES = Choices(
+    ('weekly', _('weekly')),
+    ('monthly', _('montly')),
+    ('twoweeks', _('twoweeks'))
+)
+VERIFY_TYPES_CHOICES = Choices(
+    ('review', _('review')),
+    ('accepted', _('accepted')),
+    ('rejected', _('rejected'))
+)
+
+
+def get_verify_types_choices():
+    return VERIFY_TYPES_CHOICES
+
+
+def get_report_translated_choices():
+    return REPORT_TIMESPAN_CHOICES
+
+
 class Project(Timestamped):
     class Meta:
         rules_permissions = {
-            "add": admin_of_community,
+            "add": rules.is_authenticated,
             "delete": admin_of_community,
             "change": member_of_community,
             "view": rules.always_allow,
@@ -133,14 +231,36 @@ class Project(Timestamped):
         }
 
     TYPES = Choices('business', 'cause')
+
     type = models.CharField(max_length=20, choices=TYPES)
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=300)
-    text = models.TextField()
-    published = models.BooleanField()
-    community = models.ForeignKey(Community, on_delete=models.CASCADE)
-    end_date = models.DateField(null=True, blank=True)
+    name = models.CharField(_('Name'), max_length=50)
+    location = models.CharField(_('location'), max_length=30, null=True)
+    goal = models.TextField(_('goal'), null=True)
+    description = models.CharField(_('description'), max_length=300)
+    text = models.TextField(_('text'), max_length=5000)
+    community = models.ForeignKey(Community, verbose_name=_(
+        'Community'), on_delete=models.CASCADE)
+    start_date = models.DateField(_('start_date'), null=True, blank=False)
+    end_date = models.DateField(_('end_date'), null=True, blank=False)
+    end_date_tasks = models.DateField(
+        _('end_date_tasks'), null=True, blank=False)
     gallery = models.ForeignKey(Gallery, on_delete=models.PROTECT, null=True)
+    report_period = models.CharField(_('report_period'),
+                                     choices=get_report_translated_choices(), max_length=50, default='weekly')
+    category = models.CharField(_('category'),
+                                choices=CATEGORY_TYPES, max_length=50, default='Education')
+    slack_channel = models.CharField(
+        _('slack_channel'), max_length=100, null=True, blank=True)
+    verified_status = models.CharField(_('verified_status'),
+                                       max_length=20, choices=get_verify_types_choices(), default=VERIFY_TYPES_CHOICES.review, null=True)
+
+    def latest_reports(self):
+        show_reports = 3
+        ordered = self.report_set.order_by('-published_at')
+        return ordered[:show_reports], ordered.count() - show_reports
+
+    def page_name(self):
+        return "%s %s" % (gettext('Cause') if self.type == 'cause' else gettext('Business'), self.name)
 
     def key(self):
         return 'project-%d' % self.id
@@ -151,7 +271,7 @@ class Project(Timestamped):
     def get_absolute_url(self):
         return reverse('projects:details', kwargs={'pk': self.pk})
 
-    #TODO normalize to a field, update on signal
+    # TODO normalize to a field, update on signal
     def supporters_stats(self):
         money_supporters = set()
         time_supporters = set()
@@ -160,7 +280,7 @@ class Project(Timestamped):
         for money_support in self.moneysupport_set.all():
             money_supporters.add(money_support.user)
             money += money_support.leva
-            
+
         for time_support in self.timesupport_set.all():
             time_supporters.add(time_support.user)
             time += time_support.duration()
@@ -218,7 +338,7 @@ class Project(Timestamped):
             s += time.count
 
         return s
-    
+
     def money_still_needed(self):
         return self.money_needed() - self.money_support()
 
@@ -256,6 +376,7 @@ class Project(Timestamped):
     def recent_money_support(self):
         return self.moneysupport_set.order_by('-status_since')
 
+
 class Announcement(Timestamped, Activity):
     class Meta:
         rules_permissions = {
@@ -266,7 +387,7 @@ class Announcement(Timestamped, Activity):
         }
 
     project = models.ForeignKey(Project, on_delete=models.PROTECT)
-    text = models.TextField(verbose_name='announcement')
+    text = models.TextField(verbose_name=_('announcement'))
 
     @property
     def activity_author_feed(self):
@@ -279,6 +400,7 @@ class Announcement(Timestamped, Activity):
     def get_absolute_url(self):
         return reverse('projects:announcement_details', kwargs={'pk': self.pk})
 
+
 class Report(VoteModel, Timestamped, Activity):
     class Meta:
         rules_permissions = {
@@ -287,10 +409,10 @@ class Report(VoteModel, Timestamped, Activity):
             "change": member_of_community,
             "view": rules.is_authenticated,
         }
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, verbose_name=_('Name'))
     project = models.ForeignKey(Project, on_delete=models.PROTECT)
-    text = models.TextField()
-    published_at = models.DateTimeField()
+    text = models.TextField(_('text'))
+    published_at = models.DateTimeField(_('published_at'))
 
     @property
     def activity_author_feed(self):
@@ -306,7 +428,9 @@ class Report(VoteModel, Timestamped, Activity):
     def get_absolute_url(self):
         return reverse('projects:report_details', kwargs={'pk': self.pk})
 
-#TODO notify in feed
+# TODO notify in feed
+
+
 class TimeNecessity(Timestamped):
     class Meta:
         rules_permissions = {
@@ -318,12 +442,12 @@ class TimeNecessity(Timestamped):
         }
 
     project = models.ForeignKey(Project, on_delete=models.PROTECT)
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=300)
-    price = models.IntegerField()
-    count = models.IntegerField(default=1)
-    start_date = models.DateField()
-    end_date = models.DateField()
+    name = models.CharField(max_length=50, verbose_name=_('Name'))
+    description = models.CharField(_('description'), max_length=300)
+    price = models.IntegerField(_('price'))
+    count = models.IntegerField(_('count'), default=1)
+    start_date = models.DateField(_('start_date'))
+    end_date = models.DateField(_('end_date'))
 
     def __str__(self):
         return self.name
@@ -340,7 +464,9 @@ class TimeNecessity(Timestamped):
     def get_absolute_url(self):
         return reverse('projects:time_necessity_details', kwargs={'pk': self.pk})
 
-#TODO notify in feed
+# TODO notify in feed
+
+
 class ThingNecessity(Timestamped):
     class Meta:
         rules_permissions = {
@@ -351,21 +477,20 @@ class ThingNecessity(Timestamped):
             "list": rules.is_authenticated,
         }
     project = models.ForeignKey(Project, on_delete=models.PROTECT)
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=300)
-    price = models.IntegerField()
-    count = models.IntegerField()
+    name = models.CharField(_('Name'), max_length=50)
+    description = models.CharField(_('description'), max_length=300)
+    price = models.IntegerField(_('price'))
+    count = models.IntegerField(_('count'))
 
     def create_thing_support_from_unused_money_support(self):
         unused_money_support = list(filter(
             lambda s: not s.thingsupport_set.all().exists(),
             self.accepted_money_support()
-            ))
+        ))
 
         price = self.price
         use_supports = []
 
-        
         if self.still_needed() == 0:
             return False
 
@@ -379,12 +504,12 @@ class ThingNecessity(Timestamped):
             remaining = support.leva - price
             while remaining >= 0:
                 thing_support = self.supports.create(
-                        price=self.price,
-                        project=self.project,
-                        user=self.project.community.admin,
-                        comment='Auto generated',
-                        status=Support.STATUS.accepted,
-                        status_since = timezone.now(),
+                    price=self.price,
+                    project=self.project,
+                    user=self.project.community.admin,
+                    comment='Auto generated',
+                    status=Support.STATUS.accepted,
+                    status_since=timezone.now(),
                 )
 
                 thing_support.from_money_supports.set(use_supports)
@@ -400,9 +525,10 @@ class ThingNecessity(Timestamped):
                         project=self.project,
                         user=support.user,
                         comment='reminder from %d' % support.id,
-                        status=Support.STATUS.review, # so that admin is forced to choose Necessity to spend it on
-                        status_since = timezone.now(),
-                        )
+                        # so that admin is forced to choose Necessity to spend it on
+                        status=Support.STATUS.review,
+                        status_since=timezone.now(),
+                    )
                     return True
 
                 if remaining > 0:
@@ -428,6 +554,9 @@ class ThingNecessity(Timestamped):
     def total_price(self):
         return self.count * self.price
 
+    def total_price_still_needed(self):
+        return self.still_needed() * self.price
+
     def accepted_money_support(self):
         return self.money_supports.filter(status=Support.STATUS.accepted).all()
 
@@ -440,30 +569,47 @@ class ThingNecessity(Timestamped):
     def get_absolute_url(self):
         return reverse('projects:thing_necessity_details', kwargs={'pk': self.pk})
 
+
 class Support(Timestamped):
 
     class Meta:
+        rules_permissions = {
+            "add": rules.is_authenticated,
+            "delete": myself & ~is_accepted,
+            "change": (myself & ~is_accepted) | member_of_community,
+            "view": myself | member_of_community,
+            "accept": member_of_community,
+            "mark_delivered": member_of_community,
+            "list": member_of_community
+        }
+
         abstract = True
 
     project = models.ForeignKey(Project, on_delete=models.PROTECT)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
-    
-    comment = models.TextField(blank=True)
-    STATUS = Choices(
-            'review',
-            'delivered',
-            'accepted',
-            'declined',
-            'expired')
+    supportType = models.CharField(max_length=30, null=True)
 
-    status = models.CharField(max_length=20, choices=STATUS, default=STATUS.review)
-    status_since = models.DateTimeField(default=timezone.now)
+    comment = models.TextField(
+        blank=True, verbose_name=_('Do you have a comment'))
+
+    STATUS = Choices(
+        ('review', _('review')),
+        ('delivered', _('delivered')),
+        ('accepted', _('accepted')),
+        ('declined', _('declined')),
+        ('expired', _('expired'))
+    )
+
+    status = models.CharField(_('status'),
+                              max_length=20, choices=STATUS, default=STATUS.review)
+    status_since = models.DateTimeField(
+        _('status_since'), default=timezone.now)
     __original_status = None
 
     def __init__(self, *args, **kwargs):
         super(Support, self).__init__(*args, **kwargs)
         self.__original_status = self.status
-    
+
     def save(self, *args, **kwargs):
         if self.status != self.__original_status:
             self.status_since = timezone.now()
@@ -473,7 +619,7 @@ class Support(Timestamped):
         return res
 
     def delivery_expires(self):
-        if not self.status == 'ccepted':
+        if not self.status == 'accepted':
             return None
 
         return self.status_since + datetime.timedelta(days=30)
@@ -484,7 +630,7 @@ class Support(Timestamped):
 
         expires = self.delivery_expires()
         if expires and expires < timezone.now():
-            self.status = 'expired' 
+            self.status = 'expired'
             self.save()
             return True
 
@@ -505,7 +651,9 @@ class Support(Timestamped):
 
         return accepted
 
-#TODO notify in feed
+# TODO notify in feed
+
+
 class MoneySupport(Support):
     class Meta:
         rules_permissions = {
@@ -519,8 +667,14 @@ class MoneySupport(Support):
             "list-user": myself
         }
 
-    necessity = models.ForeignKey(ThingNecessity, on_delete=models.PROTECT, related_name='money_supports', null=True, blank=True)
-    leva = models.FloatField()
+    necessity = models.ForeignKey(ThingNecessity, on_delete=models.PROTECT, related_name='money_supports',
+                                  null=True, blank=True, verbose_name=_('Which necessity do you wish to donate to'))
+    leva = models.FloatField(verbose_name=_('How much do you wish to donate'))
+
+    payment_method = models.CharField(max_length=20, verbose_name=_(
+        'Choose a payment method'), default='Unspecified')
+
+    pay_time = models.DateTimeField(null=True, blank=True, editable=False)
 
     def get_absolute_url(self):
         return reverse('projects:money_support_details', kwargs={'pk': self.pk})
@@ -533,7 +687,8 @@ class MoneySupport(Support):
 
         if accepted:
             if not self.necessity:
-                raise RuntimeError('Expected necessity to be set when accepting money support')
+                raise RuntimeError(
+                    'Expected necessity to be set when accepting money support')
 
             new_accepted = self.necessity.create_thing_support_from_unused_money_support()
 
@@ -543,9 +698,11 @@ class MoneySupport(Support):
         return accepted
 
     def __str__(self):
-        return "%s (%s)" % (self.user.first_name, self.leva)
+        return "%s (%s)" % (self.user.first_name, self.leva) + (" for %s" % self.necessity if self.necessity else "")
 
-#TODO notify in feed
+# TODO notify in feed
+
+
 class ThingSupport(Support):
     class Meta:
         rules_permissions = {
@@ -559,8 +716,9 @@ class ThingSupport(Support):
             "list-user": myself
         }
 
-    necessity = models.ForeignKey(ThingNecessity, on_delete=models.PROTECT, related_name='supports')
-    price = models.IntegerField()
+    necessity = models.ForeignKey(
+        ThingNecessity, on_delete=models.PROTECT, related_name='supports')
+    price = models.IntegerField(_('price'))
     from_money_supports = models.ManyToManyField(MoneySupport, blank=True)
 
     def get_absolute_url(self):
@@ -572,7 +730,26 @@ class ThingSupport(Support):
     def __str__(self):
         return "%s (%s)" % (self.user.first_name, self.necessity.name)
 
-#TODO notify in feed
+
+class Answer(Timestamped):
+    class Meta:
+        rules_permissions = {
+            "add": rules.is_authenticated,
+            "delete": myself & ~is_accepted,
+            "change": myself & ~is_accepted,
+            "view": myself | member_of_community,
+            "list": myself & member_of_community
+        }
+        unique_together = ['project', 'question', 'user']
+
+    project = models.ForeignKey('Project', on_delete=models.CASCADE)
+    question = models.ForeignKey('Question', on_delete=models.CASCADE)
+    answer = models.TextField(_('answer'), null=False, blank=True)
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
+
+# TODO notify in feed
+
+
 class TimeSupport(Support):
     class Meta:
         rules_permissions = {
@@ -586,10 +763,11 @@ class TimeSupport(Support):
         }
         unique_together = ['necessity', 'user']
 
-    necessity = models.ForeignKey(TimeNecessity, on_delete=models.PROTECT, related_name='supports')
-    price = models.IntegerField()
-    start_date = models.DateField()
-    end_date = models.DateField()
+    necessity = models.ForeignKey(
+        TimeNecessity, on_delete=models.CASCADE, related_name='supports')
+    price = models.IntegerField(_('price'))
+    start_date = models.DateField(_('start_date'))
+    end_date = models.DateField(_('end_date'))
 
     def get_absolute_url(self):
         return reverse('projects:time_support_details', kwargs={'pk': self.pk})
@@ -603,4 +781,116 @@ class TimeSupport(Support):
     def __str__(self):
         return "%s: %s" % (self.necessity, self.user.first_name)
 
+    def ordered_answers(self):
+        return self.user.answer_set.filter(project=self.necessity.project).order_by('question__order')
 
+
+class QuestionPrototype(Timestamped):
+    class Meta:
+        rules_permissions = {
+            "add": rules.always_deny,
+            "delete": rules.always_deny,
+            "change": rules.always_deny,
+            "view": rules.always_allow,
+            "list": rules.always_allow
+        }
+
+    text_bg = models.CharField(max_length=100, unique=True)
+    text_en = models.CharField(max_length=100, unique=True)
+    TYPES = Choices('CharField', 'TextField', 'FileField',
+                    'ChoiceField', 'Necessities')
+
+    type = models.CharField(max_length=20, choices=TYPES)
+    order = models.IntegerField()
+    required = models.BooleanField(_('required'), default=True)
+
+    def __str__(self):
+        return self.text_bg
+
+
+class Question(Timestamped):
+    class Meta:
+        rules_permissions = {
+            "add": member_of_community,
+            "delete": member_of_community,
+            "change": member_of_community,
+            "view": rules.always_allow,
+            "list": rules.always_allow
+        }
+        unique_together = ['prototype', 'project']
+
+    prototype = models.ForeignKey(QuestionPrototype, on_delete=models.PROTECT)
+    project = models.ForeignKey(Project, on_delete=models.PROTECT)
+    description = models.TextField(blank=True)
+    required = models.BooleanField(_('required'), default=True)
+    order = models.IntegerField()
+
+    def __str__(self):
+        return "%s. %s%s" % (self.order, self.prototype, ('*' if self.required else ''))
+
+    def text(self):
+        return getattr(self.prototype, 'text_%s' % get_language())
+
+
+class DonatorData(Timestamped):
+
+    class Meta:
+        rules_permissions = {
+            "add": rules.is_authenticated,
+            "delete": rules.always_deny,
+            "change": myself,
+            "view": rules.is_authenticated
+        }
+
+    phone = models.CharField(_('phone'), max_length=20, blank=False)
+    citizenship = CountryField(_('citizenship'), max_length=30, blank=False)
+    postAddress = models.CharField(
+        _('postAdress'), max_length=200, blank=False)
+    TIN = models.CharField(_('TIN'), max_length=10,
+                           blank=False, default=None, null=True)
+
+
+class LegalEntityDonatorData(Timestamped):
+    class Meta:
+        rules_permissions = {
+            "add": rules.is_authenticated,
+            "delete": rules.always_deny,
+            "change": myself,
+            "view": rules.is_authenticated,
+        }
+
+    name = models.CharField(_('name'), max_length=50, blank=False)
+    type = models.CharField(_('type'), max_length=50, blank=False)
+    headquarters = CountryField(
+        _('headquarters'), max_length=30, blank=False, null=True)
+    EIK = models.CharField(_('EIK'), max_length=50, blank=False)
+    DDORegistration = models.BooleanField(_('DDORegistration'))
+    phoneNumber = models.CharField(
+        _('phoneNumber'), max_length=30, blank=False)
+    postAddress = models.CharField(
+        _('postAdress'), max_length=200, blank=False)
+    TIN = models.CharField(_('TIN'), max_length=10,
+                           blank=False, default=None, null=True)
+    website = models.CharField(_('website'), blank=True, max_length=100)
+
+
+class TicketQR(Timestamped):
+    project = models.ForeignKey(Project, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    validation_code = models.TextField(_('validation_code'))
+    validated_at = models.DateTimeField(_('validated_at'), null=True)
+
+    def set_validated(self):
+        self.validated_at = timezone.now()
+        self.save()
+        return self.validated_at
+
+
+class BugReport(Timestamped):
+    email = models.EmailField(_('email'))
+    message = models.TextField(_('message'))
+
+
+class EpayMoneySupport(Support):
+    amount = models.FloatField(verbose_name=_(
+        'How much do you wish to donate'))
