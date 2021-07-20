@@ -102,6 +102,7 @@ INSTALLED_APPS = [
     'check_qr',
 ]
 
+
 if not TEST:
     INSTALLED_APPS += ['stream_django']
 
@@ -145,6 +146,7 @@ TEMPLATES = [
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+
 
 if TEST:
     DATABASES = {
