@@ -83,7 +83,7 @@
           <li><a class="nav-link justify-content-end {% active задруги %}" href="/projects/feed">Известия</a></li>
           {%endif%}
 
-          <li><a class="nav-link {% active задруги %}" href="/задруги/">{% trans 'Causes' %}</a></li>
+          <li><a class="nav-link  {% active задруги %}" href="/задруги/">Задруги</a></li>
 
           {%if user.is_superuser%}
           <li><a class="nav-link " href="/projects/administration">Администрация</a></li>
@@ -186,17 +186,17 @@
               </a>
             </div>
             <div class="col-md-3 text-center">
-              <a href="/ела-в-slack/" class="dark-links">
-                <img style="width:150px;" src="{% static 'media/join-slack.png' %}">
-                <h2 class="font-weight-lighter">Ела в Slack</h2>
-                <div class="font-weight-lighter">Работна среда за Задруги</div>
-              </a>
+                <a href="/ела-в-slack/" class="dark-links">
+                    <img style="width:150px;" src="{% static 'media/join-slack.png' %}">
+                    <h2 class="font-weight-lighter">Ела в Slack</h2>
+                    <div class="font-weight-lighter">Работна среда за Задруги</div>
+                </a>
             </div>
             <div class="col-md-3 text-center">
               <a href="/projects/community/" class="dark-links">
                 <img style="width:150px;" src="{% static 'media/join-communities.png' %}">
-                <h2 class="font-weight-lighter">Общности</h2>
-                <div class="font-weight-lighter">Регистрирани обединения</div>
+                <h2 class="font-weight-lighter">Организации</h2>
+                <div class="font-weight-lighter">Управляващи задругите</div>
               </a>
             </div>
             <div class="col-md-3 text-center">
@@ -214,45 +214,31 @@
   <footer class="footer">
     <div class="container-fluid">
       <div class="row footer-background pt-2">
-        <div class="col-md-3">
-          <ul class="list-group list-group-flush">
-            <a class="list-group-item no-border" href="/учредителен-акт">Учредителен акт</a>
-            <a class="list-group-item no-border" href="/етичен-кодекс">Етичен кодекс</a>
-            <a class="list-group-item no-border" href="/правила-за-дейността">Правила за осъществяване
-              дейността</a>
-            <a class="list-group-item no-border" href="/оценяваща-система">Оценяваща система</a>
-          </ul>
-        </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <ul class="list-group list-group-flush">
             <a class="list-group-item no-border" href="/условия-за-ползване">Условия за работа с
               платформата</a>
-            <a class="list-group-item no-border" href="/условия-за-участие-в-проект-хородея">Условия за участие в проект
-              Хородея</a>
             <a class="list-group-item no-border" href="/политика-за-поверителност">Политика за поверителност</a>
             <a class="list-group-item no-border" href="/политика-за-бисквитки">Политика за бисквитки</a>
           </ul>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <p class="font-weight-bold footer-titles">Свържeте се с нас</p>
           <p>
             Това е Бета версия на Хородея, предназначена за
             уточняване на функционалности
             и отстраняване на бъгове.
           </p>
+          </div>
+          <div class="col-md-4">
           {% include 'projects/bugreport_form.html' %}
-        </div>
-        <div class="col-md-3">
-          <p class="font-weight-bold footer-titles">Адрес</p>
-          <p>Фондация "Хородея", гр.София, п.к.1000, пл. Света Неделя 4, ет.4</p>
         </div>
         <div class="col-md-12 mt-5 mb-3">
           <img class="float-left mx-3" style="width:55px" src="{% static 'media/horodeya-logo-footer.png' %}">
           <div class="float-left">
-            <h6>Фондация „Хородея“</h6>
-            <p>Инициатор на проекта е Фондация „Хородея”. Фондацията стартира проекта, задава базова система от
-              правила служеща за устойчиво управление на доверието в общността и действа като гарант за спазването
-              на приетата етичната рамка.</p>
+            <h6>Фондация „Беглика“</h6>
+            <p>Фондация „Беглика“ Инициатор на проекта е Фондация „Беглика”. Фондацията стартира проекта,
+            задава базова система от правила служеща за устойчиво управление на доверието в общността.</p>
           </div>
         </div>
       </div>

@@ -21,6 +21,7 @@ from django.utils.text import slugify
 from django.utils.html import format_html
 from django.forms import ModelForm, ValidationError, inlineformset_factory, modelformset_factory
 from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
 
 from django import forms
 from django.db.models import Q
@@ -65,6 +66,7 @@ from datetime import timedelta
 from weasyprint import HTML as weasyHTML
 from django.utils.crypto import get_random_string
 
+from horodeya import settings
 mark_safe_lazy = lazy(mark_safe)
 
 
@@ -1677,6 +1679,10 @@ def bug_report_create(request):
         redirect_url = request.POST.get('next')
         if form.is_valid():
             form.save()
+            message = request.POST.get('message', '')
+            user_email = request.POST.get('email', '')
+            email = EmailMultiAlternatives(user_email, message, settings.SERVER_EMAIL, ['beglika@gmail.com'])
+            email.send()
             messages.add_message(request, messages.SUCCESS,
                                  'Благодарим ви за обратната връзка')
             return redirect(redirect_url)
