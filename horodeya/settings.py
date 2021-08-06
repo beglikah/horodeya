@@ -100,6 +100,7 @@ INSTALLED_APPS = [
     'notifications',
     'qr_code',
     'check_qr',
+    'beglika',
 ]
 
 

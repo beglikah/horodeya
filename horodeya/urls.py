@@ -39,6 +39,7 @@ urlpatterns = [
     path('qr_code/', include('qr_code.urls', namespace="qr_code")),
     path('check-qr/', include('check_qr.urls')),
     path('admin/', admin.site.urls),
+    path('home/', include('beglika.urls')),
     re_path(r'^photologue/', include('photologue.urls', namespace='photologue')),
     re_path(r'^cms/', include(wagtailadmin_urls)),
     re_path(r'^documents/', include(wagtaildocs_urls)),
