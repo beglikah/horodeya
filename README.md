@@ -1,6 +1,6 @@
 # Хородея
 
-## Python3.5
+## Python3.8
 ```bach
 virtualenv -p python3.5 venv --no-site-packages
 source venv/bin/activate
@@ -10,7 +10,7 @@ python3.5 -m pip install -r requirements.txt
 ## Настройка на средата за разработка
 
 ```bash
-virtualenv venv -p python3
+virtualenv venv -p python3.8
 source venv/bin/activate
 pip install -r requirements.txt
 ```
