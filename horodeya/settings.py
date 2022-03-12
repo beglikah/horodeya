@@ -141,7 +141,7 @@ TEMPLATES = [
     },
 ]
 
-#WSGI_APPLICATION = 'horodeya.wsgi.application'
+# WSGI_APPLICATION = 'horodeya.wsgi.application'
 
 
 # Database
@@ -263,7 +263,7 @@ LANGUAGES = (
     ('bg', 'Бъларски')
 )
 
-AWS_STORAGE_BUCKET_NAME = 'horodeya-static'
+# AWS_STORAGE_BUCKET_NAME = 'horodeya-static'
 
 
 def PHOTOLOGUE_PATH(instance, filename):
@@ -271,12 +271,25 @@ def PHOTOLOGUE_PATH(instance, filename):
         'ascii', 'ignore').decode('ascii')
     return os.path.join(instance.first_directory, instance.second_directory, fn)
 
-
+"""
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_DEFAULT_REGION = os.getenv('AWS_DEFAULT_REGION')
+"""
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+STATIC_URL = '/static/'
+
+BOOTSTRAP4 = {
+    "css_url": '/static/css/bootstrap.min.css',
+    'javascript_url': '/static/js/bootstrap.min.js',
+    'jquery_url': '/static/js/jquery-3.4.1.min.js',
+    'jquery_slim_url': '/static/js/jquery-3.4.1.min.js',
+    'popper_url': '/static/js/popper.min.js',
+}
+
+"""
 if TEST or DEV:
     STATIC_URL = '/static/'
 
@@ -305,12 +318,15 @@ else:
         'jquery_slim_url': 'https://%s/static/js/jquery-3.4.1.min.js' % AWS_S3_CUSTOM_DOMAIN,
         'popper_url': 'https://%s/static/js/popper.min.js' % AWS_S3_CUSTOM_DOMAIN,
     }
-
+"""
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
+"""
 if TEST:
     MEDIA_URL = '/media/'
 else:
     MEDIA_URL = 'https://%s.s3.amazonaws.com/media/' % AWS_STORAGE_BUCKET_NAME
+"""
 
 BOOTSTRAP4['required_css_class'] = 'required'
