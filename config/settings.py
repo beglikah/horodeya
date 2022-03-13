@@ -264,11 +264,6 @@ def PHOTOLOGUE_PATH(instance, filename):
         'ascii', 'ignore').decode('ascii')
     return os.path.join(instance.first_directory, instance.second_directory, fn)
 
-"""
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-AWS_DEFAULT_REGION = os.getenv('AWS_DEFAULT_REGION')
-"""
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 

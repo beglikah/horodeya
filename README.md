@@ -17,20 +17,20 @@ chmod +x manage.sh
 ### Локална база данни
 
 ```bash
-docker run --name horodeya-postgres -e POSTGRES_USER=horodeya -e POSTGRES_PASSWORD=horodeya -d postgres
+docker run --name itec-postgres -e POSTGRES_USER=itec -e POSTGRES_PASSWORD=itec-foundation -d postgres
 ```
 
 След като сме пуснали postgres Docker изображението:
 
 ```bash
-export DB_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' horodeya-postgres)
-export DB_URL="postgresql://horodeya:horodeya@$DB_HOST/horodeya"
+export DB_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' itec-postgres)
+export DB_URL="postgresql://itec:itec@$DB_HOST/itec"
 ```
 
 За връзка с база данни през терминал:
 
 ```bash
-docker run -it --rm --network container:horodeya-postgres postgres psql -h $DB_HOST -U horodeya
+docker run -it --rm --network container:itec-postgres postgres psql -h $DB_HOST -U itec
 ```
 
 ### Стартиране
