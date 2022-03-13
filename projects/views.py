@@ -66,7 +66,7 @@ from datetime import timedelta
 from weasyprint import HTML as weasyHTML
 from django.utils.crypto import get_random_string
 
-from horodeya import settings
+from config import settings
 mark_safe_lazy = lazy(mark_safe)
 
 

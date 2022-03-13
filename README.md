@@ -1,18 +1,11 @@
 # Хородея
 
-## Python3.8
+## Python3.8 - Настройка на средата за разработка
+
 ```bach
-virtualenv -p python3.5 venv --no-site-packages
+virtualenv -p python3.8 venv --no-site-packages
 source venv/bin/activate
-python3.5 -m pip install -r requirements.txt
-```
-
-## Настройка на средата за разработка
-
-```bash
-virtualenv venv -p python3.8
-source venv/bin/activate
-pip install -r requirements.txt
+python3.8 -m pip install -r requirements.txt
 ```
 
 Download [manage.sh](https://trello.com/c/Rp1cvIX8/54-managesh) and run:
