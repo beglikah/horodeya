@@ -42,8 +42,8 @@ jsonfield==3.1.0
 l18n==2018.5
 oauthlib==3.1.0
 openpyxl==3.0.7
-Pillow
-psycopg2-binary
+Pillow==8.4.0
+psycopg2-binary==2.9.3
 pycparser==2.20
 pycryptodomex==3.9.4
 PyJWT==1.7.1
