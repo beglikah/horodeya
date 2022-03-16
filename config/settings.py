@@ -44,7 +44,13 @@ else:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'itec.foundation']
+ALLOWED_HOSTS = [
+    '172.105.92.161',
+    'itec.foundation',
+    '0.0.0.0',
+    'localhost',
+    '127.0.0.1',
+    '127.0.1.1']
 
 # Application definition
 
@@ -121,7 +127,7 @@ MIDDLEWARE = [
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF = config.urls'
 
 TEMPLATES = [
     {
@@ -139,6 +145,9 @@ TEMPLATES = [
         },
     },
 ]
+
+
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
