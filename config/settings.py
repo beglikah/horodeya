@@ -127,7 +127,7 @@ MIDDLEWARE = [
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 
-ROOT_URLCONF = config.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
