@@ -45,7 +45,7 @@ else:
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '172.105.92.161',
+    '172.104.134.7',
     'itec.foundation',
     '0.0.0.0',
     'localhost',
