@@ -47,6 +47,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '172.104.134.7',
     'itec.foundation',
+    'www.itec.foundation',
     '0.0.0.0',
     'localhost',
     '127.0.0.1',
