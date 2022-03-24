@@ -83,7 +83,7 @@
           <li><a class="nav-link justify-content-end {% active задруги %}" href="/projects/feed">Известия</a></li>
           {%endif%}
 
-          <li><a class="nav-link  {% active задруги %}" href="/задруги/">Задруги</a></li>
+          <li><a class="nav-link  {% active задруги %}" href="/horodeya/задруги/">Задруги</a></li>
 
           {%if user.is_superuser%}
           <li><a class="nav-link " href="/projects/administration">Администрация</a></li>
@@ -98,12 +98,12 @@
           <li><a class="nav-link {% active задруги %}" href="/задруги/">{% trans 'Businesses' %}</a></li>
           {% endcomment %}
           <li><a class="nav-link {% active условия-за-задруги %}"
-              href="https://horodeya.com/%D1%83%D1%81%D0%BB%D0%BE%D0%B2%D0%B8%D1%8F-%D0%B7%D0%B0-%D0%B7%D0%B0%D0%B4%D1%80%D1%83%D0%B3%D0%B8/">Условия
+              href="/horodeya/">Условия
               за Задруги</a></li>
               <li><a class="nav-link {% active често-задавани-въпроси/ %}"
-              href="https://horodeya.com/%D1%87%D0%B5%D1%81%D1%82%D0%BE-%D0%B7%D0%B0%D0%B4%D0%B0%D0%B2%D0%B0%D0%BD%D0%B8-%D0%B2%D1%8A%D0%BF%D1%80%D0%BE%D1%81%D0%B8/">Въпроси</a></li>
+              href="/horodeya/">Въпроси</a></li>
 
-          <li><a class="nav-link {% active за-нас %}" href="/за-нас/">{% trans 'About us' %}</a></li>
+          <li><a class="nav-link {% active за-нас %}" href="/horodeya/за-нас/">{% trans 'About us' %}</a></li>
 
           {% if user.is_authenticated %}
           <li><a class="nav-link {% active account %}" href="{% url 'my_account' %}">{% trans 'Account' %}</a></li>
@@ -178,7 +178,7 @@
         <div class="container">
           <div class="row">
             <div class="col-md-3 text-center">
-              <a href="/научи-повече/" class="dark-links">
+              <a href="/horodeya/научи-повече/" class="dark-links">
                 <img style="width:150px;" src="{% static 'media/learn-more.png' %}">
                 <h2 class="font-weight-lighter">Научи
                   повече</h2>
@@ -186,7 +186,7 @@
               </a>
             </div>
             <div class="col-md-3 text-center">
-                <a href="/ела-в-slack/" class="dark-links">
+                <a href="/horodeya/ела-в-slack/" class="dark-links">
                     <img style="width:150px;" src="{% static 'media/join-slack.png' %}">
                     <h2 class="font-weight-lighter">Ела в Slack</h2>
                     <div class="font-weight-lighter">Работна среда за Задруги</div>
@@ -200,7 +200,7 @@
               </a>
             </div>
             <div class="col-md-3 text-center">
-              <a href="/за-нас/" class="dark-links">
+              <a href="/horodeya/за-нас/" class="dark-links">
                 <img style="width:150px;" src="{% static 'media/join-horodeya-development.png' %}">
                 <h2 class="font-weight-lighter">Присъедини се</h2>
                 <div class="font-weight-lighter">В развитието на Хородея</div>
@@ -216,10 +216,10 @@
       <div class="row footer-background pt-2">
         <div class="col-md-4">
           <ul class="list-group list-group-flush">
-            <a class="list-group-item no-border" href="/условия-за-ползване">Условия за работа с
+            <a class="list-group-item no-border" href="/horodeya/условия-за-ползване">Условия за работа с
               платформата</a>
-            <a class="list-group-item no-border" href="/политика-за-поверителност">Политика за поверителност</a>
-            <a class="list-group-item no-border" href="/политика-за-бисквитки">Политика за бисквитки</a>
+            <a class="list-group-item no-border" href="/horodeya/политика-за-поверителност">Политика за поверителност</a>
+            <a class="list-group-item no-border" href="/horodeya/политика-за-бисквитки">Политика за бисквитки</a>
           </ul>
         </div>
         <div class="col-md-4">
