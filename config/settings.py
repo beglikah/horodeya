@@ -21,7 +21,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
-DEBUG = True
 # SECURITY WARNING: keep the secret key used in production secret!
 
 if len(sys.argv) > 1 and sys.argv[1] == 'test':
@@ -45,7 +44,6 @@ else:
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '172.104.134.7',
     'itec.foundation',
     'www.itec.foundation',
     '0.0.0.0',
@@ -106,15 +104,15 @@ INSTALLED_APPS = [
     'notifications',
     'qr_code',
     'check_qr',
+    'horodeya',
 ]
 
 
 if not TEST:
     INSTALLED_APPS += ['stream_django']
 
-
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware', # wagtail toolbbar
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'config.force_default_language_middleware.ForceDefaultLanguageMiddleware',
@@ -263,9 +261,11 @@ STREAM_API_SECRET = os.getenv('STREAM_API_SECRET')
 DATE_FORMAT = 'Y-m-d'
 DATETIME_FORMAT = 'Y-m-d H:m:s'
 
+LANGUAGE_CODE = 'en-us'
+
 LANGUAGES = (
     ('en', 'English'),
-    ('bg', 'Бъларски')
+    ('bg', 'Български')
 )
 
 

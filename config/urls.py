@@ -18,10 +18,6 @@ from django.urls import include, path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from wagtail.admin import urls as wagtailadmin_urls
-from wagtail.documents import urls as wagtaildocs_urls
-from wagtail.core import urls as wagtail_urls
-
 from home import views as home_views
 
 import notifications.urls
@@ -32,6 +28,7 @@ urlpatterns = [
          home_views.notifications, name='notifications'),
     path('i18n/', include('django.conf.urls.i18n')),
     path('anymail/', include('anymail.urls')),
+    path('', home_views.home, name='home'),
     path('accounts/profile/', home_views.account, name='my_account'),
     path('accounts/profile/<int:pk>', home_views.account, name='account'),
     path('accounts/', include('allauth.urls')),
@@ -39,10 +36,7 @@ urlpatterns = [
     path('qr_code/', include('qr_code.urls', namespace="qr_code")),
     path('check-qr/', include('check_qr.urls')),
     path('admin/', admin.site.urls),
-    re_path(r'^photologue/', include('photologue.urls', namespace='photologue')),
-    re_path(r'^cms/', include(wagtailadmin_urls)),
-    re_path(r'^documents/', include(wagtaildocs_urls)),
-    re_path(r'', include(wagtail_urls)),
+    path('horodeya/', include('horodeya.urls')),
     # path('accounts/profile/update/<int:pk>', home_views.UserUpdate.as_view(), name='user_update'),
     url('^inbox/notifications/',
         include(notifications.urls, namespace='notifications')),

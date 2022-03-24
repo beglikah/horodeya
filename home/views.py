@@ -1,7 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic.edit import UpdateView
 from projects.models import User
-from django.http import JsonResponse
 from projects.models import Project
 
 from stream_django.feed_manager import feed_manager
@@ -15,6 +13,10 @@ from stream_django.enrich import Enrich
 #     model = User
 #     fields = ['first_name', 'last_name']
 #     success_url = '/accounts/profile/'
+
+
+def home(request):
+    return render(request, 'home/itec_home.html')
 
 
 def account(request, pk=None):
@@ -43,4 +45,8 @@ def notifications(request):
     notifications = enricher.enrich_aggregated_activities(
         notification_stats['results'])
 
-    return render(request, 'activity/aggregated/report.html', {'notifications': notifications})
+    return render(
+        request, 'activity/aggregated/report.html', {
+            'notifications': notifications
+        }
+    )
