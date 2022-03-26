@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "index.html" %}
 
 {% load i18n %}
 {% load bootstrap4 %}
@@ -8,7 +8,7 @@
   <li class="breadcrumb-item active">
     {% trans 'Donate' %}
   </li>
-    
+
 {% endblock %}
 
 {% block content %}
@@ -42,7 +42,7 @@
       {% if payment_form %}
         <button type="submit" name='go_back' class="btn btn-outline-primary">
           {% trans 'Go back' %}
-        </button>       
+        </button>
       {% endif %}
       {% if form.instance.pk %}
         {% block delete %}
@@ -60,7 +60,7 @@
       {% endif %}
       {% endbuttons %}
   </form>
-  
+
   {% if payment_form %}
   <script>
     document.getElementById('payment').scrollIntoView();

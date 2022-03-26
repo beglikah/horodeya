@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "index.html" %}
 {% load static %}
 {% load i18n %}
 {% load projects_tags %}
@@ -85,7 +85,7 @@
         <a href="{{ project.community.get_absolute_url }}">{{project.community}}</a>
       </small>
     </h2>{%if object.slack_channel is not None %}
-          <h5>Slack канал:{{object.slack_channel}}</h5>
+          <h5>{% trans "Slack chanel: " %}{{object.slack_channel}}</h5>
           {%endif%}
   </div>
 <div class="">
@@ -109,15 +109,15 @@
   <div class="body">
     <div class="col-md-6 text-nowrap">
       {% if project.location is not none %}
-      Местонахождение: {{ project.location }},
+      {% trans "Location: " %}{{ project.location }},
       {% endif %}
       <br/>
       {% if project.start_date is not none %}
-      Начална дата: {{ project.start_date }},
+      {% trans "Starting date: " %}{{ project.start_date }},
       {% endif %}
            <br/>
       {% if project.end_date is not none %}
-      Крайна дата: {{ project.end_date }}
+      {% trans "End date: " %}{{ project.end_date }}
       {% endif %}
 
     </div>

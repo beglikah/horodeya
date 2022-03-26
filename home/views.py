@@ -7,14 +7,6 @@ from stream_django.enrich import Enrich
 
 
 # Create your views here.
-
-
-# class UserUpdate(UpdateView):
-#     model = User
-#     fields = ['first_name', 'last_name']
-#     success_url = '/accounts/profile/'
-
-
 def home(request):
     return render(request, 'home/itec_home.html')
 
@@ -28,9 +20,7 @@ def account(request, pk=None):
     projectsSet = []
 
     for project in Project.objects.filter(verified_status='accepted'):
-        for community in account.communities.all():
-            if project.community_id == community.pk:
-                projectsSet.append(project)
+        projectsSet.append(project)
 
     account.projects = projectsSet
     return render(request, 'home/account.html', {'object': account})

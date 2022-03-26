@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "index.html" %}
 {% load i18n %}
 {% load static %}
 
@@ -79,6 +79,8 @@
   </div>
 </div>
 <div class="text-center"><a class="btn btn-primary" style="background-color:#4C145C; border-color:#4C145C; margin:20px"
-    href="/projects/create/cause">Създай Задруга</a>
+    href="/projects/create/cause">
+        {% trans "Create community"  %}
+    </a>
 </div>
 {% endblock %}

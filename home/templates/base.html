@@ -26,7 +26,7 @@
     {% if site_name %}{{ site_name }}{% endif %}
     {% endwith %}
     {% else %}
-    {% trans 'Horodeya' %}
+    {% trans 'Community' %}
     {% endif %}
 
     {% endblock %}
@@ -72,7 +72,7 @@
 
     <div class="collapse  navbar-collapse justify-content-md-center" id="navbarSupportedContent">
       <a class="nav-link align-self-start  d-none d-lg-block {% active начало %}" style="padding:0" href="/">
-        <img src="{% static 'media/logo-horodeya-main-04.png' %}"
+        <img src="{% static 'media/logo-community-main-04.png' %}"
           class="logo p-absolute align-top align-self-center float-left" style="max-height:70px">
       </a>
       <div class="justify-content center d-flex ml-auto">
@@ -83,7 +83,7 @@
           <li><a class="nav-link justify-content-end {% active задруги %}" href="/projects/feed">Известия</a></li>
           {%endif%}
 
-          <li><a class="nav-link  {% active задруги %}" href="/horodeya/задруги/">Задруги</a></li>
+          <li><a class="nav-link  {% active задруги %}" href="/community/задруги/">Задруги</a></li>
 
           {%if user.is_superuser%}
           <li><a class="nav-link " href="/projects/administration">Администрация</a></li>
@@ -98,12 +98,12 @@
           <li><a class="nav-link {% active задруги %}" href="/задруги/">{% trans 'Businesses' %}</a></li>
           {% endcomment %}
           <li><a class="nav-link {% active условия-за-задруги %}"
-              href="/horodeya/">Условия
+              href="/community/">Условия
               за Задруги</a></li>
               <li><a class="nav-link {% active често-задавани-въпроси/ %}"
-              href="/horodeya/">Въпроси</a></li>
+              href="/community/">Въпроси</a></li>
 
-          <li><a class="nav-link {% active за-нас %}" href="/horodeya/за-нас/">{% trans 'About us' %}</a></li>
+          <li><a class="nav-link {% active за-нас %}" href="/community/за-нас/">{% trans 'About us' %}</a></li>
 
           {% if user.is_authenticated %}
           <li><a class="nav-link {% active account %}" href="{% url 'my_account' %}">{% trans 'Account' %}</a></li>
@@ -178,7 +178,7 @@
         <div class="container">
           <div class="row">
             <div class="col-md-3 text-center">
-              <a href="/horodeya/научи-повече/" class="dark-links">
+              <a href="/community/научи-повече/" class="dark-links">
                 <img style="width:150px;" src="{% static 'media/learn-more.png' %}">
                 <h2 class="font-weight-lighter">Научи
                   повече</h2>
@@ -186,7 +186,7 @@
               </a>
             </div>
             <div class="col-md-3 text-center">
-                <a href="/horodeya/ела-в-slack/" class="dark-links">
+                <a href="/community/ела-в-slack/" class="dark-links">
                     <img style="width:150px;" src="{% static 'media/join-slack.png' %}">
                     <h2 class="font-weight-lighter">Ела в Slack</h2>
                     <div class="font-weight-lighter">Работна среда за Задруги</div>
@@ -200,8 +200,8 @@
               </a>
             </div>
             <div class="col-md-3 text-center">
-              <a href="/horodeya/за-нас/" class="dark-links">
-                <img style="width:150px;" src="{% static 'media/join-horodeya-development.png' %}">
+              <a href="/community/за-нас/" class="dark-links">
+                <img style="width:150px;" src="{% static 'media/join-community-development.png' %}">
                 <h2 class="font-weight-lighter">Присъедини се</h2>
                 <div class="font-weight-lighter">В развитието на Хородея</div>
               </a>
@@ -216,10 +216,10 @@
       <div class="row footer-background pt-2">
         <div class="col-md-4">
           <ul class="list-group list-group-flush">
-            <a class="list-group-item no-border" href="/horodeya/условия-за-ползване">Условия за работа с
+            <a class="list-group-item no-border" href="/community/условия-за-ползване">Условия за работа с
               платформата</a>
-            <a class="list-group-item no-border" href="/horodeya/политика-за-поверителност">Политика за поверителност</a>
-            <a class="list-group-item no-border" href="/horodeya/политика-за-бисквитки">Политика за бисквитки</a>
+            <a class="list-group-item no-border" href="/community/политика-за-поверителност">Политика за поверителност</a>
+            <a class="list-group-item no-border" href="/community/политика-за-бисквитки">Политика за бисквитки</a>
           </ul>
         </div>
         <div class="col-md-4">
@@ -234,7 +234,7 @@
           {% include 'projects/bugreport_form.html' %}
         </div>
         <div class="col-md-12 mt-5 mb-3">
-          <img class="float-left mx-3" style="width:55px" src="{% static 'media/horodeya-logo-footer.png' %}">
+          <img class="float-left mx-3" style="width:55px" src="{% static 'media/community-logo-footer.png' %}">
           <div class="float-left">
             <h6>Фондация „Беглика“</h6>
             <p>Фондация „Беглика“ Инициатор на проекта е Фондация „Беглика”. Фондацията стартира проекта,

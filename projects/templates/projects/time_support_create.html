@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "index.html" %}
 
 {% load i18n %}
 {% load bootstrap4 %}
@@ -42,7 +42,7 @@
       </div>
 
     {% else %}
-     <div readonly> {% bootstrap_field field  %}</div>  
+     <div readonly> {% bootstrap_field field  %}</div>
     {% endif %}
   {% endfor %}
    {% if update %}

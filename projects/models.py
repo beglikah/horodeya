@@ -1,37 +1,29 @@
-from django.utils import timezone
-import datetime
-
 from django.db import models
-from django.urls import reverse
-from django.utils.translation import get_language
-
-from django.core.validators import MaxValueValidator
-
 from django.contrib.auth.models import AbstractUser
 
-from model_utils import Choices
+from django.urls import reverse
 
 import rules
 from rules.contrib.models import RulesModelBase, RulesModelMixin
+from django.core.validators import MaxValueValidator
 
-from vote.models import VoteModel, UP, DOWN
-
-from stream_django.activity import Activity
-
-from requests.exceptions import ConnectionError
-
-from django.utils.translation import gettext, gettext_lazy as _
-
-from photologue.models import Photo, Gallery
+import datetime
+from django.utils import timezone
+from django.utils.translation import get_language, gettext, gettext_lazy as _
 
 from django_countries.fields import CountryField
+from stream_django.activity import Activity
+
+from model_utils import Choices
+from photologue.models import Photo, Gallery
+from vote.models import VoteModel, UP, DOWN
 
 
-def determine_community(object):
+def determine_project(object):
     if isinstance(object, Project):
-        return object.community
+        return object.project
     elif isinstance(object, Report) or isinstance(object, Support):
-        return object.project.community
+        return object.project.project
 
     return object
 
@@ -42,13 +34,13 @@ def is_site_admin(user, object):
 
 
 @rules.predicate
-def member_of_community(user, object):
-    return user.member_of(determine_community(object).id)
+def member_of_project(user, object):
+    return user.member_of(determine_project(object).id)
 
 
 @rules.predicate
-def admin_of_community(user, object):
-    return user == determine_community(object).admin
+def admin_of_project(user, object):
+    return user == determine_project(object).admin
 
 
 @rules.predicate
@@ -60,8 +52,8 @@ def myself(user, user2):
 
 
 @rules.predicate
-def has_a_community(user):
-    return user.communities.count() > 0
+def has_a_project(user):
+    return user.projects.count() > 0
 
 
 @rules.predicate
@@ -84,67 +76,38 @@ class Timestamped(RulesModelMixin, models.Model, metaclass=RulesModelBase):
         abstract = True
 
 
-COMMUNITY_ACTIVYTY_TYPES = [('Creativity', ' Проекти от областта на науката или изкуството, които развиват градивната енергия на индивида и неговата сила за себе реализация.'),
-                            ('Education', 'Проекти, стъпили на принципа на висшата справедливост и въплащение на благородни мисли и желания в живота на човека, при което интуитивните и творческите му способности достигат нови нива.'),
-                            ('Art', ' Проекти в областта на културата, които събуждат естественото ни чувство за споделяне и придават финес на взаимоотношенията в обществото.'),
-                            ('Administration', 'Проекти, свързани със системи за създаване и прилагане на правила за истинно и честно социално взаимодействие. Механизми за разрешаване на спорове.'),
-                            ('Willpower', 'Проекти, които развиват смелост, устрем, воля за победа, воля за индивидуална и колективна изява, като спорт и туризъм.'),
-                            ('Health', 'Проекти, които следват естествения ритъм на човешкия организъм и са мост между Висшия и конкретния ум.'),
-                            ('Food', 'Проекти развиващи това, което най-пряко влияе върху нашите бит и ежедневие, допринасят за оцеляването и изхранването на обществото.')]
-
-
-class Community(Timestamped):
-    class Meta:
-        rules_permissions = {
-            "add": rules.is_authenticated,
-            "delete": admin_of_community,
-            "change": admin_of_community,
-            "view": rules.is_authenticated,
-            "leave": member_of_community & ~admin_of_community
-        }
-
-    name = models.CharField(max_length=100, blank=False,
-                            verbose_name=_('Name'))
-    type = models.CharField(_('type'), max_length=50, default='НПО')
-    DDORegistration = models.BooleanField(_('DDORegistration'), default=False)
-    mission = models.TextField(_('mission'), default=None, null=True)
-    numberOfSupporters = models.IntegerField(
-        _('numberOfSupporters'), default=0)
-    previousExperience = models.TextField(_('previousExperience'), blank=True)
-    activityType = models.CharField(_('activityType'),
-                                    choices=COMMUNITY_ACTIVYTY_TYPES, max_length=50, default='Art')
-    website = models.CharField(_('website'), max_length=100, blank=True)
-    text = models.TextField(_('text'))
-    bulstat = models.DecimalField(_('bulstat'),
-                                  blank=True, null=True, max_digits=15, decimal_places=0)
-    email = models.EmailField(_('email'))
-    phone = models.DecimalField(_('phone'),
-                                null=True, max_digits=20, decimal_places=0)
-    admin = models.ForeignKey('User', on_delete=models.PROTECT)
-    bank_account_iban = models.CharField(blank=True, null=True, max_length=34)
-    bank_account_bank_code = models.CharField(
-        blank=True, null=True, max_length=34)
-    bank_account_name = models.CharField(blank=True, null=True, max_length=100)
-    bal = models.IntegerField(default=20, validators=[MaxValueValidator(100)])
-    photo = models.ForeignKey(
-        Photo, on_delete=models.SET_NULL, blank=True, null=True)
-    revolut_phone = models.DecimalField(
-        blank=True, null=True, max_digits=20, decimal_places=0)
-    facebook_page = models.CharField(
-        _('facebook_page'), max_length=100, null=True, blank=True)
-    slack_channel = models.CharField(
-        _('slack_channel'), max_length=100, null=True, blank=True)
-    privacy_policy = models.BooleanField(default=False)
-    platform_policy = models.BooleanField(default=False)
-
-    def page_name(self):
-        return "%s %s" % (gettext('Community'), self.name)
-
-    def __str__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse('projects:community_details', kwargs={'pk': self.pk})
+PROJECT_ACTIVYTY_TYPES = [
+    (
+        'Creativity',
+        '''Проекти от областта на науката или изкуството, които развиват
+        градивната енергия на индивида и неговата сила за себе реализация.'''
+    ), (
+        'Education',
+        '''Проекти, стъпили на принципа на висшата справедливост и въплащение
+        на благородни мисли и желания в живота на човека, при което
+        интуитивните и творческите му способности достигат нови нива.'''
+    ), (
+        'Art',
+        ''' Проекти в областта на културата, които събуждат естественото ни
+        чувство за споделяне и придават финес на взаимоотношенията
+        в обществото.'''
+    ), ('Administration',
+        ''' Проекти, свързани със системи за създаване и прилагане на правила
+        за истинно и честно социално взаимодействие. Механизми за разрешаване
+        на спорове.'''
+        ), ('Willpower',
+            '''Проекти, които развиват смелост, устрем, воля за победа, воля за
+        индивидуална и колективна изява, като спорт и туризъм.'''
+            ), (
+        'Health',
+        '''Проекти, които следват естествения ритъм на човешкия организъм и са
+        мост между Висшия и конкретния ум.'''
+    ), (
+        'Food',
+        '''Проекти развиващи това, което най-пряко влияе върху нашите бит и
+        ежедневие, допринасят за оцеляването и изхранването на обществото.'''
+    )
+]
 
 
 class User(AbstractUser, RulesModelMixin, metaclass=RulesModelBase):
@@ -156,7 +119,6 @@ class User(AbstractUser, RulesModelMixin, metaclass=RulesModelBase):
             "view": rules.is_authenticated,
         }
 
-    communities = models.ManyToManyField(Community)
     bal = models.IntegerField(default=20, validators=[MaxValueValidator(100)])
     photo = models.ForeignKey(Photo, on_delete=models.SET_NULL, null=True)
     donatorData = models.OneToOneField(
@@ -180,8 +142,8 @@ class User(AbstractUser, RulesModelMixin, metaclass=RulesModelBase):
     def get_absolute_url(self):
         return reverse('account', kwargs={'pk': self.pk})
 
-    def member_of(self, community_pk):
-        return self.communities.filter(pk=community_pk).exists()
+    def member_of(self, project_pk):
+        return self.communities.filter(pk=project_pk).exists()
 
     def total_support_count(self):
         return self.moneysupport_set.count() + self.timesupport_set.count()
@@ -224,8 +186,8 @@ class Project(Timestamped):
     class Meta:
         rules_permissions = {
             "add": rules.is_authenticated,
-            "delete": admin_of_community,
-            "change": member_of_community,
+            "delete": admin_of_project,
+            "change": member_of_project,
             "view": rules.always_allow,
             "follow": rules.is_authenticated
         }
@@ -238,21 +200,28 @@ class Project(Timestamped):
     goal = models.TextField(_('goal'), null=True)
     description = models.CharField(_('description'), max_length=300)
     text = models.TextField(_('text'), max_length=5000)
-    community = models.ForeignKey(Community, verbose_name=_(
-        'Community'), on_delete=models.CASCADE)
     start_date = models.DateField(_('start_date'), null=True, blank=False)
     end_date = models.DateField(_('end_date'), null=True, blank=False)
     end_date_tasks = models.DateField(
         _('end_date_tasks'), null=True, blank=False)
     gallery = models.ForeignKey(Gallery, on_delete=models.PROTECT, null=True)
-    report_period = models.CharField(_('report_period'),
-                                     choices=get_report_translated_choices(), max_length=50, default='weekly')
-    category = models.CharField(_('category'),
-                                choices=CATEGORY_TYPES, max_length=50, default='Education')
+    report_period = models.CharField(
+        _('report_period'),
+        choices=get_report_translated_choices(),
+        max_length=50, default='weekly'
+    )
+    category = models.CharField(
+        _('category'),
+        choices=CATEGORY_TYPES,
+        max_length=50, default='Education'
+    )
     slack_channel = models.CharField(
         _('slack_channel'), max_length=100, null=True, blank=True)
-    verified_status = models.CharField(_('verified_status'),
-                                       max_length=20, choices=get_verify_types_choices(), default=VERIFY_TYPES_CHOICES.review, null=True)
+    verified_status = models.CharField(
+        _('verified_status'),
+        max_length=20, choices=get_verify_types_choices(),
+        default=VERIFY_TYPES_CHOICES.review, null=True
+    )
 
     def latest_reports(self):
         show_reports = 3
@@ -266,7 +235,7 @@ class Project(Timestamped):
         return 'project-%d' % self.id
 
     def __str__(self):
-        return ' - '.join([self.community.name, self.name])
+        return ' - '.join([self.name])
 
     def get_absolute_url(self):
         return reverse('projects:details', kwargs={'pk': self.pk})
@@ -380,9 +349,9 @@ class Project(Timestamped):
 class Announcement(Timestamped, Activity):
     class Meta:
         rules_permissions = {
-            "add": member_of_community,
-            "delete": admin_of_community,
-            "change": member_of_community,
+            "add": member_of_project,
+            "delete": admin_of_project,
+            "change": member_of_project,
             "view": rules.is_authenticated,
         }
 
@@ -404,9 +373,9 @@ class Announcement(Timestamped, Activity):
 class Report(VoteModel, Timestamped, Activity):
     class Meta:
         rules_permissions = {
-            "add": member_of_community,
-            "delete": admin_of_community,
-            "change": member_of_community,
+            "add": member_of_project,
+            "delete": admin_of_project,
+            "change": member_of_project,
             "view": rules.is_authenticated,
         }
     name = models.CharField(max_length=50, verbose_name=_('Name'))
@@ -434,9 +403,9 @@ class Report(VoteModel, Timestamped, Activity):
 class TimeNecessity(Timestamped):
     class Meta:
         rules_permissions = {
-            "add": member_of_community,
-            "delete": member_of_community,
-            "change": member_of_community,
+            "add": member_of_project,
+            "delete": member_of_project,
+            "change": member_of_project,
             "view": rules.is_authenticated,
             "list": rules.is_authenticated,
         }
@@ -470,9 +439,9 @@ class TimeNecessity(Timestamped):
 class ThingNecessity(Timestamped):
     class Meta:
         rules_permissions = {
-            "add": member_of_community,
-            "delete": member_of_community,
-            "change": member_of_community,
+            "add": member_of_project,
+            "delete": member_of_project,
+            "change": member_of_project,
             "view": rules.is_authenticated,
             "list": rules.is_authenticated,
         }
@@ -506,7 +475,7 @@ class ThingNecessity(Timestamped):
                 thing_support = self.supports.create(
                     price=self.price,
                     project=self.project,
-                    user=self.project.community.admin,
+                    user=self.project.admin,
                     comment='Auto generated',
                     status=Support.STATUS.accepted,
                     status_since=timezone.now(),
@@ -576,11 +545,11 @@ class Support(Timestamped):
         rules_permissions = {
             "add": rules.is_authenticated,
             "delete": myself & ~is_accepted,
-            "change": (myself & ~is_accepted) | member_of_community,
-            "view": myself | member_of_community,
-            "accept": member_of_community,
-            "mark_delivered": member_of_community,
-            "list": member_of_community
+            "change": (myself & ~is_accepted) | member_of_project,
+            "view": myself | member_of_project,
+            "accept": member_of_project,
+            "mark_delivered": member_of_project,
+            "list": member_of_project
         }
 
         abstract = True
@@ -659,11 +628,11 @@ class MoneySupport(Support):
         rules_permissions = {
             "add": rules.is_authenticated,
             "delete": myself & ~is_accepted,
-            "change": (myself & ~is_accepted) | member_of_community,
-            "view": myself | member_of_community,
-            "accept": member_of_community,
-            "mark_delivered": member_of_community,
-            "list": member_of_community,
+            "change": (myself & ~is_accepted) | member_of_project,
+            "view": myself | member_of_project,
+            "accept": member_of_project,
+            "mark_delivered": member_of_project,
+            "list": member_of_project,
             "list-user": myself
         }
 
@@ -709,10 +678,10 @@ class ThingSupport(Support):
             "add": rules.is_authenticated,
             "delete": myself & ~is_accepted,
             "change": myself & ~is_accepted,
-            "view": myself | member_of_community,
-            "accept": member_of_community,
-            "mark_delivered": member_of_community,
-            "list": member_of_community,
+            "view": myself | member_of_project,
+            "accept": member_of_project,
+            "mark_delivered": member_of_project,
+            "list": member_of_project,
             "list-user": myself
         }
 
@@ -737,8 +706,8 @@ class Answer(Timestamped):
             "add": rules.is_authenticated,
             "delete": myself & ~is_accepted,
             "change": myself & ~is_accepted,
-            "view": myself | member_of_community,
-            "list": myself & member_of_community
+            "view": myself | member_of_project,
+            "list": myself & member_of_project
         }
         unique_together = ['project', 'question', 'user']
 
@@ -755,11 +724,11 @@ class TimeSupport(Support):
         rules_permissions = {
             "add": rules.is_authenticated,
             "delete": myself & ~is_accepted,
-            "change": (myself & ~is_accepted) | member_of_community,
-            "view": myself | member_of_community,
-            "accept": member_of_community,
-            "mark_delivered": member_of_community,
-            "list": member_of_community
+            "change": (myself & ~is_accepted) | member_of_project,
+            "view": myself | member_of_project,
+            "accept": member_of_project,
+            "mark_delivered": member_of_project,
+            "list": member_of_project
         }
         unique_together = ['necessity', 'user']
 
@@ -811,9 +780,9 @@ class QuestionPrototype(Timestamped):
 class Question(Timestamped):
     class Meta:
         rules_permissions = {
-            "add": member_of_community,
-            "delete": member_of_community,
-            "change": member_of_community,
+            "add": member_of_project,
+            "delete": member_of_project,
+            "change": member_of_project,
             "view": rules.always_allow,
             "list": rules.always_allow
         }

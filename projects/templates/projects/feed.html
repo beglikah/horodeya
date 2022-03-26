@@ -1,6 +1,6 @@
-{% extends 'base.html' %}
+{% extends 'index.html' %}
 {% load i18n %}
-{% load activity_tags %} 
+{% load activity_tags %}
 {% block breadcrumbs %}
 <li class="breadcrumb-item active" aria-current="page">Известия</li>
 {% endblock %}
@@ -15,6 +15,6 @@
         </div>
         {% empty %}
           <p class="text-center">{% trans 'Nothing happened recently' %}</p>
-        {% endfor %}  
+        {% endfor %}
 
  {%endblock%}

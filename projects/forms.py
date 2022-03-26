@@ -1,11 +1,95 @@
 from django import forms
 from django.utils.translation import gettext as _
 from django.utils.translation import get_language
-from projects.models import Answer, MoneySupport
 from django.utils.text import slugify
-from projects.templatetags.projects_tags import leva
-from projects.models import Project, Community, Question, BugReport, EpayMoneySupport, MoneySupport
 from django.core.exceptions import ValidationError
+
+from rules.contrib.views import AutoPermissionRequiredMixin
+
+from tempus_dominus.widgets import DateTimePicker, DatePicker
+
+import projects.models as _model
+from projects.templatetags.projects_tags import leva
+
+
+
+PROJECT_ACTIVYTY_TYPES = [('Creativity', 'Наука и творчество'),
+                            ('Education', 'Просвета и възпитание'),
+                            ('Art', 'Култура и артистичност'),
+                            ('Administration', 'Администрация и финанси'),
+                            ('Willpower', 'Спорт и туризъм'),
+                            ('Health', 'Бит и здравеопазване'),
+                            ('Food', 'Земеделие и изхранване')]
+
+
+class ProjectForm(forms.ModelForm):
+    class Meta:
+        model = _model.Project
+        fields = [
+            'name', 'category', 'location', 'description', 'goal',
+            'text', 'start_date', 'end_date', 'end_date_tasks', 'report_period'
+        ]
+        widgets = {
+            'end_date': DatePicker(
+                attrs={
+                    'required': True
+                },
+                options={
+                    'useCurrent': True,
+                    'collapse': False,
+                }
+            ),
+            'start_date': DatePicker(
+                attrs={
+                    'required': True
+                },
+                options={
+                    'useCurrent': True,
+                    'collapse': False,
+                }
+            ),
+            'end_date_tasks': DatePicker(
+                attrs={
+                    'required': True
+                },
+                options={
+                    'useCurrent': True,
+                    'collapse': True,
+                }
+            ),
+            'category': forms.RadioSelect(
+                attrs=None, choices=PROJECT_ACTIVYTY_TYPES
+            )
+        }
+        labels = {
+            'goal1': 'Goal 1 ',
+            'goal2': 'Goal 2',
+            'goal3': 'Goal 3',
+            'text': _('Text(5000 characters)')
+        }
+
+    def clean_end_date(self):
+        startDate = self.cleaned_data['start_date']
+        endDate = self.cleaned_data['end_date']
+        if endDate <= startDate:
+            raise forms.ValidationError(_(
+                'End date must be after  start date'), code='invalid')
+
+        return endDate
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        # self.fields['project'].queryset = user.projects
+
+
+class AnnouncementForm(forms.ModelForm):
+    class Meta:
+        model = _model.Announcement
+        fields = ['text']
+        widgets = {
+            'text': forms.Textarea(attrs={'rows': 2}),
+        }
 
 
 def question_key(question):
@@ -72,24 +156,24 @@ class PaymentForm(forms.Form):
     def __init__(self, *args, **kwargs):
         payment_method = kwargs.pop('payment_method')
         payment_amount = kwargs.pop('payment_amount')
-        community = kwargs.pop('community')
+        project = kwargs.pop('project')
         super(PaymentForm, self).__init__(*args, **kwargs)
 
         self.unsupported = False
 
         self.template = 'projects/payment/' + slugify(payment_method) + '.html'
-        self.payment_data = community
+        self.payment_data = project
         pledge_action_text = _('Pledge to donate') + ' ' + leva(payment_amount)
 
         if payment_method == MoneySupport.PAYMENT_METHODS.BankTransfer:
-            if not community.bank_account_iban:
+            if not project.bank_account_iban:
                 self.unsupported = True
 
             self.fields['accept'] = forms.BooleanField(label=_('I will send the money to the provided bank account within the next 3 days'),
                                                        disabled=self.unsupported, help_text=_("Otherwise the support will be marked invalid"))
             self.action_text = pledge_action_text
         elif payment_method == MoneySupport.PAYMENT_METHODS.Revolut:
-            if not community.revolut_phone:
+            if not project.revolut_phone:
                 self.unsupported = True
 
             self.fields['accept'] = forms.BooleanField(label=_('I will send the money to the provided Revolut account within the next 3 days'),
@@ -100,9 +184,34 @@ class PaymentForm(forms.Form):
             self.template = 'projects/payment/unsupported.html'
 
 
+class MoneySupportForm(forms.ModelForm):
+    class Meta:
+        model = _model.MoneySupport
+        fields = ['leva', 'necessity', 'comment',
+                  'payment_method']
+        widgets = {
+            'payment_method': forms.RadioSelect()
+        }
+
+    def __init__(self, *args, **kwargs):
+        if 'project' in kwargs:
+            project = kwargs.pop('project')
+        else:
+            project = None
+
+        super().__init__(*args, **kwargs)
+
+        if not project:
+            project = kwargs.get('instance').project
+
+        self.fields['necessity'].queryset = project.thingnecessity_set
+        self.fields['necessity'].empty_label = _('Any will do')
+
+
+
 class ProjectUpdateForm(forms.ModelForm):
     class Meta:
-        model = Project
+        model = _model.Project
         fields = ['slack_channel']
 
     def __init__(self, *args, **kwargs):
@@ -112,7 +221,7 @@ class ProjectUpdateForm(forms.ModelForm):
 
 class ProjectUpdateTextForm(forms.ModelForm):
     class Meta:
-        model = Project
+        model = _model.Project
         fields = ['text']
 
     def __init__(self, *args, **kwargs):
@@ -120,15 +229,161 @@ class ProjectUpdateTextForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
 
+class ReportForm(AutoPermissionRequiredMixin, forms.ModelForm):
+    class Meta:
+        model = _model.Report
+        fields = ['name', 'text', 'published_at']
+        widgets = {
+            'published_at': DateTimePicker(
+                options={
+                    'useCurrent': True,
+                    'collapse': False,
+                },
+            )
+        }
+
+
 class BugReportForm(forms.ModelForm):
 
     class Meta:
-        model = BugReport
+        model = _model.BugReport
         fields = ['email', 'message']
 
 
 class EpayMoneySupportForm(forms.ModelForm):
 
     class Meta:
-        model = MoneySupport
+        model = _model.MoneySupport
         fields = ['leva', 'supportType']
+
+
+class TimeSupportForm(AutoPermissionRequiredMixin, forms.ModelForm):
+    class Meta:
+        model = _model.TimeSupport
+        fields = ['comment']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+TimeNecessityFormset = forms.inlineformset_factory(
+    _model.Project,
+    _model.TimeNecessity,
+    fields=['name', 'description', 'count', 'price', 'start_date', 'end_date'],
+    widgets={
+        'count': forms.TextInput({
+            'style': 'width: 60px'
+        }
+        ),
+        'price': forms.TextInput({
+            'style': 'width: 60px'
+        }
+        ),
+        'description': forms.Textarea({
+            'rows': 1,
+            'cols': 30
+        }
+        ),
+        'start_date': DatePicker(
+            attrs={
+                'style': 'width:120px',
+                'required': True
+            },
+            options={
+                'useCurrent': True,
+                'collapse': False,
+            },
+        ),
+        'end_date': DatePicker(
+            attrs={
+                'style': 'width:120px',
+                'required': True
+            },
+            options={
+                'useCurrent': True,
+                'collapse': False,
+            },
+        )
+    },
+    extra=0)
+
+TimeNecessityFormsetWithRow = forms.inlineformset_factory(
+    _model.Project,
+    _model.TimeNecessity,
+    fields=['name', 'description', 'count', 'price', 'start_date', 'end_date'],
+    widgets={
+        'count': forms.TextInput({
+            'style': 'width: 60px'
+        }
+        ),
+        'price': forms.TextInput({
+            'style': 'width: 60px'
+        }
+        ),
+        'description': forms.Textarea({
+            'rows': 1,
+            'cols': 30
+        }
+        ),
+        'start_date': DatePicker(
+            attrs={
+                'style': 'width:120px',
+                'required': True
+            },
+            options={
+                'useCurrent': True,
+                'collapse': False,
+            },
+        ),
+        'end_date': DatePicker(
+            attrs={
+                'style': 'width:120px',
+                'required': True
+            },
+            options={
+                'useCurrent': True,
+                'collapse': False,
+            },
+        )
+    },
+    extra=1)
+
+ThingNecessityFormset = forms.inlineformset_factory(
+    _model.Project,
+    _model.ThingNecessity,
+    fields=['name', 'description', 'count', 'price'],
+    widgets={
+        'count': forms.TextInput({
+            'style': 'width: 60px'
+        }
+        ),
+        'price': forms.TextInput({
+            'style': 'width: 60px'
+        }
+        ),
+        'description': forms.Textarea({
+            'rows': 1,
+        }
+        ),
+    },
+    extra=0)
+
+ThingNecessityFormsetWithRow = forms.inlineformset_factory(
+    _model.Project,
+    _model.ThingNecessity,
+    fields=['name', 'description', 'count', 'price'],
+    widgets={
+        'count': forms.TextInput({
+            'style': 'width: 60px'
+        }
+        ),
+        'price': forms.TextInput({
+            'style': 'width: 60px'
+        }
+        ),
+        'description': forms.Textarea({
+            'rows': 1,
+        }
+        ),
+    },
+    extra=1)

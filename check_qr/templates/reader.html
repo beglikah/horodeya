@@ -1,13 +1,13 @@
-{% extends "base.html" %}
+{% extends "index.html" %}
 
 {% block content %}
   <div id="app">
     <p>
-      Резултат: <span :style="resultStyle">{( result )}</span>
+      Result: <span :style="resultStyle">{( result )}</span>
       <pre>{( requestResult )}</pre>
     </p>
     <p>
-      QR Стойност: <b>{( decodedContent )}</b>
+      QR Value: <b>{( decodedContent )}</b>
     </p>
     <p class="error">
       {( errorMessage )}
@@ -24,7 +24,7 @@
       delimiters: ['{(', ')}'],
       data() {
         return {
-          result: 'Сканирай код',
+          result: 'Scan QR code',
           resultStyle: '',
           requestResult: '',
           decodedContent: '',

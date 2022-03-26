@@ -1,12 +1,13 @@
-{% extends 'base.html' %} 
-{% load notifications_tags %} 
+{% extends 'index.html' %}
+{% load i18n %}
+{% load notifications_tags %}
 {% block content %}
 
-<a href="/projects/notifications">Непрочетени известия:{% notifications_unread %}</a>
-<a href="/projects/notifications_read">Прочетени известия</a>
+<a href="/projects/notifications">{% trans "Uread Notifications: " %}{% notifications_unread %}</a>
+<a href="/projects/notifications_read">{% trans "Read Notifications: " %}</a>
 
 {%for notf in notifications%}
 <h6>{{notf.verb}}</h6>
-{%endfor%} 
+{%endfor%}
 
 {% endblock content %}

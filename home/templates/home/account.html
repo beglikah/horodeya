@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "index.html" %}
 
 {% load account %}
 {% load i18n %}
@@ -15,10 +15,10 @@
   <a class="nav-link text-white" href="{% url 'user_update' object.pk %}">Редактирай</a>
 </li> {% endcomment %}
 <li class="nav-item">
-  <a class="nav-link text-white" href="{% url 'account_email' %}">Промени е-поща</a>
+  <a class="nav-link text-white" href="{% url 'account_email' %}">{% trans "Update email" %}</a>
 </li>
 <li class="nav-item">
-  <a class="nav-link text-white" href="{% url 'account_change_password'  %}">Промени парола</a>
+  <a class="nav-link text-white" href="{% url 'account_change_password'  %}">{% trans "Update password" %}</a>
 </li>
 
 {% endblock %}
@@ -45,25 +45,14 @@
       <ul class="list-group list-group-flush">
         {%comment%}<li class="list-group-item"> {% trans "Rating" %}: {{ object.bal }}</li>{%endcomment%}
         <li class="list-group-item">
-          {% trans "Communities" %}:
-          {% for community in object.communities.all %}
-          <a class="" href="{% url 'projects:community_details' community.pk %}">{{ community }}</a>
-          {% if not forloop.last %}
-          |
-          {% endif %}
-          {% empty %}
-          Няма юридическо лице
-          {% endfor %}
-        </li>
-        <li class="list-group-item">
-          {% trans "Causes" %}:
-          {% for project in object.projects %}
+          {% trans "Projects" %}:
+          {% for project in object.projects.all %}
           <a class="" href="{% url 'projects:details' project.pk %}">{{ project }}</a>
           {% if not forloop.last %}
           |
           {% endif %}
           {% empty %}
-          Няма задруги
+          {% trans "There no projects yet!" %}
           {% endfor %}
         </li>
         <li class="list-group-item">
