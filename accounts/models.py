@@ -91,6 +91,8 @@ class User(AbstractBaseUser, RulesModelMixin, metaclass=RulesModelBase):
             'Unselect this instead of deleting accounts.'
         ),
     )
+    is_administrator = models.BooleanField(default=False)
+    is_member = models.BooleanField(default=False)
     privacy_policy = models.BooleanField(default=False)
     platform_policy = models.BooleanField(default=False)
 
