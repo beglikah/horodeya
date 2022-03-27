@@ -14,13 +14,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.conf import settings
 
 from home import views as home_views
 
 import notifications.urls
 from django.conf.urls import url
+
+from wagtail.admin import urls as wagtailadmin_urls
+from wagtail.documents import urls as wagtaildocs_urls
+# from wagtail.core import urls as wagtail_urls
+
 
 urlpatterns = [
     path('accounts/profile/notifications',
@@ -35,12 +40,19 @@ urlpatterns = [
     path('qr_code/', include('qr_code.urls', namespace="qr_code")),
     path('check-qr/', include('check_qr.urls')),
     path('admin/', admin.site.urls),
-    path('community/', include('community.urls')),
+    # path('community/', include('community.urls')),
     # path(
     #     'accounts/profile/update/<int:pk>',
     #     home_views.UserUpdate.as_view(),
     #     name='user_update'
     # ),
+    re_path(
+        r'^photologue/', include('photologue.urls', namespace='photologue')
+    ),
+    re_path(r'^cms/', include(wagtailadmin_urls)),
+    re_path(r'^documents/', include(wagtaildocs_urls)),
+    # re_path(r'', include(wagtail_urls)),
+
     url('^inbox/notifications/',
         include(notifications.urls, namespace='notifications')),
 ]
