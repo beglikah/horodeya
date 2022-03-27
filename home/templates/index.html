@@ -4,6 +4,7 @@
 {% load notifications_tags %}
 
 
+
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
@@ -57,6 +58,7 @@
 
 {% load custom_tags %}
 
+{% load wagtailcore_tags %}
 
 <body>
   <nav class="navbar d-flex  navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
@@ -173,7 +175,7 @@
         <div class="container">
           <div class="row">
             <div class="col-md-3 text-center">
-              <a href="">
+              <a href="/projects/">
                 <img style="width:150px;" src="{% static 'media/new-learn-more.png' %}">
                 <h2 class="font-weight-lighter" style="color:#7ee6cf;">Learn more</h2>
                 <div class="font-weight-lighter" style="color:#7ee6cf;"></div>
@@ -189,7 +191,7 @@
             <div class="col-md-3 text-center">
               <a href="">
                 <img style="width:150px;" src="{% static 'media/new-join-communities.png' %}">
-                <h2 class="font-weight-lighter" style="color:#7ee6cf;">Communities</h2>
+                <h2 class="font-weight-lighter" style="color:#7ee6cf;">Projects</h2>
                 <div class="font-weight-lighter"></div>
               </a>
             </div>
@@ -210,13 +212,13 @@
       <div class="row footer-background pt-2">
         <div class="col-md-4">
           <ul class="list-group list-group-flush">
-            <a class="list-group-item no-border" href="/community/условия-за-ползване">
+            <a class="list-group-item no-border" href="/terms/условия-за-ползване">
             Terms of Use
             </a>
-            <a class="list-group-item no-border" href="/community/политика-за-поверителност">
+            <a class="list-group-item no-border" href="/terms/политика-за-поверителност">
                 Privacy Policy
             </a>
-            <a class="list-group-item no-border" href="/community/политика-за-бисквитки">
+            <a class="list-group-item no-border" href="/terms/политика-за-бисквитки">
                 Cookie Policy
             </a>
           </ul>

@@ -48,7 +48,7 @@ class HomePage(Page):
         # enricher = Enrich()
         # timeline = enricher.enrich_activities(feed.get(limit=25)['results'])
 
-        return render(request, 'home/home_page.html', {
+        return render(request, 'home/itec_home.html', {
             'page': self,
             # 'timeline': timeline,
         })
