@@ -94,7 +94,7 @@ INSTALLED_APPS = [
     'modelcluster',
     'taggit',
 
-    'debug_toolbar',
+    # 'debug_toolbar',
     'vote',
 
     'photologue',
@@ -104,7 +104,6 @@ INSTALLED_APPS = [
     'notifications',
     'qr_code',
     'check_qr',
-    'community',
 ]
 
 
