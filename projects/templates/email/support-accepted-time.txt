@@ -1,15 +1,15 @@
-Здравейте!
+Hello!
 
-Вашата заявка за вложение на труд в Задруга {{ project_name }} е одобрена.
+Your application for employment in the Project {{project_name}} has been approved.
 
-Свържете се със Задругата за уточняване на дейностите ви. Благодарим Ви за подкрепата!
+Contact the Project administrators to clarify your activities. Thank you for your support!
 
-Следвайте Задругите в Хородея, за да получавате известия и отчети на дейността им.
+Follow the Projects in ITEC to receive notifications and reports on their activities.
 
-Това е автоматично генериран имейл. Моля, не отговаряйте на това съобщение!
+This is an automatically generated email. Please do not reply to this message!
 
-Трансформираме начина, по който заедно работим, творим, доброволстваме, правим бизнес и допринасяме за обществото.
+We are transforming the way we work together, create, volunteer, do business and contribute to society.
 
-Фондация "Хородея"
+ITEC Foundation
 
-https://horodeya.com/
+https://itec.foundation/

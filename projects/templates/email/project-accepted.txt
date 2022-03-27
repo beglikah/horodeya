@@ -1,17 +1,17 @@
-Здравейте!
+Hello!
 
-Вашата Задруга {{ project_name }} е публикувана и може да започне да набира участници и средства.
+Your Project {project_name} has been published and can start raising participants and funds.
 
-1. Следете съобщенията си в Хородея редовно.
+1. Follow your messages in ITEC regularly!
 
-2. Администрирайте получените заявки за доброволен труд.
+2. Administer the received requests for voluntary work!
 
-3. Не пропускайте да давате редовни отчети и известия за дейността си.
+3. Be sure to provide regular reports and announcements about your activities!
 
-Това е автоматично генериран имейл. Моля, не отговаряйте на това съобщение!
+This is an automatically generated email. Please do not reply to this message!
 
-Трансформираме начина, по който заедно работим, творим, доброволстваме, правим бизнес и допринасяме за обществото.
+We are transforming the way we work together, create, volunteer, do business and contribute to society.
 
-Фондация "Хородея"
+ITEC Foundation
 
-https://horodeya.com/
+https://itec.foundation/

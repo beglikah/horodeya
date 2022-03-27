@@ -59,11 +59,14 @@
         <p>
         Monitor the activities of the projects you support through regular reports.
         </p>
+        {% for project in projects %}
+            <h5 class="card-title">{{ project.name }}</h5>
+        {% endfor %}
     </div>
 </div>
 
 <div class="mt-4">
-  {% for project in items %}
+  {% for project in projects %}
   <div class="card mb-3 mx-auto" style="max-width: 980;">
     <div class="row no-gutters">
       <div class="col-md-2">
@@ -75,11 +78,11 @@
         <img src="{% static 'media/community-icon.png' %}" class="card-img">
         {% endif %}
       </div>
-      <div class="col-md-6">
+      <div class="cold-6">
         <div class="card-body">
           <h5 class="card-title">{{ project.name }}
             <small class="text-muted">
-              {{project.community}}
+              {{project}}
             </small>
           </h5>
           <p class="card-text">{{ project.description }}</p>

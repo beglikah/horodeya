@@ -1,13 +1,13 @@
-Здравейте!
+Hello!
 
-Вашата Задруга {{ project_name }} е отхвърлена поради несъвместимост с Етичния Кодекс и Оценителната система на Хородея.
+Your Project {project_name} has been rejected due to incompatibility with the Code of Ethics and the ITEC Evaluation System.
 
-Ще се радваме да получим нова заявка за Задруга.
+We will be happy to receive a new application for a Project.
 
-Това е автоматично генериран имейл. Моля, не отговаряйте на това съобщение!
+This is an automatically generated email. Please do not reply to this message!
 
-Трансформираме начина, по който заедно работим, творим, доброволстваме, правим бизнес и допринасяме за обществото.
+We are transforming the way we work together, create, volunteer, do business and contribute to society.
 
-Фондация "Хородея"
+ITEC Foundation
 
-https://horodeya.com/
+https://itec.foundation/

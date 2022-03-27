@@ -5,10 +5,10 @@
   <div class="card-header bg-transparent border-bottom-0">
     <div class="media">
       <img style="width: 100px" class="mr-3" src="{% static 'media/community-icon.png' %}">
-      {% with community=activity.actor.community %}
+      {% with project=activity.actor.project %}
       <div class="media-body">
         <div>
-          <a href="{{ community.get_absolute_url }}">{{ community }}</a>
+          <a href="{{ project.get_absolute_url }}">{{ project }}</a>
           {% trans "published new report for" %}
           <a href="{{activity.actor.get_absolute_url }}">{{ activity.actor }}</a>
         </div>
