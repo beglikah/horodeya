@@ -1,6 +1,5 @@
 {% extends "index.html" %}
 
-{% load account %}
 {% load i18n %}
 {% load static %}
 
@@ -9,7 +8,7 @@
 {% endblock %}
 
 {% block admin_tools %}
-<a class="nav-link text-white" href="{% url 'projects:user_photo_update' user.id %}">{% trans "Update photo" %}</a>
+<a class="nav-link text-white" href="">{% trans "Update photo" %}</a>
 
 {% comment %} <li class="nav-item">
   <a class="nav-link text-white" href="{% url 'user_update' object.pk %}">Редактирай</a>
@@ -35,7 +34,7 @@
       {% if object.photo %}
       <img class="card-img" src="{{ object.photo.get_profile_url }}" alt="{{user.first_name}}"></img>
       {% else %}
-      <a href="{% url 'projects:user_photo_update' user.id %}">{% trans "Add photo" %}</a>
+      <a href="">{% trans "Add photo" %}</a>
       {% endif %}
     </div>
     <div class="col-md-8">

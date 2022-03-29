@@ -14,7 +14,7 @@ mark_safe_lazy = lazy(mark_safe)
 
 class NamesSignupForm(SignupForm):
 
-    field_order = ['first_name', 'second_name', 'last_name',
+    field_order = ['first_name', 'last_name',
                    'birthdate', 'email', 'password1', 'privacy_policy', 'platform_policy']
 
     # TODO add validators - no space allowed
@@ -46,7 +46,6 @@ class NamesSignupForm(SignupForm):
 
         user.first_name = request.POST['first_name']
         user.last_name = request.POST['last_name']
-        user.second_name = request.POST['second_name']
         user.birthdate = request.POST['birthdate']
         user.privacy_policy = True
         user.platform_policy = True

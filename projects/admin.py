@@ -1,13 +1,13 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import Project, User, MoneySupport, TimeSupport, ThingSupport, Announcement, QuestionPrototype, Question, Answer, Report, DonatorData, LegalEntityDonatorData, BugReport, EpayMoneySupport, TimeNecessity, ThingNecessity, TicketQR
+from .models import Project, User, MoneySupport, TimeSupport, ThingSupport, Announcement, QuestionPrototype, Question, Answer, Report,  BugReport, EpayMoneySupport, TimeNecessity, ThingNecessity, TicketQR
+from accounts.models import DonatorData, LegalEntityDonatorData
 from vote.models import Vote
 
 # Register your models here.
 
 admin.site.register(Project)
-admin.site.register(User, UserAdmin)
 admin.site.register(Vote)
 admin.site.register(MoneySupport)
 admin.site.register(TimeSupport)

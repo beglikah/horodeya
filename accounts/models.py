@@ -12,11 +12,19 @@ from django.core.validators import MaxValueValidator
 from django.utils import timezone
 from django.utils.translation import gettext, gettext_lazy as _
 
-from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import BaseUserManager
+# from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import BaseUserManager, AbstractUser
+
+from django_countries.fields import CountryField
 
 from photologue.models import Photo
 from vote.models import UP, DOWN
+# from projects.models import Report
+
+
+@rules.predicate
+def has_a_project(user):
+    return user.projects.count() > 0
 
 
 class UserManager(BaseUserManager):
@@ -55,7 +63,7 @@ def myself(user, user2):
     return user == user2.user
 
 
-class User(AbstractBaseUser, RulesModelMixin, metaclass=RulesModelBase):
+class User(AbstractUser, RulesModelMixin, metaclass=RulesModelBase):
     email = models.EmailField(
         'email address',
         unique=True,
@@ -119,7 +127,7 @@ class User(AbstractBaseUser, RulesModelMixin, metaclass=RulesModelBase):
         return '%s %s' % (self.first_name, self.last_name)
 
     def get_absolute_url(self):
-        return reverse('account', kwargs={'pk': self.pk})
+        return reverse('accounts', kwargs={'pk': self.pk})
 
     def get_full_name(self):
         full_name = '%s %s' % (self.first_name, self.last_name)
@@ -134,8 +142,8 @@ class User(AbstractBaseUser, RulesModelMixin, metaclass=RulesModelBase):
     def total_support_count(self):
         return self.moneysupport_set.count() + self.timesupport_set.count()
 
-    def total_votes_count(self):
-        return len(Report.votes.all(self.pk, UP)) + len(Report.votes.all(self.pk, DOWN))
+    # def total_votes_count(self):
+        # return len(Report.votes.all(self.pk, UP)) + len(Report.votes.all(self.pk, DOWN))
 
     def administrator_of(self, project_pk):
         return self.projects.filter(pk=project_pk).exists()
@@ -161,3 +169,74 @@ class SoftDeleteModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+class Timestamped(RulesModelMixin, models.Model, metaclass=RulesModelBase):
+
+    created_at = models.DateTimeField(editable=False)
+    updated_at = models.DateTimeField(editable=False)
+
+    def save(self, *args, **kwargs):
+        if not self.created_at:
+            self.created_at = timezone.now()
+
+        self.updated_at = timezone.now()
+        return super(Timestamped, self).save(*args, **kwargs)
+
+    class Meta:
+        abstract = True
+
+
+class DonatorData(Timestamped):
+
+    class Meta:
+        rules_permissions = {
+            "add": rules.is_authenticated,
+            "delete": rules.always_deny,
+            "change": myself,
+            "view": rules.is_authenticated
+        }
+
+    phone = models.CharField(_('phone'), max_length=20, blank=False)
+    citizenship = CountryField(_('citizenship'), max_length=30, blank=False)
+    postAddress = models.CharField(
+        _('postAdress'), max_length=200, blank=False)
+    TIN = models.CharField(_('TIN'), max_length=10,
+                           blank=False, default=None, null=True)
+
+
+class LegalEntityDonatorData(Timestamped):
+    class Meta:
+        rules_permissions = {
+            "add": rules.is_authenticated,
+            "delete": rules.always_deny,
+            "change": myself,
+            "view": rules.is_authenticated,
+        }
+
+    name = models.CharField(_('name'), max_length=50, blank=False)
+    type = models.CharField(_('type'), max_length=50, blank=False)
+    headquarters = CountryField(
+        _('headquarters'), max_length=30, blank=False, null=True)
+    EIK = models.CharField(_('EIK'), max_length=50, blank=False)
+    DDORegistration = models.BooleanField(_('DDORegistration'))
+    phoneNumber = models.CharField(
+        _('phoneNumber'), max_length=30, blank=False)
+    postAddress = models.CharField(
+        _('postAdress'), max_length=200, blank=False)
+    TIN = models.CharField(_('TIN'), max_length=10,
+                           blank=False, default=None, null=True)
+    website = models.CharField(_('website'), blank=True, max_length=100)
+
+
+class AuthorAdmin(Timestamped):
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
+
+    # additional fields
+    activation_key = models.CharField(max_length=255, default=1)
+    email_validated = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.get_full_name()
+
+

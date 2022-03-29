@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'bootstrap4',
     'projects.apps.ProjectsConfig',
     'home.apps.HomeConfig',
+    'accounts.apps.AccountsConfig',
 
     'anymail',
 
@@ -229,17 +230,7 @@ ACCOUNT_USERNAME_REQUIRED = False
 
 ACCOUNT_FORMS = {'signup': 'home.forms.NamesSignupForm'}
 
-# EMAIL_BACKEND = "anymail.backends.amazon_ses.EmailBackend"
-EMAIL_BACKEND = "anymail.backends.sendgrid.EmailBackend"
-DEFAULT_FROM_EMAIL = "info@horodeya.com"
-SERVER_EMAIL = "ops@horodeya.com"
-
-ANYMAIL = {
-    # 'WEBHOOK_SECRET': os.getenv('ANYMAIL_WEBHOOK_SECRET'),
-    'SENDGRID_API_KEY': os.getenv('SENDGRID_API_KEY'),
-}
-
-AUTH_USER_MODEL = 'projects.User'
+AUTH_USER_MODEL = 'accounts.User'
 
 LANGUAGE_CODE = 'bg-bg'
 
@@ -291,3 +282,22 @@ MEDIA_URL = '/media/'
 
 
 BOOTSTRAP4['required_css_class'] = 'required'
+
+
+# EMAIL_BACKEND = "anymail.backends.amazon_ses.EmailBackend"
+EMAIL_BACKEND = "anymail.backends.sendgrid.EmailBackend"
+DEFAULT_FROM_EMAIL = "info@horodeya.com"
+SERVER_EMAIL = "ops@horodeya.com"
+
+ANYMAIL = {
+    # 'WEBHOOK_SECRET': os.getenv('ANYMAIL_WEBHOOK_SECRET'),
+    'SENDGRID_API_KEY': os.getenv('SENDGRID_API_KEY'),
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')

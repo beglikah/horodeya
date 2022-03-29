@@ -39,6 +39,7 @@ import projects.forms as _form
 from vote.models import UP, DOWN
 
 from photologue.models import Photo, Gallery
+from accounts.models import User, DonatorData, LegalEntityDonatorData
 
 from dal import autocomplete
 
@@ -188,17 +189,17 @@ class ProjectCreate(AutoPermissionRequiredMixin, UserPassesTestMixin, CreateView
 
     def form_valid(self, form):
         user = self.request.user
+        self.author_admin = self.request.user
         project = form.instance
 
-        project.type = self.kwargs['type']
 
         # Потребител 0 следва всички проекти
         user_follow_project(0, project)
 
-        horodeya_admins = _model.User.objects.filter(is_superuser=True)
+        itec_admins = _model.User.objects.filter(is_superuser=True)
         notification_text = '%s подаде заявка за проектa %s ' % (
             user, project)
-        notify.send(self.request.user, recipient=horodeya_admins,
+        notify.send(self.request.user, recipient=itec_admins,
                     verb=notification_text)
         return super().form_valid(form)
 
@@ -980,9 +981,9 @@ def gallery_update(request, project_id):
     })
 
 
-@permission_required('projects.change_user', fn=objectgetter(_model.User, 'user_id'))
+@permission_required('projects.change_user', fn=objectgetter(User, 'user_id'))
 def user_photo_update(request, user_id):
-    user = get_object_or_404(_model.User, pk=user_id)
+    user = get_object_or_404(User, pk=user_id)
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -1089,7 +1090,7 @@ def questions_update(request, project_id):
 
 
 class DonatorDataCreate(AutoPermissionRequiredMixin, CreateView):
-    model = _model.DonatorData
+    model = DonatorData
     fields = ['phone', 'citizenship', 'postAddress',
               'TIN']
     redirectUrl = ''
@@ -1113,7 +1114,7 @@ class DonatorDataCreate(AutoPermissionRequiredMixin, CreateView):
 
 
 class LegalEntityDataCreate(AutoPermissionRequiredMixin, CreateView):
-    model = _model.LegalEntityDonatorData
+    model = LegalEntityDonatorData
     fields = ['name', 'type', 'headquarters', 'EIK', 'postAddress', 'TIN',
               'DDORegistration', 'phoneNumber', 'website']
 
@@ -1181,7 +1182,7 @@ class ProjectVerify(AutoPermissionRequiredMixin, UserPassesTestMixin, UpdateView
 
     def form_valid(self, form):
         project = form.save(commit=False)
-        project_members = _model.User.objects.filter(is_active=True)
+        project_members = User.objects.filter(is_active=True)
 
         ctx = {
             'project_name': project.name

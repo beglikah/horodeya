@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from projects.models import User
+from accounts.models import User
 from projects.models import Project
 
 from stream_django.feed_manager import feed_manager

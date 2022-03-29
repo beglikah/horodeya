@@ -23,6 +23,7 @@ PROJECT_ACTIVYTY_TYPES = [('Creativity', 'Наука и творчество'),
 
 
 class ProjectForm(forms.ModelForm):
+
     class Meta:
         model = _model.Project
         fields = [

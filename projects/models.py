@@ -1,22 +1,18 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
-
 from django.urls import reverse
 
 import rules
-from rules.contrib.models import RulesModelBase, RulesModelMixin
-from django.core.validators import MaxValueValidator
 
 import datetime
 from django.utils import timezone
 from django.utils.translation import get_language, gettext, gettext_lazy as _
 
-from django_countries.fields import CountryField
 from stream_django.activity import Activity
 
 from model_utils import Choices
-from photologue.models import Photo, Gallery
-from vote.models import VoteModel, UP, DOWN
+from photologue.models import Gallery
+from vote.models import VoteModel
+from accounts.models import User, Timestamped, AuthorAdmin
 
 
 def determine_project(object):
@@ -61,21 +57,6 @@ def is_accepted(user, support):
     return support.status == support.STATUS.accepted
 
 
-class Timestamped(RulesModelMixin, models.Model, metaclass=RulesModelBase):
-    created_at = models.DateTimeField(editable=False)
-    updated_at = models.DateTimeField(editable=False)
-
-    def save(self, *args, **kwargs):
-        if not self.created_at:
-            self.created_at = timezone.now()
-
-        self.updated_at = timezone.now()
-        return super(Timestamped, self).save(*args, **kwargs)
-
-    class Meta:
-        abstract = True
-
-
 PROJECT_ACTIVYTY_TYPES = [
     (
         'Creativity',
@@ -109,47 +90,6 @@ PROJECT_ACTIVYTY_TYPES = [
     )
 ]
 
-
-class User(AbstractUser, RulesModelMixin, metaclass=RulesModelBase):
-    class Meta:
-        rules_permissions = {
-            "add": rules.always_allow,
-            "delete": rules.always_deny,
-            "change": myself,
-            "view": rules.is_authenticated,
-        }
-
-    bal = models.IntegerField(default=20, validators=[MaxValueValidator(100)])
-    photo = models.ForeignKey(Photo, on_delete=models.SET_NULL, null=True)
-    donatorData = models.OneToOneField(
-        'DonatorData', on_delete=models.PROTECT, null=True)
-    legalEntityDonatorData = models.OneToOneField(
-        'LegalEntityDonatorData', on_delete=models.PROTECT, null=True)
-    second_name = models.CharField(_('second_name'), max_length=30, blank=True)
-    slack_channel = models.CharField(
-        _('slack_channel'), max_length=100, null=True, blank=True)
-    birthdate = models.DateField(
-        _('birthdate'), blank=False, null=True)
-    privacy_policy = models.BooleanField(default=False)
-    platform_policy = models.BooleanField(default=False)
-
-    def page_name(self):
-        return "%s %s" % (gettext('User'), str(self))
-
-    def __str__(self):
-        return '%s %s' % (self.first_name, self.last_name)
-
-    def get_absolute_url(self):
-        return reverse('account', kwargs={'pk': self.pk})
-
-    def member_of(self, project_pk):
-        return self.communities.filter(pk=project_pk).exists()
-
-    def total_support_count(self):
-        return self.moneysupport_set.count() + self.timesupport_set.count()
-
-    def total_votes_count(self):
-        return len(Report.votes.all(self.pk, UP)) + len(Report.votes.all(self.pk, DOWN))
 
 # TODO notify user on new project added
 
@@ -192,9 +132,6 @@ class Project(Timestamped):
             "follow": rules.is_authenticated
         }
 
-    TYPES = Choices('business', 'cause')
-
-    type = models.CharField(max_length=20, choices=TYPES)
     name = models.CharField(_('Name'), max_length=50)
     location = models.CharField(_('location'), max_length=30, null=True)
     goal = models.TextField(_('goal'), null=True)
@@ -222,14 +159,13 @@ class Project(Timestamped):
         max_length=20, choices=get_verify_types_choices(),
         default=VERIFY_TYPES_CHOICES.review, null=True
     )
+    author_admin = models.ForeignKey(AuthorAdmin, on_delete=models.PROTECT, null=True)
+
 
     def latest_reports(self):
         show_reports = 3
         ordered = self.report_set.order_by('-published_at')
         return ordered[:show_reports], ordered.count() - show_reports
-
-    def page_name(self):
-        return "%s %s" % (gettext('Cause') if self.type == 'cause' else gettext('Business'), self.name)
 
     def key(self):
         return 'project-%d' % self.id
@@ -714,7 +650,7 @@ class Answer(Timestamped):
     project = models.ForeignKey('Project', on_delete=models.CASCADE)
     question = models.ForeignKey('Question', on_delete=models.CASCADE)
     answer = models.TextField(_('answer'), null=False, blank=True)
-    user = models.ForeignKey('User', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 # TODO notify in feed
 
@@ -799,48 +735,6 @@ class Question(Timestamped):
 
     def text(self):
         return getattr(self.prototype, 'text_%s' % get_language())
-
-
-class DonatorData(Timestamped):
-
-    class Meta:
-        rules_permissions = {
-            "add": rules.is_authenticated,
-            "delete": rules.always_deny,
-            "change": myself,
-            "view": rules.is_authenticated
-        }
-
-    phone = models.CharField(_('phone'), max_length=20, blank=False)
-    citizenship = CountryField(_('citizenship'), max_length=30, blank=False)
-    postAddress = models.CharField(
-        _('postAdress'), max_length=200, blank=False)
-    TIN = models.CharField(_('TIN'), max_length=10,
-                           blank=False, default=None, null=True)
-
-
-class LegalEntityDonatorData(Timestamped):
-    class Meta:
-        rules_permissions = {
-            "add": rules.is_authenticated,
-            "delete": rules.always_deny,
-            "change": myself,
-            "view": rules.is_authenticated,
-        }
-
-    name = models.CharField(_('name'), max_length=50, blank=False)
-    type = models.CharField(_('type'), max_length=50, blank=False)
-    headquarters = CountryField(
-        _('headquarters'), max_length=30, blank=False, null=True)
-    EIK = models.CharField(_('EIK'), max_length=50, blank=False)
-    DDORegistration = models.BooleanField(_('DDORegistration'))
-    phoneNumber = models.CharField(
-        _('phoneNumber'), max_length=30, blank=False)
-    postAddress = models.CharField(
-        _('postAdress'), max_length=200, blank=False)
-    TIN = models.CharField(_('TIN'), max_length=10,
-                           blank=False, default=None, null=True)
-    website = models.CharField(_('website'), blank=True, max_length=100)
 
 
 class TicketQR(Timestamped):
