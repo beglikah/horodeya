@@ -29,23 +29,14 @@ from wagtail.core import urls as wagtail_urls
 
 
 urlpatterns = [
-    path('accounts/profile/notifications',
-         home_views.notifications, name='notifications'),
     path('i18n/', include('django.conf.urls.i18n')),
     path('anymail/', include('anymail.urls')),
     path('', home_views.home, name='home'),
-    path('accounts/profile/', home_views.account, name='my_account'),
-    path('accounts/profile/<int:pk>', home_views.account, name='account'),
     path('projects/', include('projects.urls')),
-    path('accounts/', include('allauth.urls')),
+    path('accounts/', include('accounts.urls')),
     path('qr_code/', include('qr_code.urls', namespace="qr_code")),
     path('check-qr/', include('check_qr.urls')),
     path('admin/', admin.site.urls),
-    # path(
-    #     'accounts/profile/update/<int:pk>',
-    #     home_views.UserUpdate.as_view(),
-    #     name='user_update'
-    # ),
     re_path(
         r'^photologue/', include('photologue.urls', namespace='photologue')
     ),

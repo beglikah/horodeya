@@ -900,11 +900,6 @@ class ThingNecessityDetails(AutoPermissionRequiredMixin, generic.DetailView):
         return context
 
 
-class UploadFileForm(forms.Form):
-    file = forms.FileField(required=False)
-    delete = forms.BooleanField(initial=False, required=False)
-
-
 PhotoFormset = modelformset_factory(
     Photo,
     fields=['image'],
@@ -979,41 +974,6 @@ def gallery_update(request, project_id):
         'formset': formset,
         'project': project,
     })
-
-
-@permission_required('projects.change_user', fn=objectgetter(User, 'user_id'))
-def user_photo_update(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
-    if request.method == 'POST':
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-
-            title = str(user)
-            slug = slugify(title, allow_unicode=True)
-
-            if user.photo:
-                user.photo.delete()
-
-            if form.cleaned_data.get('delete'):
-                messages.success(request, _('Image deleted'))
-            else:
-                photoFile = request.FILES.get('file')
-                if(photoFile):
-                    user.photo = neat_photo('user', str(
-                        user_id), photoFile)
-                    user.save()
-
-                messages.success(request, _('Image uploaded'))
-            next = request.GET.get('next')
-            if next:
-                return redirect(request.GET['next'])
-            else:
-                return redirect(user)
-    else:
-        form = UploadFileForm(
-            initial={'file': user.photo.image if user.photo else None})
-
-    return render(request, 'projects/user_photo_update.html', {'form': form, 'user': user})
 
 
 @permission_required('projects.change_question', fn=objectgetter(_model.Project, 'project_id'))

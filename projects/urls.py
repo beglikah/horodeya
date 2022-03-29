@@ -50,9 +50,6 @@ urlpatterns = [
          views.support_delivered, name='support_delivered'),
     path('accounts/<int:user_id>/support/<str:type>/list',
          views.user_support_list, name='user_support_list'),
-
-    path('accounts/<int:user_id>/photo/update',
-         views.user_photo_update, name='user_photo_update'),
     path('accounts/<int:user_id>/vote/list',
          views.user_vote_list, name='user_vote_list'),
     path('user-autocomplete/', views.UserAutocomplete.as_view(),
