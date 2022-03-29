@@ -128,7 +128,7 @@ class User(RulesModelMixin, AbstractUser, metaclass=RulesModelBase):
         return '%s %s' % (self.first_name, self.last_name)
 
     def get_absolute_url(self):
-        return reverse('accounts:account', kwargs={'pk': self.pk})
+        return reverse('account', kwargs={'pk': self.pk})
 
     def get_full_name(self):
         full_name = '%s %s' % (self.first_name, self.last_name)
