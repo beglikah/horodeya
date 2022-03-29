@@ -33,7 +33,7 @@ urlpatterns = [
     path('anymail/', include('anymail.urls')),
     path('', home_views.home, name='home'),
     path('projects/', include('projects.urls')),
-    path('accounts/', include('accounts.urls')),
+    path('accounts/', include('accounts.urls', namespace='accounts')),
     path('qr_code/', include('qr_code.urls', namespace="qr_code")),
     path('check-qr/', include('check_qr.urls')),
     path('admin/', admin.site.urls),

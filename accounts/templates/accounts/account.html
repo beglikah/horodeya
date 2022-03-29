@@ -8,16 +8,16 @@
 {% endblock %}
 
 {% block admin_tools %}
-<a class="nav-link text-white" href="">{% trans "Update photo" %}</a>
+<a class="nav-link text-white" href="{% url 'accounts:user_photo_update' user.id %}">{% trans "Update photo" %}</a>
 
 {% comment %} <li class="nav-item">
   <a class="nav-link text-white" href="{% url 'user_update' object.pk %}">Редактирай</a>
 </li> {% endcomment %}
 <li class="nav-item">
-  <a class="nav-link text-white" href="{% url 'account_email' %}">{% trans "Update email" %}</a>
+  <a class="nav-link text-white" href="{% url 'accounts:account_email' %}">{% trans "Update email" %}</a>
 </li>
 <li class="nav-item">
-  <a class="nav-link text-white" href="{% url 'account_change_password'  %}">{% trans "Update password" %}</a>
+  <a class="nav-link text-white" href="{% url 'accounts:account_change_password'  %}">{% trans "Update password" %}</a>
 </li>
 
 {% endblock %}
@@ -34,7 +34,7 @@
       {% if object.photo %}
       <img class="card-img" src="{{ object.photo.get_profile_url }}" alt="{{user.first_name}}"></img>
       {% else %}
-      <a href="">{% trans "Add photo" %}</a>
+      <a href="{% url 'accounts:user_photo_update' user.id %}">{% trans "Add photo" %}</a>
       {% endif %}
     </div>
     <div class="col-md-8">

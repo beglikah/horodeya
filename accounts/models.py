@@ -63,7 +63,19 @@ def myself(user, user2):
     return user == user2.user
 
 
-class User(AbstractUser, RulesModelMixin, metaclass=RulesModelBase):
+class User(RulesModelMixin, AbstractUser, metaclass=RulesModelBase):
+    class Meta:
+        rules_permissions = {
+            "add": rules.always_allow,
+            "delete": rules.always_deny,
+            "change": myself,
+            "view": rules.is_authenticated,
+        }
+        verbose_name = 'user'
+        verbose_name_plural = 'users'
+        db_table = 'auth_user'
+
+
     email = models.EmailField(
         'email address',
         unique=True,
@@ -109,17 +121,6 @@ class User(AbstractUser, RulesModelMixin, metaclass=RulesModelBase):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    class Meta:
-        rules_permissions = {
-            "add": rules.always_allow,
-            "delete": rules.always_deny,
-            "change": myself,
-            "view": rules.is_authenticated,
-        }
-        verbose_name = 'user'
-        verbose_name_plural = 'users'
-        db_table = 'auth_user'
-
     def page_name(self):
         return "%s %s" % (gettext('User'), str(self))
 
@@ -127,7 +128,7 @@ class User(AbstractUser, RulesModelMixin, metaclass=RulesModelBase):
         return '%s %s' % (self.first_name, self.last_name)
 
     def get_absolute_url(self):
-        return reverse('accounts', kwargs={'pk': self.pk})
+        return reverse('accounts:account', kwargs={'pk': self.pk})
 
     def get_full_name(self):
         full_name = '%s %s' % (self.first_name, self.last_name)

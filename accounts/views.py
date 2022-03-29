@@ -10,6 +10,7 @@ from stream_django.enrich import Enrich
 
 from rules.contrib.views import permission_required, objectgetter
 from django.utils.text import slugify
+from django.utils.translation import gettext as _
 from django import forms
 
 
@@ -34,9 +35,10 @@ class UploadFileForm(forms.Form):
     delete = forms.BooleanField(initial=False, required=False)
 
 
-@permission_required('projects.change_user', fn=objectgetter(User, 'user_id'))
+@permission_required('accounts.change_user', fn=objectgetter(User, 'user_id'))
 def user_photo_update(request, user_id):
     user = get_object_or_404(User, pk=user_id)
+    print(user)
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
