@@ -283,7 +283,7 @@ MEDIA_URL = '/media/'
 
 BOOTSTRAP4['required_css_class'] = 'required'
 
-
+"""
 # EMAIL_BACKEND = "anymail.backends.amazon_ses.EmailBackend"
 EMAIL_BACKEND = "anymail.backends.sendgrid.EmailBackend"
 DEFAULT_FROM_EMAIL = "info@horodeya.com"
@@ -293,6 +293,7 @@ ANYMAIL = {
     # 'WEBHOOK_SECRET': os.getenv('ANYMAIL_WEBHOOK_SECRET'),
     'SENDGRID_API_KEY': os.getenv('SENDGRID_API_KEY'),
 }
+"""
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = os.getenv('EMAIL_HOST')

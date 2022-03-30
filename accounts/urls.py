@@ -4,7 +4,6 @@ from accounts import views
 
 
 urlpatterns = [
-    path('', include('allauth.urls')),
     # path(
     #     'accounts/profile/update/<int:pk>',
     #     home_views.UserUpdate.as_view(),
@@ -15,4 +14,5 @@ urlpatterns = [
     path('profile/<int:pk>', views.account, name='account'),
     path('profile/', views.account, name='my_account'),
     path('profile/notifications', views.notifications, name='notifications'),
+    path('', include('allauth.urls')),
 ]

@@ -27,7 +27,7 @@ def account(request, pk=None):
         projectsSet.append(project)
 
     account.projects = projectsSet
-    return render(request, 'accounts/account.html', {'object': account})
+    return render(request, 'account/account.html', {'object': account})
 
 
 class UploadFileForm(forms.Form):
@@ -68,7 +68,7 @@ def user_photo_update(request, user_id):
         form = UploadFileForm(
             initial={'file': user.photo.image if user.photo else None})
 
-    return render(request, 'accounts/user_photo_update.html', {
+    return render(request, 'account/user_photo_update.html', {
         'form': form, 'user': user
     })
 
