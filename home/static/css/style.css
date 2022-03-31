@@ -16,6 +16,7 @@ body {
 }
 
 .card,
+.card-img,
 .list-group-item {
   /*background-color: transparent;*/
   background-color: transparent;
