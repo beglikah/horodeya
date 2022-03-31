@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import gettext as _
 from django.utils.translation import get_language
 from django.utils.text import slugify
-from django.core.exceptions import ValidationError
+# from django.core.exceptions import ValidationError
 
 from rules.contrib.views import AutoPermissionRequiredMixin
 
@@ -12,14 +12,15 @@ import projects.models as _model
 from projects.templatetags.projects_tags import leva
 
 
-
-PROJECT_ACTIVYTY_TYPES = [('Creativity', 'Наука и творчество'),
-                            ('Education', 'Просвета и възпитание'),
-                            ('Art', 'Култура и артистичност'),
-                            ('Administration', 'Администрация и финанси'),
-                            ('Willpower', 'Спорт и туризъм'),
-                            ('Health', 'Бит и здравеопазване'),
-                            ('Food', 'Земеделие и изхранване')]
+PROJECT_ACTIVYTY_TYPES = [
+    ('Creativity', 'Наука и творчество'),
+    ('Education', 'Просвета и възпитание'),
+    ('Art', 'Култура и артистичност'),
+    ('Administration', 'Администрация и финанси'),
+    ('Willpower', 'Спорт и туризъм'),
+    ('Health', 'Бит и здравеопазване'),
+    ('Food', 'Земеделие и изхранване')
+]
 
 
 class ProjectForm(forms.ModelForm):
@@ -27,8 +28,16 @@ class ProjectForm(forms.ModelForm):
     class Meta:
         model = _model.Project
         fields = [
-            'name', 'category', 'location', 'description', 'goal',
-            'text', 'start_date', 'end_date', 'end_date_tasks', 'report_period'
+            'name',
+            'category',
+            'location',
+            'description',
+            'goal',
+            'text',
+            'start_date',
+            'end_date',
+            'end_date_tasks',
+            'report_period',
         ]
         widgets = {
             'end_date': DatePicker(
@@ -80,6 +89,7 @@ class ProjectForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
+        self.author_admin = user
         super().__init__(*args, **kwargs)
         # self.fields['project'].queryset = user.projects
 
@@ -126,7 +136,10 @@ class QuestionForm(forms.Form):
                     field_class = getattr(forms, question.prototype.type)
 
                 field = field_class(
-                    label=label, help_text=question.description, required=question.required)
+                    label=label,
+                    help_text=question.description,
+                    required=question.required
+                )
                 field.initial = self.answer_values.get(key)
 
                 if question.prototype.type == 'ChoiceField':
@@ -146,11 +159,12 @@ class QuestionForm(forms.Form):
 
                 if value is None:
                     value = ''
-                answer, created = Answer.objects.update_or_create(
+                answer, created = _model.Answer.objects.update_or_create(
                     project=project,
                     question=self.questions[question],
                     user=self.user,
-                    defaults={'answer': value})
+                    defaults={'answer': value}
+                )
 
 
 class PaymentForm(forms.Form):
@@ -166,19 +180,29 @@ class PaymentForm(forms.Form):
         self.payment_data = project
         pledge_action_text = _('Pledge to donate') + ' ' + leva(payment_amount)
 
-        if payment_method == MoneySupport.PAYMENT_METHODS.BankTransfer:
+        if payment_method == _model.MoneySupport.PAYMENT_METHODS.BankTransfer:
             if not project.bank_account_iban:
                 self.unsupported = True
 
-            self.fields['accept'] = forms.BooleanField(label=_('I will send the money to the provided bank account within the next 3 days'),
-                                                       disabled=self.unsupported, help_text=_("Otherwise the support will be marked invalid"))
+            self.fields['accept'] = forms.BooleanField(label=_(
+                '''I will send the money to the provided bank account within
+                the next 3 days'''
+            ),
+                disabled=self.unsupported,
+                help_text=_("Otherwise the support will be marked invalid")
+            )
             self.action_text = pledge_action_text
-        elif payment_method == MoneySupport.PAYMENT_METHODS.Revolut:
+        elif payment_method == _model.MoneySupport.PAYMENT_METHODS.Revolut:
             if not project.revolut_phone:
                 self.unsupported = True
 
-            self.fields['accept'] = forms.BooleanField(label=_('I will send the money to the provided Revolut account within the next 3 days'),
-                                                       disabled=self.unsupported, help_text=_("Otherwise the support will be marked invalid"))
+            self.fields['accept'] = forms.BooleanField(label=_(
+                '''I will send the money to the provided Revolut account
+                within the next 3 days'''
+            ),
+                disabled=self.unsupported,
+                help_text=_("Otherwise the support will be marked invalid")
+            )
             self.action_text = pledge_action_text
 
         if self.unsupported:
@@ -207,7 +231,6 @@ class MoneySupportForm(forms.ModelForm):
 
         self.fields['necessity'].queryset = project.thingnecessity_set
         self.fields['necessity'].empty_label = _('Any will do')
-
 
 
 class ProjectUpdateForm(forms.ModelForm):

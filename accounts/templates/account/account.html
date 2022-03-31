@@ -11,15 +11,16 @@
 {% block admin_tools %}
 <a class="nav-link text-white" href="{% url 'user_photo_update' user.id %}">{% trans "Update photo" %}</a>
 
-{% comment %} <li class="nav-item">
-  <a class="nav-link text-white" href="{% url 'user_update' object.pk %}">Редактирай</a>
-</li> {% endcomment %}
 <li class="nav-item">
   <a class="nav-link text-white" href="{% url 'account_email' %}">{% trans "Update email" %}</a>
 </li>
 <li class="nav-item">
   <a class="nav-link text-white" href="{% url 'account_change_password'  %}">{% trans "Update password" %}</a>
 </li>
+<li class="nav-item">
+  <a class="nav-link text-white" href="{% url 'user_update' object.pk %}">Update Your Profile</a>
+</li>
+
 
 {% endblock %}
 
@@ -45,9 +46,10 @@
       <ul class="list-group list-group-flush">
         {%comment%}<li class="list-group-item"> {% trans "Rating" %}: {{ object.bal }}</li>{%endcomment%}
         <li class="list-group-item">
-          {% trans "Projects" %}:
-          {% for project in object.projects.all %}
-          <a class="" href="{% url 'projects:details' project.pk %}">{{ project }}</a>
+          {% trans "My Projects" %}:<br>
+          {% for project in object.projects %}
+          <a class="" href="{% url 'projects:details' project.pk %}">{{ project.name }}</a>
+          - Author: {{project.author_admin}}
           {% if not forloop.last %}
           |
           {% endif %}

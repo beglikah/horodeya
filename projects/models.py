@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.conf import settings
 
 import rules
 
@@ -159,7 +160,9 @@ class Project(Timestamped):
         max_length=20, choices=get_verify_types_choices(),
         default=VERIFY_TYPES_CHOICES.review, null=True
     )
-    author_admin = models.ForeignKey(AuthorAdmin, on_delete=models.PROTECT, null=True)
+    author_admin = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True
+    )
 
 
     def latest_reports(self):

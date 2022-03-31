@@ -134,10 +134,16 @@ def necessity_update(request, project_id, type):
     })
 
 
-class ProjectList(AutoPermissionRequiredMixin, generic.ListView):
-    permission_type = 'view'
+class ProjectsList(generic.ListView):
     model = _model.Project
+    paginate_by = 100
     template_name = 'projects/projects_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # context['now'] = timezone.now()
+        print(context)
+        return context
 
 
 class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
@@ -177,8 +183,8 @@ class ProjectCreate(AutoPermissionRequiredMixin, UserPassesTestMixin, CreateView
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
+        self.author_admin = self.request.user
         kwargs.update({'user': self.request.user})
-        print(kwargs)
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -189,7 +195,8 @@ class ProjectCreate(AutoPermissionRequiredMixin, UserPassesTestMixin, CreateView
 
     def form_valid(self, form):
         user = self.request.user
-        self.author_admin = self.request.user
+        form.instance.author_admin = self.request.user
+        print("Project Author: ", self.author_admin)
         project = form.instance
 
 
@@ -201,6 +208,7 @@ class ProjectCreate(AutoPermissionRequiredMixin, UserPassesTestMixin, CreateView
             user, project)
         notify.send(self.request.user, recipient=itec_admins,
                     verb=notification_text)
+        form.save()
         return super().form_valid(form)
 
 

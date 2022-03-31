@@ -7,20 +7,25 @@ from ..models import Support
 
 register = template.Library()
 
+
 @register.simple_tag
-def member_of(user, community_pk):
-    return user.is_authenticated and user.member_of(community_pk)
+def member_of(user, project_pk):
+    return user.is_authenticated and user.member_of(project_pk)
+
 
 @register.simple_tag
 def vote_exists(report, user_pk):
-    return report.votes.exists(user_pk, action=UP) or report.votes.exists(user_pk, action=DOWN)
+    vote_up = report.votes.exists(user_pk, action=UP)
+    vote_down = report.votes.exists(user_pk, action=DOWN)
+    return vote_up or vote_down
+
 
 @register.simple_tag
 def format_answer(answer):
     type = answer.question.prototype.type
     if type in ['CharField', 'TextField']:
         return answer.answer
-    #TODO
+    # TODO
     if type == 'FileField':
         return answer.answer
     if type == 'ChoiceField':
@@ -30,6 +35,7 @@ def format_answer(answer):
 
     return "not implemented"
 
+
 @register.filter
 def leva(value):
     if value == 0:
@@ -38,7 +44,7 @@ def leva(value):
     if value is None:
         return _("unknown")
 
-    return "%.2f " % value + _('lv') 
+    return "%.2f " % value + _('lv')
 
 
 STATUS_COLOR = {
@@ -49,9 +55,11 @@ STATUS_COLOR = {
     Support.STATUS.expired: 'light',
     }
 
+
 @register.filter
 def status_color(status):
     return STATUS_COLOR.get(status, 'default')
+
 
 @register.filter
 def status_text(status):

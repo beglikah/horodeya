@@ -8,10 +8,15 @@ from projects.views import neat_photo
 from stream_django.feed_manager import feed_manager
 from stream_django.enrich import Enrich
 
+from django.views.generic import DetailView
+from django.views.generic.edit import UpdateView
+
 from rules.contrib.views import permission_required, objectgetter
+from rules.contrib.views import AutoPermissionRequiredMixin
+
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
-from django import forms
+from accounts.forms import UploadFileForm
 
 
 # Create your views here.
@@ -24,15 +29,15 @@ def account(request, pk=None):
     projectsSet = []
 
     for project in Project.objects.filter(verified_status='accepted'):
-        projectsSet.append(project)
+        print(project, account)
+        print(project.author_admin)
+        if project.author_admin == account:
+            print(account.first_name)
+            projectsSet.append(project)
 
     account.projects = projectsSet
+    print(account.projects)
     return render(request, 'account/account.html', {'object': account})
-
-
-class UploadFileForm(forms.Form):
-    file = forms.FileField(required=False)
-    delete = forms.BooleanField(initial=False, required=False)
 
 
 @permission_required('accounts.change_user', fn=objectgetter(User, 'user_id'))
@@ -87,3 +92,29 @@ def notifications(request):
             'notifications': notifications
         }
     )
+
+"""
+class UserDetailView(AutoPermissionRequiredMixin, DetailView):
+    template_name = 'account/user_detail.html'
+    model = User
+"""
+
+class UserUpdateView(UpdateView):
+    template_name = 'account/user_form.html'
+    model = User
+    fields = [
+        'first_name',
+        'second_name',
+        'last_name',
+        'country',
+        'city',
+        'address',
+        'phone',
+        'bank_account_iban',
+        'bank_account_bank_code',
+        'bank_account_name',
+        'birthdate',
+        'slack_channel',
+        'privacy_policy',
+        'platform_policy'
+    ]

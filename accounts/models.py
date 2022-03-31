@@ -83,21 +83,24 @@ class User(RulesModelMixin, AbstractUser, metaclass=RulesModelBase):
             'unique': "A user with that username already exists.",
         },
     )
-    bal = models.IntegerField(default=20, validators=[MaxValueValidator(100)])
-    photo = models.ForeignKey(Photo, on_delete=models.SET_NULL, null=True)
-    donatorData = models.OneToOneField(
-        'DonatorData', on_delete=models.PROTECT, null=True)
-    legalEntityDonatorData = models.OneToOneField(
-        'LegalEntityDonatorData', on_delete=models.PROTECT, null=True)
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
-    second_name = models.CharField(_('second_name'), max_length=30, blank=True)
+    second_name = models.CharField(max_length=30, null=True, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
+    birthdate = models.DateField(
+        _('birthdate'), blank=False, null=True)
+
+    photo = models.ForeignKey(Photo, on_delete=models.SET_NULL, null=True)
+    country = CountryField(blank_label='(select country)', null=True, blank=True)
+    city = models.CharField(max_length=30, null=True, blank=True)
+    address = models.CharField(max_length=200, null=True, blank=True)
+
+    phone = models.DecimalField(_('phone'),
+                                null=True, max_digits=20, decimal_places=0)
+
     date_joined = models.DateTimeField('date joined', auto_now_add=True)
     slack_channel = models.CharField(
         _('slack_channel'), max_length=100, null=True, blank=True)
-    birthdate = models.DateField(
-        _('birthdate'), blank=False, null=True)
-    is_active = models.BooleanField('active', default=True)
+
     is_staff = models.BooleanField(
         'staff status',
         default=False,
@@ -111,8 +114,21 @@ class User(RulesModelMixin, AbstractUser, metaclass=RulesModelBase):
             'Unselect this instead of deleting accounts.'
         ),
     )
+    is_author = models.BooleanField(default=False)
     is_administrator = models.BooleanField(default=False)
     is_member = models.BooleanField(default=False)
+
+    bal = models.IntegerField(default=20, validators=[MaxValueValidator(100)])
+    donatorData = models.OneToOneField(
+        'DonatorData', on_delete=models.PROTECT, null=True)
+    legalEntityDonatorData = models.OneToOneField(
+        'LegalEntityDonatorData', on_delete=models.PROTECT, null=True)
+
+    bank_account_iban = models.CharField(blank=True, null=True, max_length=34)
+    bank_account_bank_code = models.CharField(
+        blank=True, null=True, max_length=34)
+    bank_account_name = models.CharField(blank=True, null=True, max_length=100)
+
     privacy_policy = models.BooleanField(default=False)
     platform_policy = models.BooleanField(default=False)
 

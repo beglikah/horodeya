@@ -15,6 +15,16 @@ body {
   overflow-x:hidden;
 }
 
+.card,
+.list-group-item {
+  /*background-color: transparent;*/
+  background-color: transparent;
+  border: 5px solid #5cb0cef5;
+}
+.bg-primary {
+    background-color: #277a97 !important;
+}
+
 .breadcrumb-item.active a {
   pointer-events: none;
   cursor: default;
@@ -142,7 +152,7 @@ body {
 
 .footer-background {
   font-family: "Helvetica Neue", serif;
-  background-color: #31ad9f;
+  background-color: #277a97;
 }
 
 .footer-background a, .footer-background p, .footer-background h6, .footer-background small {
@@ -151,8 +161,8 @@ body {
 
 .btn-primary {
   color: #fff;
-  background-color: #39d279;
-  border-color: #39d279;
+  background-color: #277a97;
+  border-color: #277a97;
 }
 
 .btn-white-solid {

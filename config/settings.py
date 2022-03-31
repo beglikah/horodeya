@@ -228,7 +228,7 @@ def ACCOUNT_USER_DISPLAY(u): return u.first_name
 
 ACCOUNT_USERNAME_REQUIRED = False
 
-ACCOUNT_FORMS = {'signup': 'home.forms.NamesSignupForm'}
+ACCOUNT_FORMS = {'signup': 'accounts.forms.NamesSignupForm'}
 
 AUTH_USER_MODEL = 'accounts.User'
 

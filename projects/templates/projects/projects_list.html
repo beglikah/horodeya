@@ -8,8 +8,8 @@
 {% block content %}
 
 <div class="mt-3 text-center col-10 mx-auto">
-  <div class="row causes" style="border: 5px solid #2dd476">
-    <div class="col-5 text-left" style="background-color:#2dd476;">
+  <div class="row causes" style="border: 5px solid #277a97;">
+    <div class="col-5 text-left" style="background-color:#277a97;">
       <div style="padding:20px">
         <h2 class="font-weight-lighter" style="color:white">Projects</h2>
         <p class="font-weight-light" style="color:white">
@@ -59,14 +59,12 @@
         <p>
         Monitor the activities of the projects you support through regular reports.
         </p>
-        {% for project in projects %}
-            <h5 class="card-title">{{ project.name }}</h5>
-        {% endfor %}
+        <h1 class="card-title">Active Projects:</h1>
     </div>
 </div>
 
 <div class="mt-4">
-  {% for project in projects %}
+  {% for project in object_list %}
   <div class="card mb-3 mx-auto" style="max-width: 980;">
     <div class="row no-gutters">
       <div class="col-md-2">
@@ -86,7 +84,7 @@
             </small>
           </h5>
           <p class="card-text">{{ project.description }}</p>
-          <a href="{% url 'projects:details' project.pk %}" class="btn btn-primary">Научи повече</a>
+          <a href="{% url 'projects:details' project.pk %}" class="btn btn-primary">Learn more</a>
         </div>
       </div>
       <div class="col-md-4 pr-4 pt-4">
@@ -95,23 +93,25 @@
       <div class="col-md-8 ml-1">
         {% if project.location is not none %}
         <small class="text-nowrap">
-          Местонахождение: {{ project.location }}
+          Location: {{ project.location }}
         </small>
         {% endif %}
         {% if project.start_date is not none %}
         <small  class=" text-nowrap ml-1">
-          Начална дата: {{ project.start_date }}
+          Start Date: {{ project.start_date }}
         </small>
         {% endif %}
         {% if project.end_date is not none %}
         <small class="text-nowrap ml-1">
-          Крайна дата: {{ project.end_date }}
+          End Date: {{ project.end_date }}
             </small>
         {% endif %}
       </small>
       </div>
     </div>
   </div>
+  {% empty %}
+    <li>No projects yet.</li>
   {% endfor %}
 </div>
 

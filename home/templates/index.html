@@ -71,19 +71,19 @@
     </button>
 
     <div class="collapse  navbar-collapse justify-content-md-center" id="navbarSupportedContent">
-      <a class="nav-link align-self-start  d-none d-lg-block {% active начало %}" style="padding:0" href="/">
+      <a class="nav-link align-self-start  d-none d-lg-block {% active home %}" style="padding:0" href="/">
         <img src="{% static 'media/logo_itec.png' %}"
           class="logo p-absolute align-top align-self-center float-left" style="max-height:70px">
       </a>
       <div class="justify-content center d-flex ml-auto">
         <ul class=" navbar-nav">
-          <li><a class="nav-link justify-content-end {% active задруги %}" href="/">{% trans 'Home' %}</a></li>
+          <li><a class="nav-link justify-content-end {% active projects %}" href="/">{% trans 'Home' %}</a></li>
 
           {% if user.is_authenticated%}
-          <li><a class="nav-link justify-content-end {% active задруги %}" href="/projects/feed">Notifications</a></li>
+          <li><a class="nav-link justify-content-end {% active projects %}" href="/projects/feed">Notifications</a></li>
           {%endif%}
 
-          <li><a class="nav-link  {% active задруги %}" href="/projects/">Projects</a></li>
+          <li><a class="nav-link  {% active projects %}" href="/projects/">Projects</a></li>
 
 
 
@@ -92,16 +92,16 @@
           {%endif%}
 
           {% if user.is_authenticated%}
-          <li><a class="nav-link {% active задруги %}"
+          <li><a class="nav-link {% active projects %}"
               href="/projects/notifications">Messages:{% notifications_unread %}</a></li>
           {%endif%}
 
           <li><a class="nav-link"
               href="">News</a></li>
-              <li><a class="nav-link {% active често-задавани-въпроси/ %}"
+              <li><a class="nav-link {% active questions %}"
               href="">Questions</a></li>
 
-          <li><a class="nav-link {% active за-нас %}" href="">{% trans 'About us' %}</a></li>
+          <li><a class="nav-link {% active about_us %}" href="">{% trans 'About us' %}</a></li>
 
           {% if user.is_authenticated %}
           <li><a class="nav-link {% active account %}" href="{% url 'my_account' %}">{% trans 'Account' %}</a></li>

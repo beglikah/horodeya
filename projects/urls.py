@@ -5,7 +5,7 @@ from . import views
 app_name = 'projects'
 
 urlpatterns = [
-    path('', views.ProjectList.as_view(), name='project-list'),
+    path('', views.ProjectsList.as_view(), name='project-list'),
     path('create/', views.ProjectCreate.as_view(),
          name='create'),  # type cause или business
     path('<int:pk>/update', views.ProjectUpdate.as_view(), name='update'),
