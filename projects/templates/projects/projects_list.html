@@ -70,7 +70,7 @@
       <div class="col-md-2">
         {% if project.gallery.public|length > 0 %}
         {% with project.gallery.public|first as image %}
-        <img src="{{image.get_list_url}}" alt="{{image.title}}" class="card-img">
+        <img src="{{image.get_thumbnail_url}}" alt="{{image.title}}" class="card-img">
         {% endwith %}
         {% else %}
         <img src="{% static 'media/community-icon.png' %}" class="card-img">

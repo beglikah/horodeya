@@ -29,10 +29,7 @@ def account(request, pk=None):
     projectsSet = []
 
     for project in Project.objects.filter(verified_status='accepted'):
-        print(project, account)
-        print(project.author_admin)
         if project.author_admin == account:
-            print(account.first_name)
             projectsSet.append(project)
 
     account.projects = projectsSet
