@@ -35,8 +35,8 @@ class NamesSignupForm(SignupForm):
         label=_("Last Name"),
         max_length=30)
 
-    password1 = SetPasswordField(max_length=6, label=("Password"))
-    password2 = PasswordField(max_length=6, label=("Password (again)"))
+    password1 = SetPasswordField(max_length=8, label=("Password"))
+    password2 = PasswordField(max_length=8, label=("Password (again)"))
 
     privacy_policy = forms.BooleanField(
         required=True,
@@ -60,21 +60,8 @@ class NamesSignupForm(SignupForm):
         return self.cleaned_data["password2"]
 
     def signup(self, request, user):
-        user.set_password(self.user, self.cleaned_data["password1"])
+        user.set_password(self.user, self.clean_password2())
         user.save()
-
-    def save(self, request):
-        user = super(NamesSignupForm, self).save(request)
-
-        user.set_password(self.user, self.cleaned_data["password1"])
-        user.first_name = request.POST['first_name']
-        user.second_name = request.POST['first_name']
-        user.last_name = request.POST['last_name']
-        user.birthdate = request.POST['birthdate']
-        user.privacy_policy = True
-        user.platform_policy = True
-        user.save()
-        return user
 
 
 class UploadFileForm(forms.Form):
