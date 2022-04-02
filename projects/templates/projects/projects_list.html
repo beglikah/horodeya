@@ -66,8 +66,11 @@
 <div class="mt-4">
   {% for project in object_list %}
   <div class="card mb-3 mx-auto" style="max-width: 980;">
+      <div class="card-title" style="border-bottom: 5px solid #5cb0cef5;">
+          <h5 class="card-title">{{ project.name }}</h5>
+    </div>
     <div class="row no-gutters">
-      <div class="col-md-2">
+      <div class="col-lg-3">
         {% if project.gallery.public|length > 0 %}
         {% with project.gallery.public|first as image %}
         <img src="{{image.get_thumbnail_url}}" alt="{{image.title}}" class="card-img">
@@ -76,20 +79,17 @@
         <img src="{% static 'media/community-icon.png' %}" class="card-img">
         {% endif %}
       </div>
-      <div class="cold-6">
+      <div class="col-lg-6">
         <div class="card-body">
-          <h5 class="card-title">{{ project.name }}
-            <small class="text-muted">
-              {{project}}
-            </small>
-          </h5>
           <p class="card-text">{{ project.description }}</p>
           <a href="{% url 'projects:details' project.pk %}" class="btn btn-primary">Learn more</a>
         </div>
       </div>
-      <div class="col-md-4 pr-4 pt-4">
+      <div class="col-lg-3 pr-3 pt-3">
         {% include "projects/project_stats.html" with project=project short=True only %}
       </div>
+    </div>
+      <div class="card-footer" style="border-top: 5px solid #5cb0cef5;">
       <div class="col-md-8 ml-1">
         {% if project.location is not none %}
         <small class="text-nowrap">

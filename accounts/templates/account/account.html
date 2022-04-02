@@ -34,7 +34,7 @@
   <div class="row no-gutters">
     <div class="col-md-4">
       {% if object.photo %}
-      <img class="card-img" src="/media/user/{{object.id}}/{{ object.photo }}" alt="{{user.first_name}}"></img>
+      <img class="card-img profile" src="/media/user/{{object.id}}/{{ object.photo }}" alt="{{user.first_name}}"></img>
       {% else %}
       <a href="{% url 'user_photo_update' user.id %}">{% trans "Add photo" %}</a>
       {% endif %}

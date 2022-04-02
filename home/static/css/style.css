@@ -16,16 +16,73 @@ body {
 }
 
 .card,
-.card-img,
 .list-group-item {
   /*background-color: transparent;*/
   background-color: transparent;
   border: 5px solid #5cb0cef5;
 }
+.card-title {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  margin-bottom: 0;
+  text-align: center;
+}
+.card-img {
+  border-right: 5px solid #5cb0cef5;
+}
 .bg-primary {
     background-color: #277a97 !important;
 }
+.thumbnails {
+  padding: 0px;
+  margin: 0px;
+  border-right:none;
+  background-color: transparent;
+}
+.galery {
+  background-color:#212529;
+  padding:0px;
+}
 
+.galery > button {
+  min-width: 24%;
+  width: 24%;
+}
+img.card-img.profile {
+  border-right: 5px solid #5cb0cef5;
+  border-bottom: 5px solid #5cb0cef5;
+}
+@media screen and (max-width:500px){
+  .galery > button {
+    min-width: 23%;
+    width: 23%;
+  }
+}
+button > img {
+  min-width: 99%;
+  width: 99%;
+}
+
+button.thumbnails {
+  padding: 0px;
+  margin: 0px;
+
+}
+@media screen and (max-width:992px) {
+  .card-img {
+    border-right: none;
+    border-bottom: 5px solid #5cb0cef5;
+  }
+  .thumbnails {
+    border-bottom: none;
+  }
+
+}
+.col-md-4 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+}
+*/
 .breadcrumb-item.active a {
   pointer-events: none;
   cursor: default;

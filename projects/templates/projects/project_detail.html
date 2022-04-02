@@ -50,24 +50,23 @@
   }
 </script>
 <div class="row mt-4">
-  <div class="col-md-8">
+  <div class="col-md-8 galery">
     {% if object.gallery.public|length == 0 %}
-    {% if admin %}
-    <a class="btn btn-link" href="{% url 'projects:gallery_update' object.id %}">{% trans "Add image" %}</a>
-    {% endif %}
+        {% if admin %}
+        <a class="btn btn-link" href="{% url 'projects:gallery_update' object.id %}">{% trans "Add image" %}</a>
+        {% endif %}
     {% else %}
-    {% with object.gallery.public|first as image %}
-    {% comment %}
-    <img id="image" src="{{image.get_details_url}}" alt="{{image.title}}" class="card-img">
-    {% endcomment %}
-    {% endwith %}
+        {% with object.gallery.public|first as image %}
+        <img id="image" src="{{image.get_display_url}}" alt="{{image.title}}" class="card-img thumbnails">
+        {% endwith %}
+        {% for image in object.gallery.public|slice:":8" %}
+        <button class="btn btn-light thumbnails {% if forloop.first %} active {% endif %}"
+        onclick="changeImage(this, '{{ image.get_display_url }}')">
+        <img src="{{ image.get_thumbnail_url }}" class="thumbnails" alt="{{ image.title }}">
+        </button>
+        {% endfor %}
+
     {% endif %}
-    {% for photo in object.gallery.public|slice:":7" %}
-    <button class="btn btn-light thumbnails {% if forloop.first %} active {% endif %}"
-      onclick="changeImage(this, '{{ photo.get_details_url }}')">
-      <img src="{{ photo.get_thumbnail_url }}" class="thumbnail" alt="{{ photo.title }}">
-      </a>
-      {% endfor %}
   </div>
   <div class="col-md-4 mt-4">
     {% include "projects/project_stats.html" with project=object %}
