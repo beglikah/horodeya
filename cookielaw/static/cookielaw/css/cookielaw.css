@@ -1,0 +1,41 @@
+#CookielawBanner {
+    background: #008080;
+    padding: 15px 0;
+}
+
+.cookie-container {
+    position: sticky;
+    top: 0;
+    padding-top:5rem;
+    padding-right: 15px;
+    padding-left: 15px;
+    padding-bottom: 3rem;
+    margin-right: auto;
+    margin-left: auto;
+    max-width: 90%;
+    z-index: 1020;
+}
+
+#cookieButton {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+    margin: 5px;
+}
+.terms {
+  border: 1px dotted #fff;
+}
+
+#CookielawBanner #CookielawCross {
+    background: url('../img/close.png') no-repeat 0 0;
+    cursor: pointer;
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 15px;
+    height: 15px;
+}

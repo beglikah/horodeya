@@ -23,6 +23,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 # SECURITY WARNING: keep the secret key used in production secret!
 
+if os.getenv('VIRTUAL_ENV'):
+    print('Using Virtualenv')
+else:
+    print('Not using Virtualenv')
+
 if len(sys.argv) > 1 and sys.argv[1] == 'test':
     print("Starting in TEST mode")
     TEST = True
@@ -105,6 +110,8 @@ INSTALLED_APPS = [
     'notifications',
     'qr_code',
     'check_qr',
+    'cookielaw',
+    'classytags',
 ]
 
 
@@ -127,6 +134,12 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
+
+"""
+TEMPLATE_LOADERS = (
+    'django.template.loaders.app_directories.load_template_source',
+)
+"""
 
 TEMPLATES = [
     {

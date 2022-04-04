@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Tracking User - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+
+        <div class="content">
+            <div class="section-inner clearfix" style="color:#fff;">
+
+                {% if not request.COOKIES.visits %}
+                    <h2>
+                      This is your first visit to the site.
+                      From now on I will track your visits to this site.
+                    </h2>
+                {% else %}
+                    <h2>
+                        This is your {{ request.COOKIES.visits|add:'1' }}th visit.
+                    </h2>
+                {% endif %}
+
+            </div>
+        </div>
+
+{% endblock %}

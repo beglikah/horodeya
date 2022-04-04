@@ -2,6 +2,7 @@
 {% load i18n static %}
 {% load activity_tags %}
 {% load notifications_tags %}
+{% load cookielaw_tags %}
 
 
 
@@ -45,6 +46,7 @@
   <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static 'css/flag-icon.min.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome.css' %}">
+  <link href="{% static "cookielaw/css/cookielaw.css"%}" rel="stylesheet" />
 
   {% block extra_css %}
   {# Override this in templates to add extra stylesheets #}
@@ -53,6 +55,7 @@
     <!-- Fengyuan Chen's Datepicker -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.css" integrity="sha256-b88RdwbRJEzRx95nCuuva+hO5ExvXXnpX+78h8DjyOE=" crossorigin="anonymous" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js" integrity="sha256-/7FLTdzP6CfC1VBAj/rsp3Rinuuu9leMRGd354hvk0k=" crossorigin="anonymous"></script>
+  <script src="{% static "cookielaw/js/cookielaw.js"%}" type="text/javascript"></script>
 
 </head>
 
@@ -61,6 +64,8 @@
 {% load wagtailcore_tags %}
 
 <body>
+{% cookielaw_banner %}
+{% if not is_popup %}
   <nav class="navbar d-flex  navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
     <a class="nav-link align-self-start nav-link-logo d-md-none d-lg-none" href="/">
       <img src="{% static 'media/logo_itec.png' %}" class="logo">
@@ -143,7 +148,7 @@
 
   {% block jumbotron %}
   {% endblock %}
-
+{% endif %}
   <div class="container">
     {% block breadcrumbs_container %}
     <nav class="mt-3" aria-label="breadcrumb">

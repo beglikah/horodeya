@@ -32,6 +32,7 @@ urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
     path('anymail/', include('anymail.urls')),
     path('', home_views.home, name='home'),
+    path('uj/', include('home.urls')),
     path('projects/', include('projects.urls')),
     path('accounts/', include('accounts.urls')),
     path('qr_code/', include('qr_code.urls', namespace="qr_code")),
