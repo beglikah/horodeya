@@ -3,8 +3,30 @@
     padding: 15px 0;
 }
 
-#CookielawBanner .container {
-    position: relative;
+.cookie-container {
+    position: sticky;
+    top: 0;
+    padding-top:5rem;
+    padding-right: 15px;
+    padding-left: 15px;
+    padding-bottom: 3rem;
+    margin-right: auto;
+    margin-left: auto;
+    max-width: 90%;
+    z-index: 1020;
+}
+
+#cookieButton {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+    margin: 5px;
+}
+.terms {
+  border: 1px dotted #fff;
 }
 
 #CookielawBanner #CookielawCross {
