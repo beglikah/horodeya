@@ -247,4 +247,15 @@ button.thumbnails {
     max-width: 100%;
   }
 }
-
+.empty-page {
+  min-height:280px;
+}
+.empty-page-one {
+  min-height:240px;
+}
+.empty-page-two {
+  min-height:370px;
+}
+.empty-page-home {
+  min-height:50px;
+}

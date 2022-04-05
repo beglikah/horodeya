@@ -53,6 +53,7 @@
       We develop by cooperating interests to create conditions for more projects.
       </p>
   </div>
+  {% comment %}
     {% if user.is_authenticated and user.is_superuser %}
   <a class="btn btn-primary" href="/projects/create/">{%trans 'Create Project'%}</a>
     {% elif user.authenticate and not user.is_superuser %}
@@ -60,6 +61,7 @@
     {% else %}
     <a class="btn btn-primary" href="{% url 'account_login' %}">{%trans 'Create Project'%}</a>
     {% endif %}
+{% endcomment %}
   <div>
         <br>
         <p>

@@ -80,18 +80,18 @@
       </a>
       <div class="justify-content center d-flex ml-auto">
         <ul class=" navbar-nav">
-          <li><a class="nav-link justify-content-end {% active projects %}" href="/">{% trans 'Home' %}</a></li>
+          <li><a class="nav-link justify-content-end {% active projects %}" href="/">ITEC</a></li>
 
           {% if user.is_authenticated%}
-          <li><a class="nav-link justify-content-end {% active projects %}" href="/projects/feed">Notifications</a></li>
-          {%endif%}
-
           <li><a class="nav-link  {% active projects %}" href="/projects/">Projects</a></li>
-
-
+          {%endif%}
 
           {%if user.is_superuser%}
           <li><a class="nav-link " href="/projects/administration">Administration</a></li>
+          {%endif%}
+
+          {% if user.is_authenticated%}
+          <li><a class="nav-link justify-content-end {% active projects %}" href="/projects/feed">Notifications</a></li>
           {%endif%}
 
           {% if user.is_authenticated%}
@@ -99,12 +99,9 @@
               href="/projects/notifications">Messages:{% notifications_unread %}</a></li>
           {%endif%}
 
-          <li><a class="nav-link"
-              href="">News</a></li>
-              <li><a class="nav-link {% active questions %}"
-              href="">Questions</a></li>
+        <li><a class="nav-link {% active questions %}"href="">Join</a></li>
 
-          <li><a class="nav-link {% active about_us %}" href="">{% trans 'About us' %}</a></li>
+          <li><a class="nav-link {% active about_us %}" href="">{% trans 'About' %}</a></li>
 
           {% if user.is_authenticated %}
           <li><a class="nav-link {% active account %}" href="{% url 'my_account' %}">{% trans 'Account' %}</a></li>
@@ -172,46 +169,9 @@
       </ul>
     </div>
     {% endblock %}
+    <div class="empty-page-home"></div>
   </div>
 
-  <div class="container-fluid" style="margin-top:30px; padding-top:30px; padding-bottom:30px;">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-3 text-center">
-              <a href="/projects/">
-                <img style="width:150px;" src="{% static 'media/new-learn-more.png' %}">
-                <h2 class="font-weight-lighter" style="color:#7ee6cf;">Learn more</h2>
-                <div class="font-weight-lighter" style="color:#7ee6cf;"></div>
-              </a>
-            </div>
-            <div class="col-md-3 text-center">
-                <a href="/ела-в-slack/">
-                    <img style="width:150px;" src="{% static 'media/new-join-slack.png' %}">
-                    <h2 class="font-weight-lighter" style="color:#7ee6cf;">Come to Slack</h2>
-                    <div class="font-weight-lighter"></div>
-                </a>
-            </div>
-            <div class="col-md-3 text-center">
-              <a href="">
-                <img style="width:150px;" src="{% static 'media/new-join-communities.png' %}">
-                <h2 class="font-weight-lighter" style="color:#7ee6cf;">Projects</h2>
-                <div class="font-weight-lighter"></div>
-              </a>
-            </div>
-            <div class="col-md-3 text-center">
-              <a href="">
-                <img style="width:150px;" src="{% static 'media/logo_itec1.png' %}">
-                <h2 class="font-weight-lighter" style="color:#7ee6cf;">Join</h2>
-                <div class="font-weight-lighter"></div>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
   <footer class="footer">
     <div class="container-fluid">
       <div class="row footer-background pt-2">
