@@ -1,29 +1,31 @@
 #CookielawBanner {
     background: #008080;
     padding: 15px 0;
+    color: #fff;
 }
 
 .cookie-container {
     position: sticky;
     top: 0;
-    padding-top:5rem;
-    padding-right: 15px;
-    padding-left: 15px;
-    padding-bottom: 3rem;
+    padding-bottom: 2rem;
     margin-right: auto;
     margin-left: auto;
     max-width: 90%;
     z-index: 1020;
 }
+.cookie-container p {
+  margin-bottom: 7px;
+  color: #ADD8E6;
+  font-size: 0.75rem;
+}
 
 #cookieButton {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1;
     color: #fff;
-    text-shadow: 0 1px 0 #fff;
+    text-shadow: 0 1px 0 #241f12;
     opacity: .5;
-    margin: 5px;
+    margin-top:0;
 }
 .terms {
   border: 1px dotted #fff;

@@ -2,23 +2,24 @@
 
 <div id="CookielawBanner" class="sticky-top">
     <div class="cookie-container">
-
-         <a
-             id="cookieButton"
-             class="btn btn-default pull-right"
-             href="javascript:Cookielaw.accept();"
-             style="font-size:3rem;"
-             >
-             &times;
-         </a>
-         <h5 style="color:#fff;">{% trans "This application uses cookies to make your experience better." %}</h5>
-         <p style="color:#ADD8E6;">
-         {% block trans %}
-         This application stores small text data (cookies) on your device to provide better
-         content for statistical purposes. You can disable the use of cookies by changing your
-         browser settings. By browsing our application without changing your browser settings,
-         you grant us permission to store this information on your device.
-         {% endblock %}
+        <a
+            id="cookieButton"
+            class="btn btn-default pull-right"
+            href="javascript:Cookielaw.accept();"
+            style="padding:0;"
+            >
+            &times;
+        </a>
+        <h6>
+            {% trans "This application uses cookies to make your experience better." %}
+        </h6>
+        <p>
+        {% block trans %}
+        This application stores small text data (cookies) on your device to provide better
+        content for statistical purposes. You can disable the use of cookies by changing your
+        browser settings. By browsing our application without changing your browser settings,
+        you grant us permission to store this information on your device.
+        {% endblock %}
         </p>
         <h3>
             <a
@@ -26,25 +27,16 @@
                 class="btn btn-default pull-right terms"
                 href="javascript:Cookielaw.accept();"
                 >
-                {% trans "I AGREE !" %}
+                {% trans "I AGREE" %}
             </a>
-        </h3>
-        <h3>
-        <a
-            id="cookieButton"
-            class="btn btn-default pull-right terms"
-            href=""
-            >
-            {% trans "Terms of Use" %}
-        </a>
         </h3>
         <h3>
             <a
                 id="cookieButton"
-                class="btn btn-default pull-right terms"
+                class="btn btn-default pull-left terms"
                 href="javascript:Cookielaw.reject();"
                 >
-                {% trans "I DO NOT AGREE !" %}
+                {% trans "I DON'T AGREE" %}
             </a>
         </h3>
 
