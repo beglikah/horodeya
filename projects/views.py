@@ -152,6 +152,7 @@ class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         show_admin = self.request.GET.get('show_admin', 'True') == 'True'
+        print(show_admin)
         can_be_admin = self.request.user.is_authenticated
         context['admin'] = show_admin and can_be_admin
         context['can_be_admin'] = can_be_admin
@@ -864,7 +865,8 @@ class TimeNecessityList(AutoPermissionRequiredMixin, generic.ListView):
         context['necessity_list'] = project.timenecessity_set.all()
         context['type'] = 'time'
 
-        context['member'] = self.request.user.member_of(project.pk)
+        if self.request.user == project.author_admin:
+            context['member'] = self.request.user
 
         return context
 
@@ -883,7 +885,11 @@ class ThingNecessityList(AutoPermissionRequiredMixin, generic.ListView):
         context['necessity_list'] = project.thingnecessity_set.all()
         context['type'] = 'thing'
 
-        context['member'] = self.request.user.member_of(project.pk)
+        if self.request.user == project.author_admin:
+            context['member'] = self.request.user
+
+
+        # context['member'] = self.request.user.member_of(project.pk)
 
         return context
 

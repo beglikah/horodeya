@@ -9,7 +9,7 @@
 {% include "projects/project_breadcrumb.html" with project=object active="active" only %}
 {% endblock %}
 {% block admin_tools %}
-{% if admin  or project.author_admin %}
+{% if admin %}
 <li class="nav-item flex-fill text-center ">
   <a class="nav-link text-white"
     href="{% url 'projects:details' object.pk %}?show_admin=false">
@@ -84,6 +84,7 @@
 
     {% endif %}
   </div>
+  {% if admin %}
   <div class="col-md-4 mt-4">
     {% include "projects/project_stats.html" with project=object %}
     {% if admin %}
@@ -93,6 +94,7 @@
     {% endif %}
 
   </div>
+  {% endif %}
 
 </div>
   <div class=" mt-1">
@@ -141,6 +143,7 @@
 
     </div>
   </div>
+  {% if admin %}
   <div id="volunteer" class="col-8 p-0 mt-3">
     {% with object.timenecessity_set.all as necessity_list %}
     <h5>
@@ -173,10 +176,14 @@
     {%endif%}
     {% endif %}
   </div>
+    {% endif %}
+
 </div>
 
 
 <div id="donate" class="col-8 mt-5 p-0">
+      {% if admin %}
+
   {% with object.thingnecessity_set.all as necessity_list %}
   <h5>
       The project needs {{object.things_still_needed}} things worth {{object.money_still_needed|leva}}
@@ -190,7 +197,6 @@
     {% endfor %}
   </ul>
   {% endwith %}
-  {% if admin %}
   <a class="btn btn-primary mt-3"
       href="{% url 'projects:thing_necessity_list' project.pk %}">
       {% trans 'See donations' %}
@@ -237,6 +243,8 @@
   </div> {% endcomment %}
   {% endif %}
 </div>
+{% if admin %}
+
 <div id="reports" class="col-8 p-0 mt-5">
   <h5>{% trans 'Reports' %}</h5>
   <p>{% trans 'Regular reports allow for transparency and accountability. Read the reports from the cause.' %} </p>
@@ -270,6 +278,7 @@
   </table>
   {% if admin %}
   <a class="btn btn-primary" href="{% url 'projects:report_create' project.pk %}">{% trans 'Add new report' %}</a>
+  {% endif %}
   {% endif %}
 </div>
 {% comment %}
