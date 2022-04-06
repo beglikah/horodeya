@@ -9,11 +9,15 @@
 {% block content %}
 {% if type == 'time' %}
 <div>
-<ul>
-<li>1 Оценете пазарната стойност на труда за всяка позиция.
-Тази стойност не ви ангажира с плащане към вложителя - тя служи за отчитането на личен ПРИНОС към вложителя и правото му на ДАР, служи и за определяне на вашия дан към Хородея.</li>
-<li>2 Нуждите от доброволен труд се описват като конкретни позиции с начална и крайна дата на ангажимента.</li>
-</ul>
+    <ul>
+        <li>1. Estimate the market value of labor for each position.
+            This value does not commit you to pay to the depositor - it serves to determine
+            your personal contribution to the project.
+        </li>
+        <li>2. The needs for voluntary work are described as specific positions with a start
+            and end date of the commitment.
+        </li>
+    </ul>
 </div>
 {% endif %}
 
@@ -49,7 +53,9 @@
     {% endfor %}
     </table>
   </div>
-  <button style="margin-right:10px" type="submit" class="btn btn-primary" name="add-row">{% trans 'Add row' %}</button>
+  <button style="margin-right:10px" type="submit" class="btn btn-primary" name="add-row">
+      {% trans 'Add row' %}
+  </button>
   <button type="submit" class="btn btn-primary">{% trans 'Save' %}</button>
 </form>
 {% endblock %}

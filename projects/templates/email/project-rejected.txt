@@ -1,6 +1,6 @@
 Hello!
 
-Your Project {project_name} has been rejected due to incompatibility with the Code of Ethics and the ITEC Evaluation System.
+Your Project {{project_name}} has been rejected due to incompatibility with the Code of Ethics and the ITEC Evaluation System.
 
 We will be happy to receive a new application for a Project.
 

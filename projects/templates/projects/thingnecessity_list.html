@@ -16,7 +16,7 @@
 {% endblock %}
 
 {% block content %}
-{% has_perm 'projects.change_thingnecessity' user project as can_change %}
+{% has_perm 'projects.change_thingnecessity' project as can_change %}
 {% if can_change %}
   {{ block.super }}
 {% endif %}

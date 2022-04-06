@@ -9,32 +9,48 @@
 {% include "projects/project_breadcrumb.html" with project=object active="active" only %}
 {% endblock %}
 {% block admin_tools %}
-{% if admin %}
+{% if admin  or project.author_admin %}
 <li class="nav-item flex-fill text-center ">
   <a class="nav-link text-white"
-    href="{% url 'projects:details' object.pk %}?show_admin=false">{% trans 'See as regular user' %}</a>
+    href="{% url 'projects:details' object.pk %}?show_admin=false">
+      {% trans 'See as regular user' %}
+  </a>
 </li>
 <li class="nav-item flex-fill text-center ">
-  <a class="nav-link text-white" href="{% url 'projects:time_necessity_list' object.pk %}">{% trans 'Volunteers' %}</a>
+  <a class="nav-link text-white" href="{% url 'projects:time_necessity_list' object.pk %}">
+      {% trans 'Volunteers' %}
+  </a>
 </li>
 <li class="nav-item flex-fill text-center ">
-  <a class="nav-link text-white" href="{% url 'projects:thing_necessity_list' object.pk %}">{% trans 'Donations' %}</a>
+  <a class="nav-link text-white" href="{% url 'projects:thing_necessity_list' object.pk %}">
+      {% trans 'Donations' %}
+  </a>
 </li>
 <li class="nav-item flex-fill text-center ">
-  <a class="nav-link text-white" href="{% url 'projects:report_create' object.pk %}">{% trans 'New report' %}</a>
+  <a class="nav-link text-white" href="{% url 'projects:report_create' object.pk %}">
+      {% trans 'New report' %}
+  </a>
 </li>
 <li class="nav-item flex-fill text-center ">
-  <a class="nav-link text-white" href="{% url 'projects:gallery_update' project.pk %}">{% trans 'Update images' %}</a>
+  <a class="nav-link text-white" href="{% url 'projects:gallery_update' project.pk %}">
+      {% trans 'Update images' %}
+  </a>
 </li>
 <li class="nav-item flex-fill text-center ">
-  <a class="nav-link text-white" href="{% url 'projects:update_text' project.pk %}">{% trans 'Update text' %}</a>
+  <a class="nav-link text-white" href="{% url 'projects:update_text' project.pk %}">
+      {% trans 'Update text' %}
+  </a>
 </li>
 <li class="nav-item flex-fill text-center ">
-  <a class="nav-link text-white" href="{% url 'projects:update' project.pk %}">{% trans 'Add slack' %}</a>
+  <a class="nav-link text-white" href="{% url 'projects:update' project.pk %}">
+      {% trans 'Add slack' %}
+  </a>
 </li>
 {% elif can_be_admin %}
 <li class="nav-item flex-fill text-center ">
-  <a class="nav-link text-white" href="{% url 'projects:details' object.pk %}">{% trans 'See as admin' %}</a>
+  <a class="nav-link text-white" href="{% url 'projects:details' object.pk %}">
+      {% trans 'See as admin' %}
+  </a>
 </li>
 {% endif %}
 {% endblock %}
@@ -52,7 +68,7 @@
 <div class="row mt-4">
   <div class="col-md-8 galery">
     {% if object.gallery.public|length == 0 %}
-        {% if admin %}
+        {% if admin or project.author_admin %}
         <a class="btn btn-link" href="{% url 'projects:gallery_update' object.id %}">{% trans "Add image" %}</a>
         {% endif %}
     {% else %}
@@ -73,7 +89,7 @@
     {% if admin %}
     {% else %}
     <a class="btn btn-outline-primary mt-5"
-      href="{% url 'projects:follow_project' object.pk %}">{% trans 'Follow the cause' %}</a>
+      href="{% url 'projects:follow_project' object.pk %}">{% trans 'Receive reports' %}</a>
     {% endif %}
 
   </div>
@@ -128,7 +144,7 @@
   <div id="volunteer" class="col-8 p-0 mt-3">
     {% with object.timenecessity_set.all as necessity_list %}
     <h5>
-              Задругата се нуждае от {{object.time_still_needed}} вложители на труд
+        The project needs {{object.time_still_needed}} investitors of labor.
     </h5>
     <ul class="list-group list-group-flush">
       {% for necessity in necessity_list %}
@@ -141,15 +157,19 @@
     {% endwith %}
     {% if admin %}
     <a class="btn btn-primary mt-3"
-      href="{% url 'projects:time_necessity_list' project.pk %}">{% trans 'See applications' %}</a>
+      href="{% url 'projects:time_necessity_list' project.pk %}">
+        {% trans 'See applications' %}
+    </a>
     <a class="btn btn-primary mt-3"
-      href="{% url 'projects:time_necessity_update' project.pk %}">{% trans 'Update volunteer types' %}</a>
+        href="{% url 'projects:time_necessity_update' project.pk %}">
+        {% trans 'Update volunteer types' %}
+    </a>
     {% else %}
       {%if project.time_still_needed is not 0 and project.question_set.count > 0 %}
     <a class="btn btn-primary mt-3"
       href="{% url 'projects:time_support_create' object.pk %}">{% trans 'Volunteer' %}</a>
     {%else%}
-    <h6>{% trans 'No volunteers needed' %}</h6>
+        <h6>{% trans 'No volunteers needed' %}</h6>
     {%endif%}
     {% endif %}
   </div>
@@ -159,7 +179,7 @@
 <div id="donate" class="col-8 mt-5 p-0">
   {% with object.thingnecessity_set.all as necessity_list %}
   <h5>
-         Задругата се нуждае от  {{object.things_still_needed}} неща струващи {{object.money_still_needed|leva}}
+      The project needs {{object.things_still_needed}} things worth {{object.money_still_needed|leva}}
   </h5>
   <ul class="list-group list-group-flush">
     {% for necessity in necessity_list %}
@@ -172,12 +192,18 @@
   {% endwith %}
   {% if admin %}
   <a class="btn btn-primary mt-3"
-    href="{% url 'projects:thing_necessity_list' project.pk %}">{% trans 'See donations' %}</a>
+      href="{% url 'projects:thing_necessity_list' project.pk %}">
+      {% trans 'See donations' %}
+  </a>
   <a class="btn btn-primary mt-3"
-    href="{% url 'projects:thing_necessity_update' project.pk %}">{% trans 'Update necessities' %}</a>
+      href="{% url 'projects:thing_necessity_update' project.pk %}">
+      {% trans 'Update necessities' %}
+  </a>
   {% else %}
     <a class="btn btn-primary mt-3"
-            href="{% url 'projects:money_support_create' project.pk %}?supportertype=donator">Дари</a>
+        href="{% url 'projects:money_support_create' project.pk %}?supportertype=donator">
+        {% trans 'Donate' %}
+    </a>
   <!-- Button to Open the Modal -->
   {% comment %}<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="margin-top:10px">
     {%trans 'Donate'%}
@@ -237,7 +263,7 @@
         <a class="btn-link" href="{% url 'projects:report_list' project.pk %}"> {% trans 'see all' %} </a>
       </td>
       {%else%}
-      <td>Няма подадени отчети</td>
+      <td>{% trans 'No Reports yet' %}</td>
     </tr>
     {%endif%}
     {% endwith %}
@@ -246,8 +272,11 @@
   <a class="btn btn-primary" href="{% url 'projects:report_create' project.pk %}">{% trans 'Add new report' %}</a>
   {% endif %}
 </div>
+{% comment %}
 <h3 class="mt-5">{% trans 'Announcements' %}
+{% endcomment %}
   {% if admin %}
+  {% comment %}
     <form method="post" class="form" action="{% url 'projects:announcement_create' object.pk %}" >
     {% csrf_token %}
     {% bootstrap_form announcement_form layout='inline'%}
@@ -256,8 +285,9 @@
     {% endbuttons %}
   </form>
   {% else %}
+  {% endcomment %}
   <a class="btn btn-outline-primary"
-    href="{% url 'projects:follow_project' object.pk %}">{% trans 'Follow the cause' %}</a>
+    href="{% url 'projects:follow_project' object.pk %}">{% trans 'Receive reports' %}</a>
   {% endif %}
 </h3>
 {% for activity in timeline %}

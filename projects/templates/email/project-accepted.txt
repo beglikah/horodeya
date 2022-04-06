@@ -1,6 +1,6 @@
 Hello!
 
-Your Project {project_name} has been published and can start raising participants and funds.
+Your Project {{project_name}} has been published and can start raising participants and funds.
 
 1. Follow your messages in ITEC regularly!
 

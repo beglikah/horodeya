@@ -22,8 +22,8 @@
 {% block content %}
 
 <h4 class="mb-5">
-  {% blocktrans with cause=project.name community=project.community %}
- Apply as a volunteer for the cause {{cause}} from {{community}}
+  {% blocktrans with project=project.name %}
+ Apply as a volunteer for the project {{project}}
   {% endblocktrans %}
 </h4>
 {%if form.visible_fields%}

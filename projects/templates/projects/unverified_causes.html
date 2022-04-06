@@ -28,12 +28,12 @@
         <div class="card-body">
           <h5 class="card-title">{{ project.name }}
             <small class="text-muted">
-              {{project.community}}
+              {{project.author_admin}}
             </small>
           </h5>
           <p class="card-text">{{ project.description }}</p>
-          <a href="{% url 'projects:details' project.pk %}" class="btn btn-primary">Научи повече</a>
-          <a href="/projects/{{project.id}}/verify_project" class="btn btn-primary">Одобри задруга</a>
+          <a href="{% url 'projects:details' project.pk %}" class="btn btn-primary">{% trans 'Learn more' %}</a>
+          <a href="/projects/{{project.id}}/verify_project" class="btn btn-primary">{% trans 'Verify Project' %}</a>
         </div>
       </div>
       <div class="col-md-4 pr-4 pt-4">

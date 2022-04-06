@@ -14,7 +14,7 @@
 
 {% block content %}
 
-{% if project.community.admin.pk == user.pk %}
+{% if project.author_admin.pk == user.pk %}
   {{ block.super }}
 {% endif %}
 
@@ -24,7 +24,7 @@
   {{project.name}}
 </h2>
 
-{% with admin_pk=project.community.admin.pk %}
+{% with admin_pk=project.author_admin.pk %}
 {% if admin_pk == user.pk and unpublished_reports %}
 <div class="card">
   <div class="card-header">
@@ -48,9 +48,9 @@
       <a href="{% url 'projects:report_details' report.pk %}">{{ report.name }}</a>
       {% vote_exists report user.pk as voted%}
       {% if voted %}
-        <span>Гласувано</span>
+      <span>{% trans 'Voted' %}</span>
       {% else %}
-        <span>Прочети и гласувай</span>
+      <span>{% trans 'Read and Vote' %}</span>
       {% endif %}
     </li>
   {% endfor %}

@@ -3,36 +3,36 @@
 
 
   <br class="row">
-  <h6>Избери начин на плащене през системата на ePay.bg</h6>
+  <h6>Choose a Method of Payment Through The System of ePay.bg</h6>
   <br/>
  <div class="col-lg-5 col-sm-12">
 <ul class="list-group list-group-flush mb-5">
-<li class="list-group-item">1 Банкова карта</li>
-<li class="list-group-item">2 Микросметка</li>
-<li class="list-group-item">3 В брой на каса на EasyPay</li>
-<li class="list-group-item">4 Банков превод</li>
-<li class="list-group-item">5 Банкомат</li>
+<li class="list-group-item">1 Bank Card</li>
+<li class="list-group-item">2 Microaccount</li>
+<li class="list-group-item">3 Cash at EasyPay cash register</li>
+<li class="list-group-item">4 Bank Transfer</li>
+<li class="list-group-item">5 АТМ</li>
 </ul>
 <form action="https://www.epay.bg/" method="post" name="epay">
-	<input type="hidden" name="PAGE" value="{{context.PAGE}}" />
-	<input type="hidden" name="DESCR" value="{{context.DESCR}}" />
-	<input type="hidden" name="MIN" value="{{context.MIN}}" />
-	<input type="hidden" name="INVOICE" value="{{context.INVOICE}}" />
-	<input type="hidden" name="AMOUNT" value="{{context.AMOUNT}}" />
-	<input type="hidden" name="EXP_TIME" value="{{context.EXP_TIME}}" />
-	<input type="hidden" name="ENCODED" value="{{context.ENCODED}}" />
-	<input type="hidden" name="CHECKSUM" value="{{context.CHECKSUM}}" />
-	<input
-		type="hidden"
-		name="URL_OK"
-		value="https://horodeya.com/projects/accounts/{{context.user_id}}/support/money/list"
-	/>
-	<input
-		type="hidden"
-		name="URL_CANCEL"
-		value="https://horodeya.com/projects/{{context.project_id}}/"
-	/>
-	<input class="btn btn-success" type="submit" value="Плати през Epay" />
+    <input type="hidden" name="PAGE" value="{{context.PAGE}}" />
+    <input type="hidden" name="DESCR" value="{{context.DESCR}}" />
+    <input type="hidden" name="MIN" value="{{context.MIN}}" />
+    <input type="hidden" name="INVOICE" value="{{context.INVOICE}}" />
+    <input type="hidden" name="AMOUNT" value="{{context.AMOUNT}}" />
+    <input type="hidden" name="EXP_TIME" value="{{context.EXP_TIME}}" />
+    <input type="hidden" name="ENCODED" value="{{context.ENCODED}}" />
+    <input type="hidden" name="CHECKSUM" value="{{context.CHECKSUM}}" />
+    <input
+        type="hidden"
+        name="URL_OK"
+        value="https://horodeya.com/projects/accounts/{{context.user_id}}/support/money/list"
+    />
+    <input
+        type="hidden"
+        name="URL_CANCEL"
+        value="https://horodeya.com/projects/{{context.project_id}}/"
+    />
+    <input class="btn btn-success" type="submit" value="Pay via Epay" />
 </form>
 </div>
 </div>

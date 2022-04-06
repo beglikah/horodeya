@@ -2,10 +2,10 @@
 {% block content  %}
 <form action="/projects/create_epay_support/{{context.pk}}" method="post">
 	{% csrf_token %}
-	<label for="message">Въведете сума</label>
+	<label for="message">Enter an Amount</label>
 	<input name="leva" type="number" required />
     <input name="supportType" type="hidden" value={{context.supporterType}}>
-	<input class="btn btn-success" type="submit" value="Дари" />
+	<input class="btn btn-success" type="submit" value="Donate" />
 </form>
 {% endblock content %}
 
