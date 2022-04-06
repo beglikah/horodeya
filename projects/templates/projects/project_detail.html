@@ -299,7 +299,10 @@
     href="{% url 'projects:follow_project' object.pk %}">{% trans 'Receive reports' %}</a>
   {% endif %}
 </h3>
+{% if admin %}
 {% for activity in timeline %}
 {% render_activity activity %}
 {% endfor %}
+
+{% endif %}
 {% endblock %}
