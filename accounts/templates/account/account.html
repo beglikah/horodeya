@@ -49,7 +49,6 @@
           {% trans "My Projects" %}:<br>
           {% for project in object.projects %}
           <a class="" href="{% url 'projects:details' project.pk %}">{{ project.name }}</a>
-          - Author: {{project.author_admin}}
           {% if not forloop.last %}
           |
           {% endif %}

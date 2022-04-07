@@ -378,6 +378,7 @@ def money_support_create(request, project_id=None):
     supporterType = request.GET.get('supportertype')
     if(supporterType == 'donator'):
         if(request.user.donatorData):
+            print(request.user.donatorData)
             return create_epay_support(request, pk=project_id)
         else:
             return redirect('/projects/donator/create/?next=/projects/create_epay_support/%s' % (project_id))
@@ -1084,7 +1085,7 @@ class DonatorDataCreate(AutoPermissionRequiredMixin, CreateView):
         if(redirectUrl):
             return redirect(self.request.GET['next']+'?supportertype=donator')
         else:
-            return redirect('/accounts/profile/')
+            return redirect('/account/profile/')
 
 
 class LegalEntityDataCreate(AutoPermissionRequiredMixin, CreateView):
@@ -1102,7 +1103,7 @@ class LegalEntityDataCreate(AutoPermissionRequiredMixin, CreateView):
         if(redirectUrl):
             return redirect(self.request.GET['next']+'?supportertype=legalentitydonator')
         else:
-            return redirect('/accounts/profile/')
+            return redirect('/account/profile/')
 
 
 def feed(request):
@@ -1222,6 +1223,7 @@ def received_bug_reports(request):
 
 
 def create_epay_support(request, pk):
+    print("Create Epay Support")
     if(request.method == "GET"):
         supporterType = request.GET.get('supportertype')
         context = {}
@@ -1239,11 +1241,11 @@ def create_epay_support(request, pk):
             support = form.save()
             supportId = support.id
             messages.add_message(request, messages.SUCCESS,
-                                 'Благодарим ви за дарението')
+                                 _('Thank you for your donation'))
             return redirect('/projects/pay_epay_support/%s' % (supportId))
         else:
             messages.add_message(request, messages.ERROR,
-                                 'Въведете валидна сума')
+                                 _('Please enter a valid amount'))
             return redirect('/')
 
 
