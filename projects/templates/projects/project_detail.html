@@ -8,8 +8,9 @@
 
 {% include "projects/project_breadcrumb.html" with project=object active="active" only %}
 {% endblock %}
+
 {% block admin_tools %}
-{% if admin %}
+{% if author %}
 <li class="nav-item flex-fill text-center ">
   <a class="nav-link text-white"
     href="{% url 'projects:details' object.pk %}?show_admin=false">
@@ -46,7 +47,7 @@
       {% trans 'Add slack' %}
   </a>
 </li>
-{% elif can_be_admin %}
+{% elif as_regular_user %}
 <li class="nav-item flex-fill text-center ">
   <a class="nav-link text-white" href="{% url 'projects:details' object.pk %}">
       {% trans 'See as admin' %}
@@ -56,9 +57,7 @@
 {% endblock %}
 
 {% block content %}
-{% if can_be_admin %}
 {{ block.super }}
-{% endif %}
 
 <script>
   function changeImage(btn, image) {
@@ -67,21 +66,10 @@
     document.getElementById('image').src = image;
   }
 </script>
-<div class="row mt-1" style="justify-content:center;">
-    <h2>
-        {{ object.name }}
-    </h2>
-</div>
-<div class="row mt-1" style="justify-content:center;">
-    <h5>{{ object.description }}</h5>
-</div>
-
 <div class="row mt-4" style="margin-right:0; margin-left:0;">
-    <div class="col-md-2 mt-2">
-    </div>
     <div class="col-md-8 galery">
     {% if object.gallery.public|length == 0 %}
-        {% if admin %}
+        {% if author %}
         <a class="btn btn-link" href="{% url 'projects:gallery_update' object.id %}">{% trans "Add image" %}</a>
         {% endif %}
     {% else %}
@@ -96,7 +84,28 @@
         {% endfor %}
     {% endif %}
     </div>
-    <div class="col-md-2 mt-2">
+    <div class="col-md-4 mt-4" style="margin-top:0!important;">
+        <h1>{{ object.name }}</h1>
+        <hr style="border: 5px solid #5cb0cef5;">
+        <h3>{{ object.description }}</h3>
+        <br>
+    {% if project.location is not none %}
+        <p>{% trans "Location: " %}{{ project.location }},</p>
+    {% endif %}
+    {% if project.start_date is not none %}
+        <p>{% trans "Starting date: " %}{{ project.start_date }},</p>
+    {% endif %}
+    {% if project.end_date is not none %}
+        <p>{% trans "End date: " %}{{ project.end_date }},</p>
+    {% endif %}
+    {% if project.author_admin is not none %}
+        <p>{% trans "Project author: " %}{{ project.author_admin }},</p>
+    {% endif %}
+    {%if object.slack_channel is not None %}
+        <p>{% trans "Slack chanel: " %}{{object.slack_channel}}</p>
+    {%endif%}
+
+
     </div>
 </div>
 
@@ -118,32 +127,8 @@
   </div>
 </div>
 
-<div class="body">
-    <div class="col-md-6 text-nowrap">
-    {% if project.location is not none %}
-        {% trans "Location: " %}{{ project.location }},
-    {% endif %}
-    <br/>
-    {% if project.start_date is not none %}
-        {% trans "Starting date: " %}{{ project.start_date }},
-    {% endif %}
-    <br/>
-    {% if project.end_date is not none %}
-        {% trans "End date: " %}{{ project.end_date }},
-    {% endif %}
-    <br/>
-    {% if project.author_admin is not none %}
-        {% trans "Project author: " %}{{ project.author_admin }},
-    {% endif %}
-    <br/>
-    {%if object.slack_channel is not None %}
-        {% trans "Slack chanel: " %}{{object.slack_channel}}
-    {%endif%}
-    </div>
-</div>
-
 <div class="">
-    {% if admin %}
+    {% if author %}
     <div id="volunteer" class="col-md-4 mt-4">
         {% include "projects/project_stats.html" with project=object %}
     </div>
@@ -157,7 +142,7 @@
     </a>
 </div>
 
-{% if admin %}
+{% if author %}
 <div id="reports" class="col-8 p-0 mt-5">
     <h3><b>{% trans 'Reports:' %}</b></h3>
     <p>{% trans 'Regular reports allow for transparency and accountability. Read the reports from the cause.' %} </p>

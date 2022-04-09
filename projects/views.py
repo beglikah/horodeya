@@ -11,6 +11,8 @@ from django.core.mail import EmailMultiAlternatives
 
 from django.contrib import messages
 from django.http import HttpResponse
+from django.http.request import HttpRequest
+
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
@@ -152,10 +154,24 @@ class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         show_admin = self.request.GET.get('show_admin', 'True') == 'True'
-        print(show_admin)
-        can_be_admin = self.request.user.is_authenticated
-        context['admin'] = show_admin and can_be_admin
-        context['can_be_admin'] = can_be_admin
+        author = self.object.author_admin
+        print("Author admin: ", author)
+        current_user = self.request.user
+        url = HttpRequest.get_full_path(self.request)
+        urlend = url.split('/')
+        urlfinish = urlend[-1]
+
+        print("Current user: ", current_user)
+        if current_user == author and author.is_authenticated:
+            if urlfinish == '?show_admin=false':
+                show_admin = False
+                context['as_regular_user'] = current_user.is_authenticated
+            else:
+                show_admin = True
+                context['author'] = author and show_admin
+        else:
+            context['regular_user'] = current_user.is_authenticated
+            show_admin = False
 
         try:
             feed = feed_manager.get_feed('project', context['object'].id)
