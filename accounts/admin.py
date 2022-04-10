@@ -9,6 +9,10 @@ class MyUserAdmin(UserAdmin):
     readonly_fields = ('date_joined',)
     list_display = (
         'email',
+        'is_author',
+        'is_administrator',
+        'is_member',
+        'is_superuser',
         'photo',
         'first_name',
         'second_name',
@@ -24,6 +28,15 @@ class MyUserAdmin(UserAdmin):
         'slack_channel',
         'privacy_policy',
         'platform_policy',
+    )
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        ('Permissions', {
+            'fields': (
+                'is_author',
+                'is_superuser',
+            )
+        })
     )
 
 

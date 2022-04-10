@@ -6,14 +6,14 @@ import rules
 
 import datetime
 from django.utils import timezone
-from django.utils.translation import get_language, gettext, gettext_lazy as _
+from django.utils.translation import get_language, gettext_lazy as _
 
 from stream_django.activity import Activity
 
 from model_utils import Choices
 from photologue.models import Gallery
 from vote.models import VoteModel
-from accounts.models import User, Timestamped, AuthorAdmin
+from accounts.models import User, Timestamped
 
 
 def determine_project(object):
@@ -42,7 +42,7 @@ def member_of_project(user, object):
 
 @rules.predicate
 def administrator_of_project(user, object):
-    for administrator in project.determine_project(object).administrators:
+    for administrator in object.determine_project(object).administrators:
         if user == administrator:
             return user == administrator
 
@@ -135,7 +135,7 @@ class Project(Timestamped):
         rules_permissions = {
             "add": rules.is_authenticated,
             "delete": is_author_admin,
-            "change": member_of_project,
+            "change": is_author_admin,
             "view": rules.always_allow,
             "follow": rules.is_authenticated
             # "create": rules.is_superuser,
@@ -177,7 +177,20 @@ class Project(Timestamped):
     author_admin = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True
     )
+    administrators = models.ManyToManyField(
+        User,
+        related_name='administrator_of_project', blank=True)
+    members = models.ManyToManyField(
+        User,
+        related_name='member_of_project',
+        blank=True
+    )
 
+    def all_administrators(self):
+        return ", ".join([str(a) for a in self.administrators.all()])
+
+    def all_members(self):
+        return ", ".join([str(m) for m in self.members.all()])
 
     def latest_reports(self):
         show_reports = 3

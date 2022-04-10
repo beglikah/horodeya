@@ -43,10 +43,22 @@
   </a>
 </li>
 <li class="nav-item flex-fill text-center ">
-  <a class="nav-link text-white" href="{% url 'projects:update' project.pk %}">
+  <a class="nav-link text-white" href="{% url 'projects:update_slack' project.pk %}">
       {% trans 'Add slack' %}
   </a>
 </li>
+
+<li class="nav-item flex-fill text-center ">
+  <a class="nav-link text-white" href="{% url 'projects:update_administrators' project.pk %}">
+      {% trans 'Add administrator' %}
+  </a>
+</li>
+<li class="nav-item flex-fill text-center ">
+  <a class="nav-link text-white" href="{% url 'projects:update_members' project.pk %}">
+      {% trans 'Add member' %}
+  </a>
+</li>
+
 {% elif as_regular_user %}
 <li class="nav-item flex-fill text-center ">
   <a class="nav-link text-white" href="{% url 'projects:details' object.pk %}">
@@ -89,23 +101,29 @@
         <hr style="border: 5px solid #5cb0cef5;">
         <h3>{{ object.description }}</h3>
         <br>
-    {% if project.location is not none %}
-        <p>{% trans "Location: " %}{{ project.location }},</p>
-    {% endif %}
-    {% if project.start_date is not none %}
-        <p>{% trans "Starting date: " %}{{ project.start_date }},</p>
-    {% endif %}
-    {% if project.end_date is not none %}
-        <p>{% trans "End date: " %}{{ project.end_date }},</p>
-    {% endif %}
-    {% if project.author_admin is not none %}
-        <p>{% trans "Project author: " %}{{ project.author_admin }},</p>
-    {% endif %}
-    {%if object.slack_channel is not None %}
-        <p>{% trans "Slack chanel: " %}{{object.slack_channel}}</p>
-    {%endif%}
-
-
+        {% if project.location is not none %}
+            <p>{% trans "Location: " %}{{ project.location }},</p>
+        {% endif %}
+        {% if project.start_date is not none %}
+            <p>{% trans "Starting date: " %}{{ project.start_date }},</p>
+        {% endif %}
+        {% if project.end_date is not none %}
+            <p>{% trans "End date: " %}{{ project.end_date }},</p>
+        {% endif %}
+        {% if project.author_admin is not none %}
+            <p>{% trans "Project author: " %}{{ project.author_admin }},</p>
+        {% endif %}
+        {%if object.slack_channel is not None %}
+            <p>{% trans "Slack chanel: " %}{{object.slack_channel}}</p>
+        {%endif%}
+        {%if administrators is not None %}
+            <p>{% trans "Project Administrators: " %}
+            {{administrators }}</p>
+        {%endif%}
+        {%if members is not None %}
+            <p>{% trans "Project Members: " %}
+            {{ members }}</p>
+        {%endif%}
     </div>
 </div>
 

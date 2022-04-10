@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.core.mail import EmailMultiAlternatives
 
 from django.contrib import messages
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.http.request import HttpRequest
 
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -141,15 +141,23 @@ class ProjectsList(generic.ListView):
     paginate_by = 100
     template_name = 'projects/projects_list.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect('/accounts/login/')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # context['now'] = timezone.now()
-        print(context)
         return context
 
 
 class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
     model = _model.Project
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect('/accounts/login/')
+
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -160,9 +168,15 @@ class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
         url = HttpRequest.get_full_path(self.request)
         urlend = url.split('/')
         urlfinish = urlend[-1]
+        administrators = self.object.all_administrators()
+        members = self.object.all_members()
+        context['administrators'] = administrators
+        context['members'] = members
+        print("Administrators: ", administrators)
+        print("Members: ", members)
 
         print("Current user: ", current_user)
-        if current_user == author and author.is_authenticated:
+        if current_user == author:
             if urlfinish == '?show_admin=false':
                 show_admin = False
                 context['as_regular_user'] = current_user.is_authenticated
@@ -229,9 +243,37 @@ class ProjectCreate(AutoPermissionRequiredMixin, UserPassesTestMixin, CreateView
         return super().form_valid(form)
 
 
-class ProjectUpdate(AutoPermissionRequiredMixin, UpdateView):
+class ProjectUpdateSlack(AutoPermissionRequiredMixin, UpdateView):
     model = _model.Project
-    form_class = _form.ProjectUpdateForm
+    form_class = _form.ProjectUpdateSlackForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+    def form_valid(self, form):
+        user = self.request.user
+        return super().form_valid(form)
+
+
+class ProjectUpdateAdministrators(AutoPermissionRequiredMixin, UpdateView):
+    model = _model.Project
+    form_class = _form.ProjectUpdateAdministratorsForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+    def form_valid(self, form):
+        user = self.request.user
+        return super().form_valid(form)
+
+
+class ProjectUpdateMembers(AutoPermissionRequiredMixin, UpdateView):
+    model = _model.Project
+    form_class = _form.ProjectUpdateMembersForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

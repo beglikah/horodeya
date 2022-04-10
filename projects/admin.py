@@ -8,10 +8,20 @@ from vote.models import Vote
 
 # Register your models here.
 class ProjectAdmin(admin.ModelAdmin):
+    fields = [
+        'name',
+        'verified_status',
+        'administrators',
+        'members',
+    ]
     list_display = (
         'name',
         'verified_status',
         'author_admin',
+        'all_administrators',
+        'all_members',
+    )
+    list_editable = (
     )
 
 

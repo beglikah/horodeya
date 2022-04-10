@@ -9,6 +9,7 @@ from rules.contrib.views import AutoPermissionRequiredMixin
 from tempus_dominus.widgets import DateTimePicker, DatePicker
 
 import projects.models as _model
+from accounts.models import User
 from projects.templatetags.projects_tags import leva
 
 
@@ -233,7 +234,7 @@ class MoneySupportForm(forms.ModelForm):
         self.fields['necessity'].empty_label = _('Any will do')
 
 
-class ProjectUpdateForm(forms.ModelForm):
+class ProjectUpdateSlackForm(forms.ModelForm):
     class Meta:
         model = _model.Project
         fields = ['slack_channel']
@@ -247,6 +248,38 @@ class ProjectUpdateTextForm(forms.ModelForm):
     class Meta:
         model = _model.Project
         fields = ['text']
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+
+
+class ProjectUpdateAdministratorsForm(forms.ModelForm):
+    administrators = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    class Meta:
+        model = _model.Project
+        fields = ['administrators']
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        print("Current User: ",user)
+        super().__init__(*args, **kwargs)
+
+    def save(self):
+        project = super().save(commit=False)
+        project.save()
+        project.administrators.add(*self.cleaned_data.get('administrators'))
+        return project
+
+
+class ProjectUpdateMembersForm(forms.ModelForm):
+    class Meta:
+        model = _model.Project
+        fields = ['members']
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')

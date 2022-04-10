@@ -8,7 +8,9 @@ urlpatterns = [
     path('', views.ProjectsList.as_view(), name='project-list'),
     path('create/', views.ProjectCreate.as_view(),
          name='create'),  # type cause или business
-    path('<int:pk>/update', views.ProjectUpdate.as_view(), name='update'),
+    path('<int:pk>/update_members', views.ProjectUpdateMembers.as_view(), name='update_members'),
+    path('<int:pk>/update_administrators', views.ProjectUpdateAdministrators.as_view(), name='update_administrators'),
+    path('<int:pk>/update_slack', views.ProjectUpdateSlack.as_view(), name='update_slack'),
     path('<int:pk>/update_text',
          views.ProjectTextUpdate.as_view(), name='update_text'),
     path('<int:pk>/delete', views.ProjectDelete.as_view(), name='delete'),
