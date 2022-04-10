@@ -27,7 +27,7 @@
     </div>
 
     {% if not short %}
-    {% if author %}
+    {% if author or member_of or administrator_of %}
     <a
         class="btn btn-primary mt-3"
         href="{% url 'projects:time_necessity_list' project.pk %}"
@@ -87,7 +87,7 @@
             >
             </div>
     </div>
-    {% if not short %} {% if author %}
+    {% if not short %} {% if author or member_of or administrator_of %}
     <a
         class="btn btn-primary mt-3"
         href="{% url 'projects:thing_necessity_list' project.pk %}"

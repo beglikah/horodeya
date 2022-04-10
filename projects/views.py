@@ -67,13 +67,19 @@ def short_random():
 
 
 @login_required
-@permission_required('projects.change_thingnecessity', fn=objectgetter(_model.Project, 'project_id'))
+@permission_required(
+    'projects.change_thingnecessity',
+    fn=objectgetter(_model.Project, 'project_id')
+)
 def thing_necessity_update(request, project_id):
     return necessity_update(request, project_id, 'thing')
 
 
 @login_required
-@permission_required('projects.change_timenecessity', fn=objectgetter(_model.Project, 'project_id'))
+@permission_required(
+    'projects.change_timenecessity',
+    fn=objectgetter(_model.Project, 'project_id')
+)
 def time_necessity_update(request, project_id):
     return necessity_update(request, project_id, 'time')
 
@@ -163,27 +169,60 @@ class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         show_admin = self.request.GET.get('show_admin', 'True') == 'True'
+
         author = self.object.author_admin
-        print("Author admin: ", author)
+        administrators = self.object.all_administrators()
+        members = self.object.all_members()
         current_user = self.request.user
+
         url = HttpRequest.get_full_path(self.request)
         urlend = url.split('/')
         urlfinish = urlend[-1]
-        administrators = self.object.all_administrators()
-        members = self.object.all_members()
-        context['administrators'] = administrators
-        context['members'] = members
-        print("Administrators: ", administrators)
-        print("Members: ", members)
 
-        print("Current user: ", current_user)
-        if current_user == author:
+        adm = administrators.split(",")
+        print(adm)
+        for adm_name in adm:
+            if current_user.get_full_name() == adm_name:
+                adm_user = current_user
+            else:
+                adm_user = None
+
+        mem = members.split(",")
+        for mem_name in mem:
+            if current_user.get_full_name() == mem_name:
+                mem_user = current_user
+            else:
+                mem_user = None
+
+        for member_of in members:
+            if current_user == member_of:
+                print("Is Member Of Project: ", member_of)
+                return member_of
+
+        if (current_user == author):
             if urlfinish == '?show_admin=false':
                 show_admin = False
                 context['as_regular_user'] = current_user.is_authenticated
             else:
                 show_admin = True
                 context['author'] = author and show_admin
+                print("Is Author: ", author)
+
+        elif (current_user == adm_user):
+            if urlfinish == '?show_admin=false':
+                show_admin = False
+                context['as_regular_user'] = current_user.is_authenticated
+            else:
+                show_admin = True
+                context['administrator_of'] = current_user.is_authenticated
+
+        elif (current_user == mem_user):
+            if urlfinish == '?show_admin=false':
+                show_admin = False
+                context['as_regular_user'] = current_user.is_authenticated
+            else:
+                show_admin = True
+                context['member_of'] = current_user and show_admin
         else:
             context['regular_user'] = current_user.is_authenticated
             show_admin = False
@@ -228,7 +267,6 @@ class ProjectCreate(AutoPermissionRequiredMixin, UserPassesTestMixin, CreateView
     def form_valid(self, form):
         user = self.request.user
         form.instance.author_admin = self.request.user
-        print("Project Author: ", self.author_admin)
         project = form.instance
 
 
@@ -236,7 +274,7 @@ class ProjectCreate(AutoPermissionRequiredMixin, UserPassesTestMixin, CreateView
         user_follow_project(0, project)
 
         itec_admins = _model.User.objects.filter(is_superuser=True)
-        notification_text = '%s подаде заявка за проектa %s ' % (
+        notification_text = '%s submitted a project application %s ' % (
             user, project)
         notify.send(self.request.user, recipient=itec_admins,
                     verb=notification_text)
@@ -267,7 +305,6 @@ class ProjectUpdateAdministrators(AutoPermissionRequiredMixin, UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update({'user': self.request.user})
-        print("Kwargs: ", kwargs)
         return kwargs
 
     def form_valid(self, form):
@@ -599,15 +636,15 @@ def support_change_accept(request, pk, type, accepted):
 
         if type == 'time':
             if support.STATUS == support.STATUS.accepted:
-                notification_message = 'Вашата заявка за доброволстване към %s беше приета' % (
+                notification_message = 'Your request to volonteer for the %s has been accepted' % (
                     project_name)
                 email_txt_filename = 'email/support-accepted-time.txt'
             else:
-                notification_message = 'Вашата заявка за доброволстване към %s беше отхвърлена' % (
+                notification_message = 'Your request to volonteer for the %s has been rejected' % (
                     project_name)
                 email_txt_filename = 'email/support-declined-time.txt'
         else:
-            notification_message = 'Вашето дарение към %s беше прието' % (
+            notification_message = 'Your donation for the %s was accepted' % (
                 project_name)
 
         result = support.set_accepted(accepted)
@@ -621,7 +658,7 @@ def support_change_accept(request, pk, type, accepted):
                 txt_msg = render_to_string(email_txt_filename, context=ctx)
                 email = EmailMultiAlternatives(notification_message,
                                                txt_msg,
-                                               'no-reply@horodeya.com',
+                                               'no-reply@itec.foundation',
                                                [user_recipient.email])
                 email.send()
 
@@ -647,10 +684,10 @@ def support_delivered(request, pk, type):
     project_name = project.name
 
     if type == 'time':
-        notification_message = 'Поздравления за успешно изпълненото доброволстване към задругата %s' % (
+        notification_message = 'Congratulations on the successful volunteering of the project %s' % (
             project_name)
     else:
-        notification_message = 'Вашето дарение към %s беше получено' % (
+        notification_message = 'Your donation for the %s has been recieved' % (
             project_name)
 
     # support = get_support(pk, type)
@@ -907,7 +944,7 @@ def time_support_create_update(request, project, support=None):
                     'Applied to %d volunteer positions' % saved))
 
                 notify.send(request.user,
-                            verb='%s подаде заявка за доброволстване към %s' % (request.user, project))
+                            verb='%s applied for volunteering for a %s' % (request.user, project))
                 return redirect(project)
 
     context['formset'] = formset
@@ -1114,7 +1151,7 @@ def questions_update(request, project_id):
                         form.save()
 
         except IntegrityError:
-            error_message = 'Добавили сте някой от въпросите повече от веднъж'
+            error_message = 'You have added any of the questions more than once'
             formset = cls(initial=initial, queryset=_model.Question.objects.filter(
                 project=project).order_by('order'))
             return render(request, template_name, {'formset': formset,
@@ -1228,12 +1265,12 @@ class ProjectVerify(AutoPermissionRequiredMixin, UserPassesTestMixin, UpdateView
             'project_name': project.name
         }
         if(project.verified_status == 'accepted'):
-            notification_message = 'Задругата %s беше одобрена' % (project)
+            notification_message = 'The %s project was approved' % (project)
             txt_msg = render_to_string(
                 'email/project-accepted.txt', context=ctx)
 
         elif(project.verified_status == 'rejected'):
-            notification_message = 'Задругата %s беше отхвърлена' % (project)
+            notification_message = 'The %s project was rejected' % (project)
             txt_msg = render_to_string(
                 'email/project-rejected.txt', context=ctx)
 
@@ -1243,7 +1280,7 @@ class ProjectVerify(AutoPermissionRequiredMixin, UserPassesTestMixin, UpdateView
         recipients_list = project_members.values_list('email', flat=True)
         email = EmailMultiAlternatives(notification_message,
                                        txt_msg,
-                                       'no-reply@horodeya.com',
+                                       'no-reply@itec.foundation',
                                        recipients_list)
         email.send()
 
@@ -1268,11 +1305,11 @@ def bug_report_create(request):
             email = EmailMultiAlternatives(user_email, message, settings.SERVER_EMAIL, ['beglika@gmail.com'])
             email.send()
             messages.add_message(request, messages.SUCCESS,
-                                 'Благодарим ви за обратната връзка')
+                                 'Thank you for your feedback')
             return redirect(redirect_url)
         else:
             messages.add_message(request, messages.ERROR,
-                                 "Въведете валиден имейл адрес")
+                                 "Please enter a valid email address")
             return redirect(redirect_url)
 
 
@@ -1375,13 +1412,13 @@ def accept_epay_payment(request):
             support.status = _model.MoneySupport.STATUS.delivered
             support.save()
 
-            txt_subject = 'Вашето дарение към %s беше получено' % (
+            txt_subject = 'Your donation to the %s project has been received' % (
                 support.project.name)
             txt_msg = render_to_string('email/support-delivered-money.txt',
                                        context={'project_name': support.project.name})
             email = EmailMultiAlternatives(txt_subject,
                                            txt_msg,
-                                           'no-reply@horodeya.com',
+                                           'no-reply@itec.foundation',
                                            [support.user.email])
 
             # only send tickets for Beglika 2020 for now
