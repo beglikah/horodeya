@@ -266,17 +266,39 @@ class ProjectUpdateAdministratorsForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
-        print("Current User: ",user)
         super().__init__(*args, **kwargs)
 
     def save(self):
         project = super().save(commit=False)
+        original_administrators = project.administrators.all()
+        new_administrators = self.cleaned_data.get('administrators')
+        remove_a = original_administrators.exclude(
+            id__in=new_administrators.values('id')
+        )
+        add_a = new_administrators.exclude(
+            id__in=original_administrators.values('id')
+        )
         project.save()
-        project.administrators.add(*self.cleaned_data.get('administrators'))
+
+        if new_administrators:
+            for administrator in new_administrators.all():
+                if administrator.is_administrator == False:
+                    administrator.is_administrator = True
+                    administrator.save()
+
+        if remove_a:
+            project.administrators.remove(*remove_a)
+        if add_a:
+            project.administrators.add(*add_a)
         return project
 
 
 class ProjectUpdateMembersForm(forms.ModelForm):
+    members = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
     class Meta:
         model = _model.Project
         fields = ['members']
@@ -284,6 +306,29 @@ class ProjectUpdateMembersForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
+
+    def save(self):
+        project = super().save(commit=False)
+        project.save()
+        original_members = project.members.all()
+        new_members = self.cleaned_data.get('members')
+        remove_m = original_members.exclude(id__in=new_members.values('id'))
+        add_m = new_members.exclude(id__in=original_members.values('id'))
+        project.save()
+
+        if new_members:
+            for member in new_members.all():
+                if member.is_member == False:
+                    member.is_member=True
+                    member.save()
+
+        if remove_m:
+            project.members.remove(*remove_m)
+        if add_m:
+            project.members.add(*add_m)
+
+        return project
+
 
 
 class ReportForm(AutoPermissionRequiredMixin, forms.ModelForm):

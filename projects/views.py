@@ -144,6 +144,7 @@ class ProjectsList(generic.ListView):
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return HttpResponseRedirect('/accounts/login/')
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -246,6 +247,7 @@ class ProjectCreate(AutoPermissionRequiredMixin, UserPassesTestMixin, CreateView
 class ProjectUpdateSlack(AutoPermissionRequiredMixin, UpdateView):
     model = _model.Project
     form_class = _form.ProjectUpdateSlackForm
+    template_name = 'projects/project_update_form.html'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -260,20 +262,24 @@ class ProjectUpdateSlack(AutoPermissionRequiredMixin, UpdateView):
 class ProjectUpdateAdministrators(AutoPermissionRequiredMixin, UpdateView):
     model = _model.Project
     form_class = _form.ProjectUpdateAdministratorsForm
+    template_name = 'projects/project_update_form.html'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update({'user': self.request.user})
+        print("Kwargs: ", kwargs)
         return kwargs
 
     def form_valid(self, form):
         user = self.request.user
+
         return super().form_valid(form)
 
 
 class ProjectUpdateMembers(AutoPermissionRequiredMixin, UpdateView):
     model = _model.Project
     form_class = _form.ProjectUpdateMembersForm
+    template_name = 'projects/project_update_form.html'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -288,6 +294,7 @@ class ProjectUpdateMembers(AutoPermissionRequiredMixin, UpdateView):
 class ProjectTextUpdate(AutoPermissionRequiredMixin, UpdateView):
     model = _model.Project
     form_class = _form.ProjectUpdateTextForm
+    template_name = 'projects/project_update_form.html'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

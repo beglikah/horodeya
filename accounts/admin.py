@@ -30,7 +30,7 @@ class MyUserAdmin(UserAdmin):
         'platform_policy',
     )
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
+        (None, {'fields': ('email', 'password', 'first_name', 'last_name',)}),
         ('Permissions', {
             'fields': (
                 'is_author',
