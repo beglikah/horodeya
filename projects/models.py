@@ -21,30 +21,36 @@ def determine_project(object):
         return object
     elif isinstance(object, Report) or isinstance(object, Support):
         return object
-
     return object
 
 
 @rules.predicate
 def is_author_admin(user, object):
-    return user == determine_project(object).author_admin
+    if determine_project(object) is not None:
+        return user == determine_project(object).author_admin
+
+
+@rules.predicate
+def is_author(user):
+    if user.is_author == True:
+        return user
+
 
 
 @rules.predicate
 def member_of_project(user, object):
-    print("Project author:", determine_project(object).author_admin)
-    print("User", user)
-    return user == determine_project(object).author_admin
-    # for member in project.determine_project(object).members:
-    #     if user == member:
-    #         return user == member
+    if determine_project(object) is not None:
+        for member in determine_project(object).members.all():
+             if user == member:
+                return user == member
 
 
 @rules.predicate
 def administrator_of_project(user, object):
-    for administrator in object.determine_project(object).administrators:
-        if user == administrator:
-            return user == administrator
+    if determine_project(object) is not None:
+        for administrator in determine_project(object).administrators.all():
+            if user == administrator:
+                return user == administrator
 
 
 @rules.predicate
@@ -133,18 +139,14 @@ def get_report_translated_choices():
 class Project(Timestamped):
     class Meta:
         rules_permissions = {
-            "add": rules.is_authenticated,
+            "add": is_author,
             "delete": is_author_admin,
-            "change": is_author_admin,
+            "change": is_author_admin | administrator_of_project,
             "view": rules.always_allow,
-            "follow": rules.is_authenticated
-            # "create": rules.is_superuser,
-            # "add_administrators": [is_author_admin, administrator_of_project],
-            # "add_members": [is_author_admin, administrator_of_project, member_of_project],
-            # "delete": is_author_admin,
-            # "change": [is_author_admin, administrator_of_project],
-            # "view": rules.always_allow,
-            # "follow": rules.is_authenticated
+            "follow": rules.is_authenticated,
+            "create": is_author,
+            "add_administrators": is_author_admin,
+            "add_members": is_author_admin | administrator_of_project,
         }
 
     name = models.CharField(_('Name'), max_length=50)
@@ -339,13 +341,10 @@ class Announcement(Timestamped, Activity):
 class Report(VoteModel, Timestamped, Activity):
     class Meta:
         rules_permissions = {
-            "add": member_of_project,
-            # "add": [is_author_admin, administrator_of_project, member_of_project],
-            "delete": is_author_admin,
-            "change": member_of_project,
+            "add": is_author_admin | administrator_of_project | member_of_project,
+            "delete": is_author_admin ,
+            "change": is_author_admin | member_of_project | administrator_of_project,
             "view": rules.is_authenticated,
-            # "change": [is_author_admin, administrator_of_project],
-            # "view": [is_author_admin, administrator_of_project, member_of_project],
         }
     name = models.CharField(max_length=50, verbose_name=_('Name'))
     project = models.ForeignKey(Project, on_delete=models.PROTECT)
@@ -372,9 +371,9 @@ class Report(VoteModel, Timestamped, Activity):
 class TimeNecessity(Timestamped):
     class Meta:
         rules_permissions = {
-            "add": member_of_project,
-            "delete": member_of_project,
-            "change": member_of_project,
+            "add": is_author_admin | administrator_of_project | member_of_project,
+            "delete": is_author_admin,
+            "change": is_author_admin | administrator_of_project | member_of_project,
             "view": rules.is_authenticated,
             "list": rules.is_authenticated,
             # "view": [is_author_admin, administrator_of_project, member_of_project],
@@ -410,9 +409,9 @@ class TimeNecessity(Timestamped):
 class ThingNecessity(Timestamped):
     class Meta:
         rules_permissions = {
-            "add": member_of_project,
-            "delete": member_of_project,
-            "change": member_of_project,
+            "add": is_author_admin | administrator_of_project | member_of_project,
+            "delete": is_author_admin | administrator_of_project | member_of_project,
+            "change": is_author_admin | administrator_of_project | member_of_project,
             "view": rules.is_authenticated,
             "list": rules.is_authenticated,
             # "view": [is_author_admin, administrator_of_project, member_of_project],
