@@ -72,6 +72,10 @@ def short_random():
     fn=objectgetter(_model.Project, 'project_id')
 )
 def thing_necessity_update(request, project_id):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     return necessity_update(request, project_id, 'thing')
 
 
@@ -81,10 +85,18 @@ def thing_necessity_update(request, project_id):
     fn=objectgetter(_model.Project, 'project_id')
 )
 def time_necessity_update(request, project_id):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     return necessity_update(request, project_id, 'time')
 
 
 def necessity_update(request, project_id, type):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     cls = _form.TimeNecessityFormset if type == 'time' else _form.ThingNecessityFormset
     template_name = 'projects/necessity_form.html'
     project = get_object_or_404(_model.Project, pk=project_id)
@@ -147,6 +159,9 @@ class ProjectsList(generic.ListView):
     paginate_by = 100
     template_name = 'projects/projects_list.html'
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return HttpResponseRedirect('/accounts/login/')
@@ -159,6 +174,9 @@ class ProjectsList(generic.ListView):
 
 class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
     model = _model.Project
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -247,7 +265,7 @@ class ProjectCreate(AutoPermissionRequiredMixin, UserPassesTestMixin, CreateView
     form_class = _form.ProjectForm
 
     def handle_no_permission(self):
-        return redirect('/projects/project/create')
+        return redirect('permission_denied')
 
     def test_func(self):
         return self.request.user
@@ -287,6 +305,9 @@ class ProjectUpdateSlack(AutoPermissionRequiredMixin, UpdateView):
     form_class = _form.ProjectUpdateSlackForm
     template_name = 'projects/project_update_form.html'
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update({'user': self.request.user})
@@ -301,6 +322,9 @@ class ProjectUpdateAdministrators(AutoPermissionRequiredMixin, UpdateView):
     model = _model.Project
     form_class = _form.ProjectUpdateAdministratorsForm
     template_name = 'projects/project_update_form.html'
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -318,6 +342,9 @@ class ProjectUpdateMembers(AutoPermissionRequiredMixin, UpdateView):
     form_class = _form.ProjectUpdateMembersForm
     template_name = 'projects/project_update_form.html'
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update({'user': self.request.user})
@@ -333,6 +360,9 @@ class ProjectTextUpdate(AutoPermissionRequiredMixin, UpdateView):
     form_class = _form.ProjectUpdateTextForm
     template_name = 'projects/project_update_form.html'
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update({'user': self.request.user})
@@ -347,6 +377,9 @@ class ProjectDelete(AutoPermissionRequiredMixin, DeleteView):
     model = _model.Project
     success_url = '/'
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
 
 class ReportCreate(PermissionRequiredMixin, CreateView):
     model = _model.Report
@@ -357,6 +390,9 @@ class ReportCreate(PermissionRequiredMixin, CreateView):
         return get_object_or_404(_model.Project, pk=project_pk)
 
     permission_required = ('projects.add_report')
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
 
     def get_context_data(self, **kwargs):
 
@@ -388,12 +424,18 @@ class ReportDelete(AutoPermissionRequiredMixin, DeleteView):
     model = _model.Report
     template_name = 'projects/project_confirm_delete.html'
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     def get_success_url(self):
         return reverse_lazy('projects:details', kwargs={'pk': self.object.project.pk})
 
 
 class ReportDetails(AutoPermissionRequiredMixin, generic.DetailView):
     model = _model.Report
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -423,6 +465,9 @@ class ReportList(AutoPermissionRequiredMixin, generic.ListView):
     model = _model.Report
     permission_type = 'view'
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         now = timezone.now()
@@ -439,10 +484,18 @@ class ReportList(AutoPermissionRequiredMixin, generic.ListView):
 
 
 def report_vote_up(request, pk):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     return report_vote(request, pk, UP)
 
 
 def report_vote_down(request, pk):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     return report_vote(request, pk, DOWN)
 
 
@@ -451,6 +504,9 @@ def report_vote_down(request, pk):
 def report_vote(request, pk, action):
     user = request.user
     report = get_object_or_404(_model.Report, pk=pk)
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
 
     if report.votes.exists(user.pk, action=action):
         success = report.votes.delete(user.pk)
@@ -477,6 +533,10 @@ def report_vote(request, pk, action):
 
 @login_required
 def money_support_create(request, project_id=None):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     supporterType = request.GET.get('supportertype')
     if(supporterType == 'donator'):
         if(request.user.donatorData):
@@ -492,6 +552,10 @@ def money_support_create(request, project_id=None):
 
 
 class MoneySupportUpdate(AutoPermissionRequiredMixin, UpdateView):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     model = _model.MoneySupport
     template_name = 'projects/support_form.html'
     form_class = _form.MoneySupportForm
@@ -507,10 +571,18 @@ class MoneySupportUpdate(AutoPermissionRequiredMixin, UpdateView):
 
 @permission_required('projects.update_moneysupport', fn=objectgetter(_model.MoneySupport, 'support_id'))
 def money_support_update(request, project_id=None, support_id=None):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     return money_support_crud(request, support_id=support_id)
 
 
 def money_support_crud(request, project_id=None, support_id=None):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     Form = _form.MoneySupportForm
     template = 'projects/support_form.html'
     supportType = request.GET.get('supportertype')
@@ -574,12 +646,18 @@ class MoneySupportDetails(AutoPermissionRequiredMixin, generic.DetailView):
     model = _model.MoneySupport
     template_name = 'projects/support_detail.html'
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
 # TODO only allow if support is not accepted
 
 
 class MoneySupportDelete(AutoPermissionRequiredMixin, DeleteView):
     model = _model.MoneySupport
     template_name = 'projects/project_confirm_delete.html'
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
 
     def get_success_url(self):
         return reverse_lazy('projects:details', kwargs={'pk': self.object.project.pk})
@@ -589,11 +667,18 @@ class TimeSupportDelete(AutoPermissionRequiredMixin, DeleteView):
     model = _model.TimeSupport
     template_name = 'projects/project_confirm_delete.html'
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     def get_success_url(self):
         return reverse_lazy('projects:details', kwargs={'pk': self.object.project.pk})
 
 
 def get_support(pk, type):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     if type in ['money', 'm']:
         support = get_object_or_404(_model.MoneySupport, pk=pk)
     else:
@@ -603,19 +688,35 @@ def get_support(pk, type):
 
 
 def get_support_request(request, pk, type, *args, **kwargs):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     return get_support(pk, type)
 
 
 def support_accept(request, pk, type):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     return support_change_accept(request, pk, type, True)
 
 
 def support_decline(request, pk, type):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     return support_change_accept(request, pk, type, False)
 
 
 @permission_required('projects.accept_support', fn=get_support_request)
 def support_change_accept(request, pk, type, accepted):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     if type in ['money', 'm']:
         support = get_object_or_404(_model.MoneySupport, pk=pk)
     else:
@@ -674,6 +775,9 @@ def support_change_accept(request, pk, type, accepted):
 @permission_required('projects.mark_delivered_support', fn=get_support_request)
 def support_delivered(request, pk, type):
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     if type in ['money', 'm']:
         support = get_object_or_404(_model.MoneySupport, pk=pk)
     else:
@@ -708,6 +812,10 @@ def support_delivered(request, pk, type):
 
 @permission_required('projects.change_timesupport', fn=objectgetter(_model.TimeSupport, 'pk'))
 def time_support_update(request, pk):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     time_support = get_object_or_404(_model.TimeSupport, pk=pk)
     return time_support_create_update(request, time_support.project, time_support)
 
@@ -716,9 +824,16 @@ class TimeSupportDetails(AutoPermissionRequiredMixin, generic.DetailView):
     model = _model.TimeSupport
     template_name = 'projects/support_detail.html'
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
 
 def user_support_list(request, user_id, type):
     user = get_object_or_404(_model.User, pk=user_id)
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     if type == 'time':
         support_list = user.timesupport_set.order_by('-status_since')
 
@@ -734,6 +849,10 @@ def user_support_list(request, user_id, type):
 
 
 def user_vote_list(request, user_id):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     user = get_object_or_404(_model.User, pk=user_id)
 
     votes_up = _model.Report.votes.all(user_id, UP)
@@ -799,6 +918,9 @@ class UserAutocomplete(autocomplete.Select2QuerySetView):
 @permission_required('projects.follow_project', fn=objectgetter(_model.Project, 'pk'))
 def follow_project(request, pk):
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     project = get_object_or_404(_model.Project, pk=pk)
 
     user = request.user
@@ -830,6 +952,9 @@ class AnnouncementCreate(PermissionRequiredMixin, CreateView):
 
     permission_required = ('projects.add_announcement')
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     def form_valid(self, form):
         project_pk = self.kwargs['project']
         self.project = get_object_or_404(_model.Project, pk=project_pk)
@@ -844,6 +969,9 @@ class AnnouncementUpdate(AutoPermissionRequiredMixin, UpdateView):
     model = _model.Announcement
     fields = ['text']
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     def get_success_url(self):
         return reverse_lazy('projects:details', kwargs={'pk': self.object.project.pk})
 
@@ -851,12 +979,18 @@ class AnnouncementUpdate(AutoPermissionRequiredMixin, UpdateView):
 class AnnouncementDelete(AutoPermissionRequiredMixin, DeleteView):
     model = _model.Announcement
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     def get_success_url(self):
         return reverse_lazy('projects:details', kwargs={'pk': self.object.project.pk})
 
 
 class AnnouncementDetails(AutoPermissionRequiredMixin, generic.DetailView):
     model = _model.Announcement
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
 
     def get_context_data(self, **kwargs):
 
@@ -867,6 +1001,10 @@ class AnnouncementDetails(AutoPermissionRequiredMixin, generic.DetailView):
 @permission_required('projects.add_timesupport', fn=objectgetter(_model.Project, 'project_id'))
 def time_support_create(request, project_id):
     project = get_object_or_404(_model.Project, pk=project_id)
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     if(request.user.donatorData or request.user.legalEntityDonatorData):
         return time_support_create_update(request, project)
     else:
@@ -874,6 +1012,10 @@ def time_support_create(request, project_id):
 
 
 def time_support_create_update(request, project, support=None):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     context = {}
     context['project'] = project
     queryset = _model.TimeSupport.objects.filter(project=project, user=request.user)
@@ -958,6 +1100,10 @@ class TimeNecessityList(AutoPermissionRequiredMixin, generic.ListView):
     permission_type = 'view'
     model = _model.TimeNecessity
 
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -977,6 +1123,10 @@ class TimeNecessityList(AutoPermissionRequiredMixin, generic.ListView):
 class ThingNecessityList(AutoPermissionRequiredMixin, generic.ListView):
     permission_type = 'view'
     model = _model.ThingNecessity
+
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1000,6 +1150,9 @@ class ThingNecessityList(AutoPermissionRequiredMixin, generic.ListView):
 class TimeNecessityDetails(AutoPermissionRequiredMixin, generic.DetailView):
     model = _model.TimeNecessity
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
@@ -1009,6 +1162,9 @@ class TimeNecessityDetails(AutoPermissionRequiredMixin, generic.DetailView):
 
 class ThingNecessityDetails(AutoPermissionRequiredMixin, generic.DetailView):
     model = _model.ThingNecessity
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
 
     def get_context_data(self, **kwargs):
 
@@ -1046,6 +1202,9 @@ def neat_photo(first_directory, second_directory, image):
 def gallery_update(request, project_id):
     template_name = 'projects/photo_form.html'
     project = get_object_or_404(_model.Project, pk=project_id)
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
 
     # TODO make project.name unique
     gallery, created = Gallery.objects.get_or_create(
@@ -1096,6 +1255,10 @@ def gallery_update(request, project_id):
 @permission_required('projects.change_question', fn=objectgetter(_model.Project, 'project_id'))
 def questions_update(request, project_id):
     project = get_object_or_404(_model.Project, pk=project_id)
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     if project.question_set is None:
         prototypes = _model.QuestionPrototype.objects.order_by('order').all()
     else:
@@ -1172,6 +1335,9 @@ class DonatorDataCreate(AutoPermissionRequiredMixin, CreateView):
               'TIN']
     redirectUrl = ''
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         redirectUrl = self.request.GET.get('next')
@@ -1194,6 +1360,9 @@ class LegalEntityDataCreate(AutoPermissionRequiredMixin, CreateView):
     model = LegalEntityDonatorData
     fields = ['name', 'type', 'headquarters', 'EIK', 'postAddress', 'TIN',
               'DDORegistration', 'phoneNumber', 'website']
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
 
     def form_valid(self, form):
         user = self.request.user
@@ -1245,6 +1414,10 @@ def notifications_mark_as_read(request):
 
 @user_passes_test(lambda u: u.is_superuser)
 def unverified_cause_list(request):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     unverified_causes = _model.Project.objects.filter(verified_status='review')
     return render(request, 'projects/unverified_causes.html', {'items': unverified_causes})
 
@@ -1256,6 +1429,9 @@ class ProjectVerify(AutoPermissionRequiredMixin, UserPassesTestMixin, UpdateView
 
     def test_func(self):
         return self.request.user.is_superuser
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
 
     def form_valid(self, form):
         project = form.save(commit=False)
@@ -1315,16 +1491,28 @@ def bug_report_create(request):
 
 @user_passes_test(lambda u: u.is_superuser)
 def administration(request):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     return render(request, 'projects/administration.html')
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def received_bug_reports(request):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     bug_reports = _model.BugReport.objects.all()
     return render(request, 'projects/bug_reports.html', {'reports': bug_reports})
 
 
 def create_epay_support(request, pk):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     print("Create Epay Support")
     if(request.method == "GET"):
         supporterType = request.GET.get('supportertype')
@@ -1354,6 +1542,9 @@ def create_epay_support(request, pk):
 def pay_epay_support(request, pk):
     # if(request == 'GET'):
 
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
     support = get_object_or_404(_model.MoneySupport, pk=pk)
     context = {}
 
@@ -1382,6 +1573,9 @@ def pay_epay_support(request, pk):
 
 @csrf_exempt
 def accept_epay_payment(request):
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
 
     encodedParam = request.POST.get('encoded')
     checksum = request.POST.get('checksum')

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block breadcrumbs %}
+<li class="breadcrumb-item active" aria-current="page">Permissions:</li>
+{% endblock %}
+
+{%block  content %}
+<div class="container">
+    <div class="" style="margin-left:15%">
+        <h1 style="text-aligh:center;">{% trans 'You have no permissions to do that!' %}</h1>
+        <h4>
+            {% trans 'Please ' %}
+            <a href="{% url 'account_logout' %}"><b>Log out</b></a>
+            {% trans 'and' %}
+            <b>Log in</b>
+            {% trans ' as a user with the required permissions.' %}
+        </h4>
+        <p>{% trans ' or ' %}</p>
+        <p>{% trans 'Contact us for more instructions: ' %}</p>
+        <div class="col-md-6 mt-2">
+            {% include 'projects/bugreport_form.html' %}
+        </div>
+    </div>
+</div>
+
+{%endblock content %}
