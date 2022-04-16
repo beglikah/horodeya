@@ -86,15 +86,15 @@
           <li><a class="nav-link  {% active projects %}" href="/projects/">Projects</a></li>
           {%endif%}
 
-          {%if user.is_superuser%}
+          {%if user.is_superuser or user.is_author  or user.is_administrator %}
           <li><a class="nav-link " href="/projects/administration">Administration</a></li>
           {%endif%}
 
-          {% if user.is_authenticated%}
+          {% if user.is_superuser or user.is_author  or user.is_administrator or user.is_member %}
           <li><a class="nav-link justify-content-end {% active projects %}" href="/projects/feed">Reports</a></li>
           {%endif%}
 
-          {% if user.is_authenticated%}
+          {% if user.is_superuser or user.is_author  or user.is_administrator %}
           <li><a class="nav-link {% active projects %}"
               href="/projects/notifications">Messages:{% notifications_unread %}</a></li>
           {%endif%}

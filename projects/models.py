@@ -20,7 +20,7 @@ def determine_project(object):
     if isinstance(object, Project):
         return object
     elif isinstance(object, Report) or isinstance(object, Support):
-        return object
+        return object.project
     return object
 
 
@@ -32,17 +32,16 @@ def is_author_admin(user, object):
 
 @rules.predicate
 def is_author(user):
-    if user.is_author == True:
-        return user
-
+    if user.is_author:
+        return user.is_author(determine_project(object))
 
 
 @rules.predicate
 def member_of_project(user, object):
     if determine_project(object) is not None:
         for member in determine_project(object).members.all():
-             if user == member:
-                return user == member
+            if user == member:
+                return user.member_of_project(determine_project(object))
 
 
 @rules.predicate
@@ -50,7 +49,7 @@ def administrator_of_project(user, object):
     if determine_project(object) is not None:
         for administrator in determine_project(object).administrators.all():
             if user == administrator:
-                return user == administrator
+                return user.member_of_project(determine_project(object))
 
 
 @rules.predicate
@@ -317,9 +316,9 @@ class Project(Timestamped):
 class Announcement(Timestamped, Activity):
     class Meta:
         rules_permissions = {
-            "add": member_of_project,
+            "add": is_author_admin | administrator_of_project | member_of_project,
             "delete": is_author_admin,
-            "change": member_of_project,
+            "change": is_author_admin | administrator_of_project | member_of_project,
             "view": rules.is_authenticated,
         }
 
@@ -371,13 +370,11 @@ class Report(VoteModel, Timestamped, Activity):
 class TimeNecessity(Timestamped):
     class Meta:
         rules_permissions = {
-            "add": is_author_admin | administrator_of_project | member_of_project,
+            "add": is_author_admin | administrator_of_project,
             "delete": is_author_admin,
             "change": is_author_admin | administrator_of_project | member_of_project,
             "view": rules.is_authenticated,
             "list": rules.is_authenticated,
-            # "view": [is_author_admin, administrator_of_project, member_of_project],
-            # "list": [is_author_admin, administrator_of_project, member_of_project]
         }
 
     project = models.ForeignKey(Project, on_delete=models.PROTECT)
@@ -409,13 +406,11 @@ class TimeNecessity(Timestamped):
 class ThingNecessity(Timestamped):
     class Meta:
         rules_permissions = {
-            "add": is_author_admin | administrator_of_project | member_of_project,
+            "add": is_author_admin | administrator_of_project,
             "delete": is_author_admin | administrator_of_project | member_of_project,
             "change": is_author_admin | administrator_of_project | member_of_project,
             "view": rules.is_authenticated,
             "list": rules.is_authenticated,
-            # "view": [is_author_admin, administrator_of_project, member_of_project],
-            # "list": [is_author_admin, administrator_of_project, member_of_project]
         }
     project = models.ForeignKey(Project, on_delete=models.PROTECT)
     name = models.CharField(_('Name'), max_length=50)
@@ -517,11 +512,11 @@ class Support(Timestamped):
         rules_permissions = {
             "add": rules.is_authenticated,
             "delete": myself & ~is_accepted,
-            "change": (myself & ~is_accepted) | member_of_project,
-            "view": myself | member_of_project,
-            "accept": member_of_project,
-            "mark_delivered": member_of_project,
-            "list": [is_author_admin, administrator_of_project, member_of_project]
+            "change": (myself & ~is_accepted) | is_author_admin | administrator_of_project,
+            "view": myself | is_author_admin | administrator_of_project | member_of_project,
+            "accept": is_author_admin | administrator_of_project | member_of_project,
+            "mark_delivered": is_author_admin | administrator_of_project | member_of_project,
+            "list": is_author_admin | administrator_of_project | member_of_project,
         }
 
         abstract = True
@@ -600,11 +595,11 @@ class MoneySupport(Support):
         rules_permissions = {
             "add": rules.is_authenticated,
             "delete": myself & ~is_accepted,
-            "change": (myself & ~is_accepted) | member_of_project,
-            "view": myself | member_of_project,
-            "accept": member_of_project,
-            "mark_delivered": member_of_project,
-            "list": member_of_project,
+            "change": (myself & ~is_accepted) | is_author_admin | administrator_of_project | member_of_project,
+            "view": myself |is_author_admin | administrator_of_project |  member_of_project,
+            "accept": is_author_admin | administrator_of_project |  member_of_project,
+            "mark_delivered": is_author_admin | administrator_of_project |  member_of_project,
+            "list": is_author_admin | administrator_of_project |  member_of_project,
             "list-user": myself
         }
 
@@ -650,10 +645,10 @@ class ThingSupport(Support):
             "add": rules.is_authenticated,
             "delete": myself & ~is_accepted,
             "change": myself & ~is_accepted,
-            "view": myself | member_of_project,
-            "accept": member_of_project,
-            "mark_delivered": member_of_project,
-            "list": member_of_project,
+            "view": myself |is_author_admin | administrator_of_project | member_of_project,
+            "accept": is_author_admin | administrator_of_project |  member_of_project,
+            "mark_delivered": is_author_admin | administrator_of_project | member_of_project,
+            "list": is_author_admin | administrator_of_project | member_of_project,
             "list-user": myself
         }
 
@@ -678,8 +673,8 @@ class Answer(Timestamped):
             "add": rules.is_authenticated,
             "delete": myself & ~is_accepted,
             "change": myself & ~is_accepted,
-            "view": myself | member_of_project,
-            "list": myself & member_of_project
+            "view": myself | is_author_admin | administrator_of_project | member_of_project,
+            "list": myself | is_author_admin | administrator_of_project | member_of_project
         }
         unique_together = ['project', 'question', 'user']
 
@@ -696,11 +691,11 @@ class TimeSupport(Support):
         rules_permissions = {
             "add": rules.is_authenticated,
             "delete": myself & ~is_accepted,
-            "change": (myself & ~is_accepted) | member_of_project,
-            "view": myself | member_of_project,
-            "accept": member_of_project,
-            "mark_delivered": member_of_project,
-            "list": member_of_project
+            "change": (myself & ~is_accepted) | is_author_admin | administrator_of_project,
+            "view": rules.is_authenticated,
+            "accept": is_author_admin | administrator_of_project,
+            "mark_delivered": is_author_admin | administrator_of_project | member_of_project,
+            "list": is_author_admin | administrator_of_project | member_of_project,
         }
         unique_together = ['necessity', 'user']
 
@@ -752,9 +747,9 @@ class QuestionPrototype(Timestamped):
 class Question(Timestamped):
     class Meta:
         rules_permissions = {
-            "add": [is_author_admin, administrator_of_project, member_of_project],
-            "delete": [is_author_admin, administrator_of_project, member_of_project],
-            "change": [is_author_admin, administrator_of_project, member_of_project],
+            "add": is_author_admin | administrator_of_project,
+            "delete": is_author_admin | administrator_of_project,
+            "change": is_author_admin | administrator_of_project,
             "view": rules.always_allow,
             "list": rules.always_allow
         }

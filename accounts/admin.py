@@ -34,6 +34,8 @@ class MyUserAdmin(UserAdmin):
         ('Permissions', {
             'fields': (
                 'is_author',
+                'is_administrator',
+                'is_member',
                 'is_superuser',
             )
         })
