@@ -742,6 +742,7 @@ def support_change_accept(request, pk, type, accepted):
         project_name = project.name
 
         if type == 'time':
+            print("Suport Status:", support.status)
             if support.STATUS == support.STATUS.accepted:
                 notification_message = 'Your request to volonteer for the %s has been accepted' % (
                     project_name)
@@ -756,6 +757,9 @@ def support_change_accept(request, pk, type, accepted):
 
         result = support.set_accepted(accepted)
         if result == accepted:
+            notification_message = 'Your request to volonteer for the %s has been accepted' % (project_name)
+            email_txt_filename = 'email/support-accepted-time.txt'
+
             notify.send(request.user, recipient=user_recipient,
                         verb=notification_message)
             project.members.add(user_recipient)
@@ -1104,8 +1108,9 @@ def time_support_create_update(request, project, support=None):
 
                 messages.success(request, _(
                     'Applied to %d volunteer positions' % saved))
+                notification_message = '%s applied for volunteering for a %s' % (request.user, project)
 
-                notify.send(request.user.email, recipient=request.user, verb='%s applied for volunteering for a %s' % (request.user, project))
+                notify.send(request.user, recipient=request.user, verb=notification_message)
                 return redirect(project)
 
     context['formset'] = formset
