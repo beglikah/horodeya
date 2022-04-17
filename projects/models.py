@@ -41,7 +41,7 @@ def member_of_project(user, object):
     if determine_project(object) is not None:
         for member in determine_project(object).members.all():
             if user == member:
-                return user.member_of_project(determine_project(object))
+                return user == member
 
 
 @rules.predicate
@@ -49,7 +49,7 @@ def administrator_of_project(user, object):
     if determine_project(object) is not None:
         for administrator in determine_project(object).administrators.all():
             if user == administrator:
-                return user.member_of_project(determine_project(object))
+                return user == administrator
 
 
 @rules.predicate
@@ -341,7 +341,7 @@ class Report(VoteModel, Timestamped, Activity):
     class Meta:
         rules_permissions = {
             "add": is_author_admin | administrator_of_project | member_of_project,
-            "delete": is_author_admin ,
+            "delete": is_author_admin,
             "change": is_author_admin | member_of_project | administrator_of_project,
             "view": rules.is_authenticated,
         }

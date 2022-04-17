@@ -316,19 +316,9 @@ class ProjectUpdateMembersForm(forms.ModelForm):
         add_m = new_members.exclude(id__in=original_members.values('id'))
         project.save()
 
-        if new_members:
-            for member in new_members.all():
-                if member.is_member == False:
-                    member.is_member=True
-                    member.save()
-
-        if remove_m:
-            project.members.remove(*remove_m)
-        if add_m:
-            project.members.add(*add_m)
+        project.members.remove(*remove_m)
 
         return project
-
 
 
 class ReportForm(AutoPermissionRequiredMixin, forms.ModelForm):

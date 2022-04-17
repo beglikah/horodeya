@@ -3,16 +3,37 @@
 {%block content%}
 {% trans "" %}
 <ul>
+    {% if user.is_superuser %}
     <li>
         <a class="nav-link " href="/projects/unverified_causes">
-            {% trans "Communities for verification" %}
+            {% trans "Projects for verification" %}
         </a>
     </li>
+    {% endif %}
     <li>
         <a class="nav-link " href="/projects/bugreport_list">
             {% trans "Recieved feedback" %}
         </a>
     </li>
+    {% if projects %}
+        {% for project in projects %}
+            {% if project.for_review %}
+                <li>
+                    <a class="nav-link " href="{% url 'projects:time_necessity_list' project.pk %}">
+                        {% trans "Time Support for " %}{{ project.name }}
+                    </a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    <li>
+        <a class="nav-link " href="/projects/notifications">
+            {% trans "Notifications" %}
+        </a>
+    </li>
+
+
+
 </ul>
 {%endblock%}
 

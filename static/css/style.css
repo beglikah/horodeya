@@ -81,7 +81,26 @@ button.thumbnails {
     flex: 0 0 33.333333%;
     max-width: 33.333333%;
 }
-*/
+@media screen and (max-width:774px) {
+  .col-md-4 {
+      flex: 0 0 33.333333%;
+      max-width: 100%;
+  }
+}
+
+@media screen and (max-width:1200px) {
+  .col-md-4 {
+      flex: 0 0 33.333333%;
+      max-width: 90%;
+  }
+}
+@media screen and (min-width:1201px) {
+  .col-md-4 {
+      flex: 0 0 33.333333%;
+      max-width: 50%;
+  }
+}
+
 .breadcrumb-item.active a {
   pointer-events: none;
   cursor: default;

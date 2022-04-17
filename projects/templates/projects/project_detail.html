@@ -38,6 +38,11 @@
       {% trans 'Update members' %}
   </a>
 </li>
+<li class="nav-item flex-fill text-center ">
+  <a class="nav-link text-white" href="{% url 'projects:volunteer_questions_update' project.pk %}">
+      {% trans 'Update questions' %}
+  </a>
+</li>
 {% elif administrator_of %}
 {% include "projects/menu_admin.html" %}
 <li class="nav-item flex-fill text-center ">
@@ -45,9 +50,6 @@
       {% trans 'Update members' %}
   </a>
 </li>
-
-{% elif member_of %}
-{% include "projects/menu_admin.html" %}
 
 {% elif as_regular_user %}
 <li class="nav-item flex-fill text-center ">
@@ -107,13 +109,19 @@
         {%if object.slack_channel is not None %}
             <p>{% trans "Slack chanel: " %}{{object.slack_channel}}</p>
         {%endif%}
-        {%if administrators is not None %}
+        {%if adm is not None %}
             <p>{% trans "Project Administrators: " %}
-            {{administrators }}</p>
+            {% for administrator in adm %}
+            {{ administrator }},
+            {% endfor %}
+            </p>
         {%endif%}
-        {%if members is not None %}
+        {%if mem is not None %}
             <p>{% trans "Project Members: " %}
-            {{ members }}</p>
+            {% for member in mem %}
+            {{ member }},
+            {% endfor %}
+            </p>
         {%endif%}
     </div>
 </div>
@@ -138,20 +146,29 @@
 
 <div class="">
     {% if author or member_of or administrator_of %}
-    <div id="volunteer" class="col-md-4 mt-4">
+    <div id="volunteer" class="">
         {% include "projects/project_stats.html" with project=object %}
     </div>
     {% endif %}
 </div>
+<div class="">
+    {% if member_of %}
+    <div id="volunteer" class="col-md-4 mt-4" style="padding-left: 0px;" >
+        <p class="font-weight-bold footer-titles">Report problems: </p>
+        {% include 'projects/bugreport_form.html' %}
+    </div>
+    {% endif %}
+</div>
 
-<div id="donate" class="col-md-4 mt-4">
+
+<div id="donate" class="col-md-4 mt-4" style="padding-left: 0px;">
     <a class="btn btn-primary mt-3"
         href="{% url 'projects:time_support_create' project.pk %}?supportertype=donator">
         {% trans 'Invest Time' %}
     </a>
 </div>
 
-{% if author or member_of or administrator_of %}
+{% if author or administrator_of %}
 <div id="reports" class="col-8 p-0 mt-5">
     <h3><b>{% trans 'Reports:' %}</b></h3>
     <p>{% trans 'Regular reports allow for transparency and accountability. Read the reports from the cause.' %} </p>

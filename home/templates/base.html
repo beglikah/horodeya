@@ -86,7 +86,12 @@
           <li><a class="nav-link  {% active projects %}" href="/projects/">Projects</a></li>
           {%endif%}
 
-          {%if user.is_superuser or user.is_author  or user.is_administrator %}
+          {% if user.is_superuser or user.is_author %}
+          <li><a class="nav-link " href="/projects/create">Create project</a></li>
+          {% endif%}
+
+
+          {% if user.is_superuser or user.is_author  or user.is_administrator %}
           <li><a class="nav-link " href="/projects/administration">Administration</a></li>
           {%endif%}
 

@@ -82,12 +82,10 @@ def thing_necessity_update(request, project_id):
 @login_required
 @permission_required(
     'projects.change_timenecessity',
-    fn=objectgetter(_model.Project, 'project_id')
+    fn=objectgetter(_model.Project, 'project_id'),
+    login_url='permission_denied'
 )
 def time_necessity_update(request, project_id):
-
-    def handle_no_permission(self):
-        return redirect('permission_denied')
 
     return necessity_update(request, project_id, 'time')
 
@@ -198,6 +196,7 @@ class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
         urlfinish = urlend[-1]
 
         adm = administrators.split(",")
+        context['adm'] = adm
         print(adm)
         for adm_name in adm:
             if current_user.get_full_name() == adm_name:
@@ -206,6 +205,7 @@ class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
                 adm_user = None
 
         mem = members.split(",")
+        context['mem'] = mem
         for mem_name in mem:
             if current_user.get_full_name() == mem_name:
                 mem_user = current_user
@@ -428,7 +428,9 @@ class ReportDelete(AutoPermissionRequiredMixin, DeleteView):
         return redirect('permission_denied')
 
     def get_success_url(self):
-        return reverse_lazy('projects:details', kwargs={'pk': self.object.project.pk})
+        return reverse_lazy(
+            'projects:details', kwargs={'pk': self.object.project.pk}
+        )
 
 
 class ReportDetails(AutoPermissionRequiredMixin, generic.DetailView):
@@ -569,12 +571,12 @@ class MoneySupportUpdate(AutoPermissionRequiredMixin, UpdateView):
         return context
 
 
-@permission_required('projects.update_moneysupport', fn=objectgetter(_model.MoneySupport, 'support_id'))
+@permission_required(
+    'projects.update_moneysupport',
+    fn=objectgetter(_model.MoneySupport, 'support_id'),
+    login_url='permission_denied'
+)
 def money_support_update(request, project_id=None, support_id=None):
-
-    def handle_no_permission(self):
-        return redirect('permission_denied')
-
     return money_support_crud(request, support_id=support_id)
 
 
@@ -605,7 +607,9 @@ def money_support_crud(request, project_id=None, support_id=None):
             if 'go_back' in request.POST:
                 payment_form = None
             elif 'step_2-accept' in request.POST:
-                # We only validate data if this is a step_2 submit, if only a step_1 submit  validation on step_2 printed on the form may confuse the user
+                # We only validate data if this is a step_2 submit, if only a
+                # step_1 submit  validation on step_2 printed on the form may
+                # confuse the user
                 payment_form = _form.PaymentForm(
                     request.POST,
                     payment_method=form.cleaned_data['payment_method'],
@@ -628,7 +632,7 @@ def money_support_crud(request, project_id=None, support_id=None):
                     support.supportType = supportType
                     support.save()
 
-                    notification_message = '%s подаде заявка за парична подкрепа към %s' % (
+                    notification_message = '%s applied for financial support for a %s' % (
                         request.user, project)
                     notify.send(request.user, verb=notification_message)
 
@@ -660,7 +664,8 @@ class MoneySupportDelete(AutoPermissionRequiredMixin, DeleteView):
         return redirect('permission_denied')
 
     def get_success_url(self):
-        return reverse_lazy('projects:details', kwargs={'pk': self.object.project.pk})
+        return reverse_lazy(
+            'projects:details', kwargs={'pk': self.object.project.pk})
 
 
 class TimeSupportDelete(AutoPermissionRequiredMixin, DeleteView):
@@ -671,7 +676,8 @@ class TimeSupportDelete(AutoPermissionRequiredMixin, DeleteView):
         return redirect('permission_denied')
 
     def get_success_url(self):
-        return reverse_lazy('projects:details', kwargs={'pk': self.object.project.pk})
+        return reverse_lazy(
+            'projects:details', kwargs={'pk': self.object.project.pk})
 
 
 def get_support(pk, type):
@@ -711,11 +717,11 @@ def support_decline(request, pk, type):
     return support_change_accept(request, pk, type, False)
 
 
-@permission_required('projects.accept_support', fn=get_support_request)
+@permission_required(
+    'projects.accept_support',
+    fn=get_support_request,
+    login_url='permission_denied')
 def support_change_accept(request, pk, type, accepted):
-
-    def handle_no_permission(self):
-        return redirect('permission_denied')
 
     if type in ['money', 'm']:
         support = get_object_or_404(_model.MoneySupport, pk=pk)
@@ -752,6 +758,10 @@ def support_change_accept(request, pk, type, accepted):
         if result == accepted:
             notify.send(request.user, recipient=user_recipient,
                         verb=notification_message)
+            project.members.add(user_recipient)
+            if user_recipient.is_member == False:
+                user_recipient.is_member = True
+                user_recipient.save()
             if type == 'time':
                 ctx = {
                     'project_name': project_name
@@ -772,11 +782,12 @@ def support_change_accept(request, pk, type, accepted):
     return redirect(support)
 
 
-@permission_required('projects.mark_delivered_support', fn=get_support_request)
+@permission_required(
+    'projects.mark_delivered_support',
+    fn=get_support_request,
+    login_url='permission_denied'
+)
 def support_delivered(request, pk, type):
-
-    def handle_no_permission(self):
-        return redirect('permission_denied')
 
     if type in ['money', 'm']:
         support = get_object_or_404(_model.MoneySupport, pk=pk)
@@ -810,12 +821,12 @@ def support_delivered(request, pk, type):
     return redirect(support)
 
 
-@permission_required('projects.change_timesupport', fn=objectgetter(_model.TimeSupport, 'pk'))
+@permission_required(
+    'projects.change_timesupport',
+    fn=objectgetter(_model.TimeSupport, 'pk'),
+    login_url='permission_denied'
+)
 def time_support_update(request, pk):
-
-    def handle_no_permission(self):
-        return redirect('permission_denied')
-
     time_support = get_object_or_404(_model.TimeSupport, pk=pk)
     return time_support_create_update(request, time_support.project, time_support)
 
@@ -858,9 +869,9 @@ def user_vote_list(request, user_id):
     votes_up = _model.Report.votes.all(user_id, UP)
     votes_down = _model.Report.votes.all(user_id, DOWN)
 
-    supported_projects = set()
-    money_supported = user.moneysupport_set.all()
-    time_supported = user.timesupport_set.all()
+    # supported_projects = set()
+    # money_supported = user.moneysupport_set.all()
+    # time_supported = user.timesupport_set.all()
 
     awaiting_list = []
     # TODO use stream framework for this
@@ -915,11 +926,12 @@ class UserAutocomplete(autocomplete.Select2QuerySetView):
         return format_html('%s %s' % (item.first_name, item.last_name))
 
 
-@permission_required('projects.follow_project', fn=objectgetter(_model.Project, 'pk'))
+@permission_required(
+    'projects.follow_project',
+    fn=objectgetter(_model.Project, 'pk'),
+    login_url='permission_denied'
+)
 def follow_project(request, pk):
-
-    def handle_no_permission(self):
-        return redirect('permission_denied')
 
     project = get_object_or_404(_model.Project, pk=pk)
 
@@ -962,7 +974,8 @@ class AnnouncementCreate(PermissionRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('projects:details', kwargs={'pk': self.object.project.pk})
+        return reverse_lazy(
+            'projects:details', kwargs={'pk': self.object.project.pk})
 
 
 class AnnouncementUpdate(AutoPermissionRequiredMixin, UpdateView):
@@ -973,7 +986,8 @@ class AnnouncementUpdate(AutoPermissionRequiredMixin, UpdateView):
         return redirect('permission_denied')
 
     def get_success_url(self):
-        return reverse_lazy('projects:details', kwargs={'pk': self.object.project.pk})
+        return reverse_lazy(
+            'projects:details', kwargs={'pk': self.object.project.pk})
 
 
 class AnnouncementDelete(AutoPermissionRequiredMixin, DeleteView):
@@ -983,7 +997,8 @@ class AnnouncementDelete(AutoPermissionRequiredMixin, DeleteView):
         return redirect('permission_denied')
 
     def get_success_url(self):
-        return reverse_lazy('projects:details', kwargs={'pk': self.object.project.pk})
+        return reverse_lazy(
+            'projects:details', kwargs={'pk': self.object.project.pk})
 
 
 class AnnouncementDetails(AutoPermissionRequiredMixin, generic.DetailView):
@@ -998,12 +1013,12 @@ class AnnouncementDetails(AutoPermissionRequiredMixin, generic.DetailView):
         return context
 
 
-@permission_required('projects.add_timesupport', fn=objectgetter(_model.Project, 'project_id'))
+@permission_required(
+    'projects.add_timesupport',
+    fn=objectgetter(_model.Project, 'project_id'),
+    login_url='permission_denied')
 def time_support_create(request, project_id):
     project = get_object_or_404(_model.Project, pk=project_id)
-
-    def handle_no_permission(self):
-        return redirect('permission_denied')
 
     if(request.user.donatorData or request.user.legalEntityDonatorData):
         return time_support_create_update(request, project)
@@ -1018,7 +1033,9 @@ def time_support_create_update(request, project, support=None):
 
     context = {}
     context['project'] = project
-    queryset = _model.TimeSupport.objects.filter(project=project, user=request.user)
+    queryset = _model.TimeSupport.objects.filter(
+        project=project, user=request.user
+    )
     applied_necessities = set(map(lambda ts: ts.necessity, queryset.all()))
     answers = project.answer_set.filter(user=request.user).all()
 
@@ -1029,8 +1046,11 @@ def time_support_create_update(request, project, support=None):
     TimeSupportFormset = modelformset_factory(
         _model.TimeSupport,
         fields=['necessity', 'comment', 'start_date', 'end_date', 'price'],
-        labels={'comment': _(
-                'Why do you apply for this position? List your relevant experience / skills')},
+        labels={
+            'comment': _(
+                'Why do you apply for this position? List your relevant experience / skills'
+            )
+        },
         widgets={
             'start_date': forms.HiddenInput(),
             'end_date': forms.HiddenInput(),
@@ -1085,8 +1105,7 @@ def time_support_create_update(request, project, support=None):
                 messages.success(request, _(
                     'Applied to %d volunteer positions' % saved))
 
-                notify.send(request.user,
-                            verb='%s applied for volunteering for a %s' % (request.user, project))
+                notify.send(request.user.email, recipient=request.user, verb='%s applied for volunteering for a %s' % (request.user, project))
                 return redirect(project)
 
     context['formset'] = formset
@@ -1099,7 +1118,6 @@ def time_support_create_update(request, project, support=None):
 class TimeNecessityList(AutoPermissionRequiredMixin, generic.ListView):
     permission_type = 'view'
     model = _model.TimeNecessity
-
 
     def handle_no_permission(self):
         return redirect('permission_denied')
@@ -1124,7 +1142,6 @@ class ThingNecessityList(AutoPermissionRequiredMixin, generic.ListView):
     permission_type = 'view'
     model = _model.ThingNecessity
 
-
     def handle_no_permission(self):
         return redirect('permission_denied')
 
@@ -1140,8 +1157,6 @@ class ThingNecessityList(AutoPermissionRequiredMixin, generic.ListView):
 
         if self.request.user == project.author_admin:
             context['member'] = self.request.user
-
-
         # context['member'] = self.request.user.member_of(project.pk)
 
         return context
@@ -1252,12 +1267,13 @@ def gallery_update(request, project_id):
     })
 
 
-@permission_required('projects.change_question', fn=objectgetter(_model.Project, 'project_id'))
+@permission_required(
+    'projects.change_question',
+    fn=objectgetter(_model.Project, 'project_id'),
+    login_url='permission_denied'
+)
 def questions_update(request, project_id):
     project = get_object_or_404(_model.Project, pk=project_id)
-
-    def handle_no_permission(self):
-        return redirect('permission_denied')
 
     if project.question_set is None:
         prototypes = _model.QuestionPrototype.objects.order_by('order').all()
@@ -1372,7 +1388,8 @@ class LegalEntityDataCreate(AutoPermissionRequiredMixin, CreateView):
         user.save()
         redirectUrl = self.request.GET.get('next')
         if(redirectUrl):
-            return redirect(self.request.GET['next']+'?supportertype=legalentitydonator')
+            return redirect(
+                self.request.GET['next']+'?supportertype=legalentitydonator')
         else:
             return redirect('/account/profile/')
 
@@ -1402,7 +1419,10 @@ def notifications_read(request):
     user = request.user
     notifications_read = user.notifications.read()
 
-    return render(request, 'projects/notifications_read.html', {'notifications': notifications_read})
+    return render(
+        request, 'projects/notifications_read.html',
+        {'notifications': notifications_read}
+    )
 
 
 def notifications_mark_as_read(request):
@@ -1412,14 +1432,19 @@ def notifications_mark_as_read(request):
     return redirect('/projects/notifications')
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(
+    (lambda u: u.is_superuser),
+    login_url='permission_denied'
+)
 def unverified_cause_list(request):
-
-    def handle_no_permission(self):
-        return redirect('permission_denied')
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
     unverified_causes = _model.Project.objects.filter(verified_status='review')
-    return render(request, 'projects/unverified_causes.html', {'items': unverified_causes})
+    return render(
+        request, 'projects/unverified_causes.html',
+        {'items': unverified_causes}
+    )
 
 
 class ProjectVerify(AutoPermissionRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -1478,7 +1503,10 @@ def bug_report_create(request):
             form.save()
             message = request.POST.get('message', '')
             user_email = request.POST.get('email', '')
-            email = EmailMultiAlternatives(user_email, message, settings.SERVER_EMAIL, ['beglika@gmail.com'])
+            email = EmailMultiAlternatives(
+                user_email, message,
+                settings.SERVER_EMAIL, ['beglika@gmail.com']
+            )
             email.send()
             messages.add_message(request, messages.SUCCESS,
                                  'Thank you for your feedback')
@@ -1489,23 +1517,43 @@ def bug_report_create(request):
             return redirect(redirect_url)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(
+    (lambda u: u.is_superuser or u.is_author or u.is_administrator),
+    login_url='permission_denied'
+)
 def administration(request):
+    my_projects = []
+    context = {}
+    projects = _model.Project.objects.all()
+    user = request.user
+    for project in projects:
+        for_review = []
+        for supporter in project.timesupport_set.all():
+            if supporter.status == 'review':
+                for_review.append(supporter)
+            project.for_review = for_review
+        if project.author_admin == user:
+            my_projects.append(project)
 
-    def handle_no_permission(self):
-        return redirect('permission_denied')
+        administrators = project.all_administrators().split(",")
+        for administrator in administrators:
+            if administrator == user:
+                my_projects.append(project)
+                return my_projects
 
-    return render(request, 'projects/administration.html')
+    context['projects'] = projects
+    print(context)
+    return render(request, 'projects/administration.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(
+    (lambda u: u.is_superuser or u.is_author or u.is_administrator),
+    login_url='permission_denied'
+)
 def received_bug_reports(request):
-
-    def handle_no_permission(self):
-        return redirect('permission_denied')
-
     bug_reports = _model.BugReport.objects.all()
-    return render(request, 'projects/bug_reports.html', {'reports': bug_reports})
+    return render(
+        request, 'projects/bug_reports.html', {'reports': bug_reports})
 
 
 def create_epay_support(request, pk):
@@ -1519,7 +1567,11 @@ def create_epay_support(request, pk):
         context = {}
         context['pk'] = pk
         context['supporterType'] = supporterType
-        return render(request, 'projects/epaymoneysupport_form.html', {'context': context})
+        return render(
+            request,
+            'projects/epaymoneysupport_form.html',
+            {'context': context}
+        )
 
     if(request.method == "POST"):
         form = _form.EpayMoneySupportForm(request.POST)
@@ -1608,8 +1660,10 @@ def accept_epay_payment(request):
 
             txt_subject = 'Your donation to the %s project has been received' % (
                 support.project.name)
-            txt_msg = render_to_string('email/support-delivered-money.txt',
-                                       context={'project_name': support.project.name})
+            txt_msg = render_to_string(
+                'email/support-delivered-money.txt',
+                context={'project_name': support.project.name}
+            )
             email = EmailMultiAlternatives(txt_subject,
                                            txt_msg,
                                            'no-reply@itec.foundation',
@@ -1625,7 +1679,9 @@ def accept_epay_payment(request):
                 ticket.save()
                 ctx_pdf = {
                     'ticket_code': ticket.validation_code,
-                    'url': request.build_absolute_uri('/check-qr?ticket=' + ticket.validation_code)
+                    'url': request.build_absolute_uri(
+                        '/check-qr?ticket=' + ticket.validation_code
+                    )
                 }
                 html_string = render_to_string(
                     'email/ticket-pdf.html', context=ctx_pdf)

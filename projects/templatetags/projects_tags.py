@@ -1,16 +1,46 @@
 from django import template
+from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 
 from vote.models import UP, DOWN
-from ..models import Support
+from ..models import Support, Project
 
 register = template.Library()
 
 
 @register.simple_tag
+def author(user, project_pk):
+    project = get_object_or_404(Project, pk=project_pk)
+    print("Author: ", project.author_admin)
+    if user == project.author_admin:
+        author = project.author_admin
+        print("Author: ", author)
+        return author
+
+
+@register.simple_tag
+def administrator_of(user, project_pk):
+    project = get_object_or_404(Project, pk=project_pk)
+    administrators = project.all_administrators().split(',')
+    print("Administrators: ", administrators)
+    for administrator in administrators:
+        if user.get_full_name() == administrator:
+            administrator_of = administrator
+            print("Administrator: ", administrator_of)
+            return administrator_of
+
+
+@register.simple_tag
 def member_of(user, project_pk):
-    return user.is_authenticated and user.member_of(project_pk)
+    project = get_object_or_404(Project, pk=project_pk)
+    members = project.all_members().split(',')
+    print("Memebers: ", members)
+    for member in members:
+        if user.get_full_name() == member:
+            member_of = member
+            print("Memeber: ", member)
+            return member_of
 
 
 @register.simple_tag
