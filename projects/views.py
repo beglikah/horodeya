@@ -197,7 +197,6 @@ class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
 
         adm = administrators.split(",")
         context['adm'] = adm
-        print(adm)
         for adm_name in adm:
             if current_user.get_full_name() == adm_name:
                 adm_user = current_user
@@ -214,7 +213,6 @@ class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
 
         for member_of in members:
             if current_user == member_of:
-                print("Is Member Of Project: ", member_of)
                 return member_of
 
         if (current_user == author):
@@ -224,7 +222,6 @@ class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
             else:
                 show_admin = True
                 context['author'] = author and show_admin
-                print("Is Author: ", author)
 
         elif (current_user == adm_user):
             if urlfinish == '?show_admin=false':
@@ -542,7 +539,6 @@ def money_support_create(request, project_id=None):
     supporterType = request.GET.get('supportertype')
     if(supporterType == 'donator'):
         if(request.user.donatorData):
-            print(request.user.donatorData)
             return create_epay_support(request, pk=project_id)
         else:
             return redirect('/projects/donator/create/?next=/projects/create_epay_support/%s' % (project_id))
@@ -742,7 +738,6 @@ def support_change_accept(request, pk, type, accepted):
         project_name = project.name
 
         if type == 'time':
-            print("Suport Status:", support.status)
             if support.STATUS == support.STATUS.accepted:
                 notification_message = 'Your request to volonteer for the %s has been accepted' % (
                     project_name)
@@ -763,7 +758,7 @@ def support_change_accept(request, pk, type, accepted):
             notify.send(request.user, recipient=user_recipient,
                         verb=notification_message)
             project.members.add(user_recipient)
-            if user_recipient.is_member == False:
+            if user_recipient.is_member is not True:
                 user_recipient.is_member = True
                 user_recipient.save()
             if type == 'time':
@@ -1547,7 +1542,6 @@ def administration(request):
                 return my_projects
 
     context['projects'] = projects
-    print(context)
     return render(request, 'projects/administration.html', context)
 
 
@@ -1566,7 +1560,6 @@ def create_epay_support(request, pk):
     def handle_no_permission(self):
         return redirect('permission_denied')
 
-    print("Create Epay Support")
     if(request.method == "GET"):
         supporterType = request.GET.get('supportertype')
         context = {}

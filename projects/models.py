@@ -32,8 +32,8 @@ def is_author_admin(user, object):
 
 @rules.predicate
 def is_author(user):
-    if user.is_author:
-        return user.is_author(determine_project(object))
+    if user.is_author == True:
+        return user
 
 
 @rules.predicate
@@ -138,7 +138,7 @@ def get_report_translated_choices():
 class Project(Timestamped):
     class Meta:
         rules_permissions = {
-            "add": is_author,
+            "add": is_author | rules.is_superuser,
             "delete": is_author_admin,
             "change": is_author_admin | administrator_of_project,
             "view": rules.always_allow,
