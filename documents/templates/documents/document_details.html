@@ -1,0 +1,21 @@
+{% extends "home/base.html" %}
+{% load i18n static %}
+
+{% block title %}
+{{ document.title|capfirst }} - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="section-inner clearfix">
+        <h1><a href="/media/documents/{{document.doc_name}}">{{document.title|capfirst}}</a></h1>
+        <p>
+            <span> {{ document.pub_date|date:"D d M Y" }} </span>
+        </p>
+        <p>
+            {{document.content|safe}}
+        </p>
+    </div>
+</div>
+
+{% endblock %}

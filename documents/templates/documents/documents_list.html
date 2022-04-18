@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block content %}
+<div class="">
+  <h2>&#187; {% trans "All Documents"%}</h2>
+  <hr>
+  {% for document in object_list %}
+      <p>
+      <big><b>
+          <a href="/media/documents/{{document.doc_name}}">{{document.title|capfirst}}</a>
+        </b></big>
+          <span>{% trans "Date:"%} {{ document.pub_date|date:"D d M Y" }} </span>
+      </p>
+  {% empty %}
+      <p>{% trans "There are not documents yet." %}</p>
+  {% endfor %}
+
+</div>
+{% endblock %}

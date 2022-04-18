@@ -35,6 +35,7 @@ urlpatterns = [
     path('home/', include('home.urls')),
     path('projects/', include('projects.urls')),
     path('accounts/', include('accounts.urls')),
+    path('documents/', include('documents.urls', namespace="documents")),
     path('qr_code/', include('qr_code.urls', namespace="qr_code")),
     path('check-qr/', include('check_qr.urls')),
     path('admin/', admin.site.urls),
@@ -42,7 +43,7 @@ urlpatterns = [
         r'^photologue/', include('photologue.urls', namespace='photologue')
     ),
     re_path(r'^cms/', include(wagtailadmin_urls)),
-    re_path(r'^documents/', include(wagtaildocs_urls)),
+    # re_path(r'^documents/', include(wagtaildocs_urls)),
     re_path(r'^terms/', include(wagtail_urls)),
 
     url('^inbox/notifications/',

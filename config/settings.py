@@ -112,6 +112,7 @@ INSTALLED_APPS = [
     'check_qr',
     'cookielaw',
     'classytags',
+    'documents',
 ]
 
 
