@@ -8,7 +8,7 @@
 {% block content %}
 <div class="container">
     <div class="section-inner clearfix">
-        <h1><a href="/media/documents/{{document.doc_name}}">{{document.title|capfirst}}</a></h1>
+        <h1><a href="/media/documents/{{document.doc_name}}" target="_blank">{{document.title|capfirst}}</a></h1>
         <p>
             <span> {{ document.pub_date|date:"D d M Y" }} </span>
         </p>

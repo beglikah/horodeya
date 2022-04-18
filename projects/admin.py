@@ -26,7 +26,8 @@ class ProjectAdminForm(forms.ModelForm):
             'name',
             'verified_status',
             'administrators',
-            'members'
+            'members',
+            'document',
         ]
 
         def __init__(self, *args, **kwargs):
@@ -62,7 +63,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
         if new_administrators:
             for administrator in new_administrators.all():
-                if administrator.is_administrator == False:
+                if administrator.is_administrator is not True:
                     administrator.is_administrator = True
                     administrator.save()
 
@@ -79,8 +80,8 @@ class ProjectAdmin(admin.ModelAdmin):
 
         if new_members:
             for member in new_members.all():
-                if member.is_member == False:
-                    member.is_member=True
+                if member.is_member is not True:
+                    member.is_member = True
                     member.save()
 
         if remove_m:

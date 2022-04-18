@@ -14,6 +14,7 @@ from model_utils import Choices
 from photologue.models import Gallery
 from vote.models import VoteModel
 from accounts.models import User, Timestamped
+from documents.models import Document
 
 
 def determine_project(object):
@@ -32,7 +33,7 @@ def is_author_admin(user, object):
 
 @rules.predicate
 def is_author(user):
-    if user.is_author == True:
+    if user.is_author:
         return user
 
 
@@ -153,6 +154,10 @@ class Project(Timestamped):
     goal = models.TextField(_('goal'), null=True)
     description = models.CharField(_('description'), max_length=300)
     text = models.TextField(_('text'), max_length=5000)
+    document = models.ForeignKey(
+        Document, null=True, blank=True,
+        on_delete=models.CASCADE
+    )
     start_date = models.DateField(_('start_date'), null=True, blank=False)
     end_date = models.DateField(_('end_date'), null=True, blank=False)
     end_date_tasks = models.DateField(
