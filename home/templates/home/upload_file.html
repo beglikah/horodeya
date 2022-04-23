@@ -6,9 +6,6 @@
 {% load bootstrap4 %}
 {{form.media}}
 <div>
-{% if user.photo %}
-  <img src="{{user.photo.get_profile_url}}">
-{% endif %}
 <form method="post" class="form mt-3" enctype="multipart/form-data">
     {% csrf_token %}
     {% bootstrap_form form layout='inline' %}

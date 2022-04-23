@@ -150,10 +150,12 @@
     </div>
   </div>
 </div>
+{% if object.prezentation %}
 <div class="">
     <h1><a href="/media/{{object.prezentation}}" target="_blank">Project Prezentation</a></h1>
 
 </div>
+{% endif %}
 
 <div class="">
     {% if author or member_of or administrator_of %}

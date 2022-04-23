@@ -319,7 +319,7 @@ class ProjectUpdateSlack(AutoPermissionRequiredMixin, UpdateView):
 class ProjectUpdatePresentation(AutoPermissionRequiredMixin, UpdateView):
     model = _model.Project
     form_class = _form.ProjectUpdatePresentationForm
-    template_name = 'projects/presentation_update.html'
+    template_name = 'home/upload_file.html'
 
     def handle_no_permission(self):
         return redirect('permission_denied')
@@ -373,7 +373,7 @@ def project_prezentation_update(request, project_id):
         form = _form.ProjectUpdatePresentationForm(
             initial={'prezentation': project.prezentation if project.prezentation else None})
 
-    return render(request, 'projects/presentation_update.html', {
+    return render(request, 'home/upload_file.html', {
         'form': form, 'project:': project,
     })
 
