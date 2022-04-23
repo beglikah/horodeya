@@ -43,6 +43,13 @@
       {% trans 'Update questions' %}
   </a>
 </li>
+<li class="nav-item flex-fill text-center ">
+  <a class="nav-link text-white" href="{% url 'projects:update_prezentation' project.pk  %}">
+      {% trans 'Update Presentation' %}
+  </a>
+</li>
+
+
 {% elif administrator_of %}
 {% include "projects/menu_admin.html" %}
 <li class="nav-item flex-fill text-center ">
@@ -144,7 +151,7 @@
   </div>
 </div>
 <div class="">
-    <h1><a href="/media/documents/{{object.document.doc_name}}" target="_blank">{{ object.document.title|capfirst}}</a></h1>
+    <h1><a href="/media/{{object.prezentation}}" target="_blank">Project Prezentation</a></h1>
 
 </div>
 

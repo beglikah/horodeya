@@ -254,6 +254,16 @@ class ProjectUpdateTextForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
 
+class ProjectUpdatePresentationForm(forms.ModelForm):
+    class Meta:
+        model = _model.Project
+        fields = ['prezentation']
+
+    def __init__(self, *args, **kwargs):
+        # user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+
+
 class ProjectUpdateAdministratorsForm(forms.ModelForm):
     administrators = forms.ModelMultipleChoiceField(
         queryset=User.objects.all(),

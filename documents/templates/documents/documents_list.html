@@ -8,7 +8,7 @@
   {% for document in object_list %}
       <p>
       <big><b>
-          <a href="/media/documents/{{document.doc_name}}">{{document.title|capfirst}}</a>
+          <a href="/media/documents/{{document.doc_name}}" target="_blank">{{document.title|capfirst}}</a>
         </b></big>
           <span>{% trans "Date:"%} {{ document.pub_date|date:"D d M Y" }} </span>
       </p>

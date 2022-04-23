@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
-from django.template.defaultfilters import slugify
+# from django.utils.translation import gettext_lazy as _
+# from django.template.defaultfilters import slugify
 from django.urls import reverse
 
 
@@ -9,14 +9,6 @@ from django.urls import reverse
 class Document(models.Model):
     title = models.CharField(max_length=100)
     document = models.FileField(upload_to='documents/')
-    slug = models.SlugField(
-        _('Slug'),
-        default='slug',
-        max_length=200,
-        help_text=_(
-            """Slug will be generated automatically from the title of the
-            document!""")
-    )
     pub_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
@@ -33,5 +25,4 @@ class Document(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)
         super(Document, self).save(*args, **kwargs)

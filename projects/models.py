@@ -14,7 +14,6 @@ from model_utils import Choices
 from photologue.models import Gallery
 from vote.models import VoteModel
 from accounts.models import User, Timestamped
-from documents.models import Document
 
 
 def determine_project(object):
@@ -136,6 +135,10 @@ def get_report_translated_choices():
     return REPORT_TIMESPAN_CHOICES
 
 
+def project_directory_path(instance, filename):
+    return 'prezentations/{0}/{1}'.format(instance.id, filename)
+
+
 class Project(Timestamped):
     class Meta:
         rules_permissions = {
@@ -154,9 +157,8 @@ class Project(Timestamped):
     goal = models.TextField(_('goal'), null=True)
     description = models.CharField(_('description'), max_length=300)
     text = models.TextField(_('text'), max_length=5000)
-    document = models.ForeignKey(
-        Document, null=True, blank=True,
-        on_delete=models.CASCADE
+    prezentation = models.FileField(
+        upload_to=project_directory_path, null=True, blank=True,
     )
     start_date = models.DateField(_('start_date'), null=True, blank=False)
     end_date = models.DateField(_('end_date'), null=True, blank=False)

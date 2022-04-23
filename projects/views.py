@@ -1,5 +1,6 @@
 import os
 import uuid
+
 import base64
 from hashlib import sha1
 import hmac
@@ -313,6 +314,70 @@ class ProjectUpdateSlack(AutoPermissionRequiredMixin, UpdateView):
     def form_valid(self, form):
         user = self.request.user
         return super().form_valid(form)
+
+
+class ProjectUpdatePresentation(AutoPermissionRequiredMixin, UpdateView):
+    model = _model.Project
+    form_class = _form.ProjectUpdatePresentationForm
+    template_name = 'projects/presentation_update.html'
+
+    def handle_no_permission(self):
+        return redirect('permission_denied')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+    def form_valid(self, form):
+        user = self.request.user
+        return super().form_valid(form)
+
+
+def handle_uploaded_file(project_id, f):
+    print("file Id: ", project_id)
+    with open('media/prezentations/'+f"{project_id}/"+f.name, 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+
+
+# @permission_required('projects.change', fn=objectgetter(_model.Project, 'pk'))
+def project_prezentation_update(request, project_id):
+    user = request.user
+    print("Project id: ", project_id)
+    project = get_object_or_404(_model.Project, pk=project_id)
+    print(project)
+    if request.method == 'POST':
+        form = _form.ProjectUpdatePresentationForm(request.POST, request.FILES)
+        if form.is_valid():
+
+            if project.prezentation:
+                project.prezentation.delete()
+
+            if form.cleaned_data.get('delete'):
+                messages.success(request, _('Prezentation deleted'))
+            else:
+                prezentationFile = request.FILES.get('prezentation')
+                print(prezentationFile)
+                if(prezentationFile):
+                    handle_uploaded_file(project_id, request.FILES["prezentation"])
+                    print("Project Prezentation: ", project.prezentation)
+                    project.prezentation = request.FILES.get("prezentation")
+                    print("New Presentation: ", project.prezentation)
+                    project.save()
+
+                messages.success(request, _('Prezentation uploaded'))
+                context = {'pk': project.pk}
+                return redirect('projects:details', pk=project.pk)
+    else:
+        form = _form.ProjectUpdatePresentationForm(
+            initial={'prezentation': project.prezentation if project.prezentation else None})
+
+    return render(request, 'projects/presentation_update.html', {
+        'form': form, 'project:': project,
+    })
+
+
 
 
 class ProjectUpdateAdministrators(AutoPermissionRequiredMixin, UpdateView):
