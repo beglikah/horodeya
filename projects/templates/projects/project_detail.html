@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
 {% load i18n %}
-{% load projects_tags %}
 {% load activity_tags %}
 {% load bootstrap4 %}
 {% block breadcrumbs %}
@@ -164,15 +163,22 @@
     </div>
     {% endif %}
 </div>
+{% if mem is not none %}
+    {% for member_of in mem %}
+    <h3>{{user}}</h3>
+    <h3>{{member_of}}</h3>
+
+{% endfor %}
+{% endif %}
+
+    {% if members_of %}
 <div class="">
-    {% if member_of %}
     <div id="volunteer" class="col-md-4 mt-4" style="padding-left: 0px;" >
         <p class="font-weight-bold footer-titles">Report problems: </p>
         {% include 'projects/bugreport_form.html' %}
     </div>
-    {% endif %}
 </div>
-
+{% endif %}
 
 <div id="donate" class="col-md-4 mt-4" style="padding-left: 0px;">
     <a class="btn btn-primary mt-3"

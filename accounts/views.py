@@ -8,11 +8,9 @@ from projects.views import neat_photo
 from stream_django.feed_manager import feed_manager
 from stream_django.enrich import Enrich
 
-from django.views.generic import DetailView
 from django.views.generic.edit import UpdateView
 
 from rules.contrib.views import permission_required, objectgetter
-from rules.contrib.views import AutoPermissionRequiredMixin
 
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
@@ -90,11 +88,13 @@ def notifications(request):
         }
     )
 
+
 """
 class UserDetailView(AutoPermissionRequiredMixin, DetailView):
     template_name = 'account/user_detail.html'
     model = User
 """
+
 
 class UserUpdateView(UpdateView):
     template_name = 'account/user_form.html'

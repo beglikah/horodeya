@@ -85,18 +85,6 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
 
-    # Wagtail http://docs.wagtail.io/en/v2.6.2/getting_started/integrating_into_django.html
-    'wagtail.contrib.forms',
-    'wagtail.contrib.redirects',
-    'wagtail.embeds',
-    'wagtail.sites',
-    'wagtail.users',
-    'wagtail.snippets',
-    'wagtail.documents',
-    'wagtail.images',
-    'wagtail.admin',
-    'wagtail.core',
-
     'modelcluster',
     'taggit',
 
@@ -120,7 +108,6 @@ if not TEST:
     INSTALLED_APPS += ['stream_django']
 
 MIDDLEWARE = [
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware', # wagtail toolbbar
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'config.force_default_language_middleware.ForceDefaultLanguageMiddleware',
@@ -131,7 +118,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -220,9 +206,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-WAGTAIL_SITE_NAME = 'Хородея'
-WAGTAIL_FRONTEND_LOGIN_URL = '/accounts/login/'
 
 BOOTSTRAP4 = {
     'theme_url': None

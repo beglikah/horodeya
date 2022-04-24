@@ -201,6 +201,12 @@ class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
         for adm_name in adm:
             if current_user.get_full_name() == adm_name:
                 adm_user = current_user
+                if urlfinish == '?show_admin=false':
+                    show_admin = False
+                    context['as_regular_user'] = current_user.is_authenticated
+                else:
+                    show_admin = True
+                    context['administrator_of'] = current_user.is_authenticated
             else:
                 adm_user = None
 
@@ -208,13 +214,16 @@ class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
         context['mem'] = mem
         for mem_name in mem:
             if current_user.get_full_name() == mem_name:
-                mem_user = current_user
+                if urlfinish == '?show_admin=false':
+                    show_admin = False
+                    print("Memeber: ", mem_user)
+                    context['member_of'] = current_user.is_authenticated
+                else:
+                    show_admin = False
+                    print("Else Memeber: ", mem_user)
+                    context['member_of'] = current_user.is_authenticated
             else:
                 mem_user = None
-
-        for member_of in members:
-            if current_user == member_of:
-                return member_of
 
         if (current_user == author):
             if urlfinish == '?show_admin=false':
@@ -224,21 +233,6 @@ class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
                 show_admin = True
                 context['author'] = author and show_admin
 
-        elif (current_user == adm_user):
-            if urlfinish == '?show_admin=false':
-                show_admin = False
-                context['as_regular_user'] = current_user.is_authenticated
-            else:
-                show_admin = True
-                context['administrator_of'] = current_user.is_authenticated
-
-        elif (current_user == mem_user):
-            if urlfinish == '?show_admin=false':
-                show_admin = False
-                context['as_regular_user'] = current_user.is_authenticated
-            else:
-                show_admin = True
-                context['member_of'] = current_user and show_admin
         else:
             context['regular_user'] = current_user.is_authenticated
             show_admin = False

@@ -4,11 +4,11 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 
 from vote.models import UP, DOWN
-from ..models import Support, Project
+from projects.models import Support, Project
 
 register = template.Library()
 
-
+"""
 @register.simple_tag
 def author(user, project_pk):
     project = get_object_or_404(Project, pk=project_pk)
@@ -17,7 +17,7 @@ def author(user, project_pk):
         author = project.author_admin
         print("Author: ", author)
         return author
-
+"""
 
 @register.simple_tag
 def administrator_of(user, project_pk):
@@ -33,14 +33,33 @@ def administrator_of(user, project_pk):
 
 @register.simple_tag
 def member_of(user, project_pk):
-    project = get_object_or_404(Project, pk=project_pk)
+    projects = Project.objects.all()
+    print("Projects: ", projects)
     members = project.all_members().split(',')
     print("Memebers: ", members)
     for member in members:
-        if user.get_full_name() == member:
+        print(user)
+        if user == member:
             member_of = member
             print("Memeber: ", member)
-            return member_of
+            context['member_of'] = member
+            context['project'] = project
+            print(project)
+            return context
+
+
+@register.simple_tag
+def author(user):
+    print("Load tags")
+    projectsSet = []
+    for project in Project.objects.filter(verified_status='accepted'):
+        if project.author_admin == user:
+            projectsSet.append(project)
+
+    user.projects = projectsSet
+    print(user.projects)
+    context['object'] = user
+    return context
 
 
 @register.simple_tag
