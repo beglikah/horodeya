@@ -24,6 +24,7 @@ def author_admin(user, project_pk, show_admin):
         else:
             show_admin = True
             context['author_admin'] = user and show_admin
+
     print("Tag Context: ", context)
     print()
     return context
@@ -76,6 +77,31 @@ def as_regular_user(user, project_pk, show_admin):
     print("As Regular User tag: ", context)
     print()
     return context
+
+
+@register.simple_tag
+def is_author_of(user, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    context = {}
+    if project.author_admin == user:
+        print("Project Author: ", project.author_admin == user)
+        context['is_author_of'] = user.is_authenticated
+        context['object.project_id'] = project.pk
+    print(context)
+    return context
+
+
+@register.simple_tag
+def is_administrator_of(user, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    administrators = project.all_administrators().split(',')
+    for administrator in administrators:
+        if administrator == user.get_full_name():
+            print("Is Administrator: ", (administrator == user.get_full_name()))
+            context = {'is_administrator_of': user.is_authenticated}
+            context['object.project_id'] = project.pk
+            print(context)
+            return context
 
 
 @register.simple_tag
