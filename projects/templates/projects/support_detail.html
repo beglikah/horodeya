@@ -8,41 +8,44 @@
 {% endblock %}
 
 {% block admin_tools %}
-    {% author user object.project_id as author %}
-    {% administrator_of user object.project_id as administrator_of %}
-    {% member_of user object.project_id as member_of %}
-    {% if author or administrator_of or member_of %}
-    {% if object.status == 'review' %}
-    <li class="nav-item">
-        <a class="nav-link text-white" href="{% url 'projects:support_accept' object.pk object.get_type %}">{% trans 'Accept' %}</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-white" href="{% url 'projects:support_decline' object.pk object.get_type %}">{% trans 'Decline' %}</a>
-    </li>
-    {% elif object.status == 'accepted' %}
-    <li class="nav-item">
-        <a class="nav-link text-white" href="{% url 'projects:support_delivered' object.pk object.get_type %}">{% trans 'Mark as delivered' %}</a>
-    </li>
-    {% endif %}
-    {% endif %}
-    <li class="nav-item">
-        {% if object.get_type == 'time' %}
-        <a class="nav-link text-white" href="{% url 'projects:time_support_update' object.pk %}">{% trans 'Inspect it' %}</a>
-        {% else %}
-        <a class="nav-link text-white" href="{% url 'projects:money_support_update' object.pk %}">{% trans 'Update' %}</a>
+    {% author_admin user object.project_id show_admin as author_admin %}
+    {% administrator_admin user object.project_id show_admin as administrator_admin %}
+    {% member_admin user object.project_id as member_admin %}
+
+
+    {% if author_admin or administrator_admin or member_admin %}
+        {% if object.status == 'review' %}
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'projects:support_accept' object.pk object.get_type %}">{% trans 'Accept' %}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'projects:support_decline' object.pk object.get_type %}">{% trans 'Decline' %}</a>
+            </li>
+        {% elif object.status == 'accepted' %}
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'projects:support_delivered' object.pk object.get_type %}">{% trans 'Mark as delivered' %}</a>
+            </li>
         {% endif %}
-    </li>
+        <li class="nav-item">
+        {% if object.get_type == 'time' %}
+            <a class="nav-link text-white" href="{% url 'projects:time_support_update' object.pk %}">{% trans 'Inspect it' %}</a>
+        {% else %}
+            <a class="nav-link text-white" href="{% url 'projects:money_support_update' object.pk %}">{% trans 'Update' %}</a>
+        {% endif %}
+        </li>
+    {% endif %}
 {% endblock %}
 
 
 {% block content %}
-    {% author user object.project_id as author %}
-    {% administrator_of user object.project_id as administrator_of %}
-    {% member_of user object.project_id as member_of %}
-    {% if author or administrator_of or member_of %}
+    {% author_admin user object.project_id show_admin as author_admin %}
+    {% administrator_admin user object.project_id show_admin as administrator_admin %}
+    {% member_admin user object.project_id as member_admin %}
+
+
+    {% if author_admin or administrator_admin or member_admin %}
         {{ block.super }}
-{% endif %}
+    {% endif %}
 
-{% include "projects/support_detail_fragment.html" with object=object user=user only %}
-
+        {% include "projects/support_detail_fragment.html" with object=object user=user only %}
 {% endblock %}

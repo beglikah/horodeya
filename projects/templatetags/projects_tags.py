@@ -8,57 +8,73 @@ from projects.models import Support, Project
 
 register = template.Library()
 
-"""
-@register.simple_tag
-def author(user, project_pk):
-    project = get_object_or_404(Project, pk=project_pk)
-    print("Author: ", project.author_admin)
-    if user == project.author_admin:
-        author = project.author_admin
-        print("Author: ", author)
-        return author
-"""
 
 @register.simple_tag
-def administrator_of(user, project_pk):
+def author_admin(user, project_pk, show_admin):
     project = get_object_or_404(Project, pk=project_pk)
+    context = {}
+    print("Project Author: ", project.author_admin)
+    print("Is Author: ", project.author_admin == user)
+    if project.author_admin == user and project.pk and show_admin:
+        print("Show Admin: ", show_admin)
+        if show_admin is False:
+            show_admin = False
+            context['as_regular_user'] = user.is_authenticated
+            print(context)
+        else:
+            show_admin = True
+            context['author_admin'] = user and show_admin
+    print("Tag Context: ", context)
+    print()
+    return context
+
+
+@register.simple_tag
+def administrator_admin(user, project_pk, show_admin):
+    project = get_object_or_404(Project, pk=project_pk)
+    context = {}
+
     administrators = project.all_administrators().split(',')
     print("Administrators: ", administrators)
     for administrator in administrators:
-        if user.get_full_name() == administrator:
-            administrator_of = administrator
-            print("Administrator: ", administrator_of)
-            return administrator_of
+        print("Is administrator: ", administrator == user.get_full_name())
+        if administrator == user.get_full_name() and project.pk and show_admin:
+            if show_admin is False:
+                context['as_regular_user'] = user.is_authenticated
+                print("Current user: ", user)
+            else:
+                show_admin = True
+                context['administrator_admin'] = user and show_admin
+    print("Administrator tag: ", context)
+    print()
+    return context
 
 
 @register.simple_tag
-def member_of(user, project_pk):
-    projects = Project.objects.all()
-    print("Projects: ", projects)
-    members = project.all_members().split(',')
-    print("Memebers: ", members)
+def member_admin(user, project_pk):
+    project = get_object_or_404(Project, pk=project_pk)
+    context = {}
+    members = project.all_members().split(', ')
+    print("Project Members:", members)
     for member in members:
-        print(user)
-        if user == member:
-            member_of = member
-            print("Memeber: ", member)
-            context['member_of'] = member
-            context['project'] = project
-            print(project)
-            return context
+        print("Is member: ", member == user.get_full_name())
+        if member == user.get_full_name() and project.pk:
+            context['member_admin'] = member
+    print("Member:", context)
+    print()
+    return context
 
 
 @register.simple_tag
-def author(user):
-    print("Load tags")
-    projectsSet = []
-    for project in Project.objects.filter(verified_status='accepted'):
-        if project.author_admin == user:
-            projectsSet.append(project)
+def as_regular_user(user, project_pk, show_admin):
+    project = get_object_or_404(Project, pk=project_pk)
+    context = {}
 
-    user.projects = projectsSet
-    print(user.projects)
-    context['object'] = user
+    if show_admin is False and project.pk:
+        context['as_regular_user'] = user.is_authenticated
+        print("Current user: ", user)
+    print("As Regular User tag: ", context)
+    print()
     return context
 
 

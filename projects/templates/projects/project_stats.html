@@ -1,5 +1,6 @@
 {% load i18n %} {% load projects_tags %}
 
+{% member_admin user object.pk as member_admin %}
 <div>
     <div class="col-md-4 mt-4" style="padding-left: 0px;">
         <div class="">
@@ -29,14 +30,14 @@
     </div>
 
     {% if not short %}
-    {% if author or member_of or administrator_of %}
+
+    {% if author_admin or administrator_admin %}
     <a
         class="btn btn-primary mt-3"
         href="{% url 'projects:time_necessity_list' project.pk %}"
         >
         {% trans 'See Time Investments' %}
     </a>
-        {% if author or administrator_of %}
     <a
         class="btn btn-primary mt-3"
         href="{% url 'projects:time_necessity_update' project.pk %}"
@@ -44,6 +45,14 @@
         {% trans 'Update Time Investments types' %}
     </a>
         {% endif %}
+    {% if member_admin %}
+    <a
+        class="btn btn-primary mt-3"
+        href="{% url 'projects:time_necessity_list' project.pk %}"
+        >
+        {% trans 'See Time Investments' %}
+    </a>
+
     {% else %}
         {%if project.time_still_needed is not 0 and project.question_set.count > 0 %}
         <a class="btn btn-primary mt-3" href="{% url 'projects:time_support_create' object.pk %}">
@@ -56,7 +65,7 @@
     {% else %}
     <hr />
     {% endif %}
-    {% if author or administrator_of %}
+    {% if author_admin or administrator_admin %}
     <div class="col-md-4 mt-4" style="padding-left: 0px;">
         <div class="">
             <br>

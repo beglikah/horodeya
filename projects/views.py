@@ -186,56 +186,17 @@ class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         show_admin = self.request.GET.get('show_admin', 'True') == 'True'
-
-        author = self.object.author_admin
-        administrators = self.object.all_administrators()
-        members = self.object.all_members()
-        current_user = self.request.user
-
         url = HttpRequest.get_full_path(self.request)
         urlend = url.split('/')
         urlfinish = urlend[-1]
-
-        adm = administrators.split(",")
-        context['adm'] = adm
-        for adm_name in adm:
-            if current_user.get_full_name() == adm_name:
-                adm_user = current_user
-                if urlfinish == '?show_admin=false':
-                    show_admin = False
-                    context['as_regular_user'] = current_user.is_authenticated
-                else:
-                    show_admin = True
-                    context['administrator_of'] = current_user.is_authenticated
-            else:
-                adm_user = None
-
-        mem = members.split(",")
-        context['mem'] = mem
-        for mem_name in mem:
-            if current_user.get_full_name() == mem_name:
-                if urlfinish == '?show_admin=false':
-                    show_admin = False
-                    print("Memeber: ", mem_user)
-                    context['member_of'] = current_user.is_authenticated
-                else:
-                    show_admin = False
-                    print("Else Memeber: ", mem_user)
-                    context['member_of'] = current_user.is_authenticated
-            else:
-                mem_user = None
-
-        if (current_user == author):
-            if urlfinish == '?show_admin=false':
-                show_admin = False
-                context['as_regular_user'] = current_user.is_authenticated
-            else:
-                show_admin = True
-                context['author'] = author and show_admin
-
-        else:
-            context['regular_user'] = current_user.is_authenticated
+        if urlfinish == '?show_admin=false':
             show_admin = False
+            context['urlfinish'] = urlfinish
+            context['show_admin'] = show_admin
+        else:
+            show_admin = True
+            context['urlfinish'] = urlfinish
+            context['show_admin'] = show_admin
 
         try:
             feed = feed_manager.get_feed('project', context['object'].id)
@@ -248,7 +209,7 @@ class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
             context['timeline'] = None
 
         context['announcement_form'] = _form.AnnouncementForm()
-
+        print()
         return context
 
 
@@ -370,8 +331,6 @@ def project_prezentation_update(request, project_id):
     return render(request, 'home/upload_file.html', {
         'form': form, 'project:': project,
     })
-
-
 
 
 class ProjectUpdateAdministrators(AutoPermissionRequiredMixin, UpdateView):
@@ -1191,9 +1150,6 @@ class TimeNecessityList(AutoPermissionRequiredMixin, generic.ListView):
         context['necessity_list'] = project.timenecessity_set.all()
         context['type'] = 'time'
 
-        if self.request.user == project.author_admin:
-            context['member'] = self.request.user
-
         return context
 
 
@@ -1228,7 +1184,7 @@ class TimeNecessityDetails(AutoPermissionRequiredMixin, generic.DetailView):
         return redirect('permission_denied')
 
     def get_context_data(self, **kwargs):
-
+        show_admin = self.request.GET.get('show_admin', 'True') == 'True'
         context = super().get_context_data(**kwargs)
         context['type'] = 'time'
         return context
