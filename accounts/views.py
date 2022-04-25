@@ -24,8 +24,6 @@ def account(request, pk=None):
         account = get_object_or_404(User, pk=pk)
     else:
         account = request.user
-
-    print(account.projects)
     return render(request, 'account/account.html', {'object': account})
 
 
