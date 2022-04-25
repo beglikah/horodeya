@@ -1,9 +1,18 @@
 {% extends "base.html" %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Update Your Account" %}{% endblock %}
 
 {% block content %}
+<h1>{% trans "Update Your Account" %}:</h1>
+{% load bootstrap4 %}
+
 <form method="post">
     {% csrf_token %}
-    {{form.as_p}}
-    <input type="submit" value="Save">
+    {% bootstrap_form form %}
+    {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+    {% endif %}
+    <input type="submit" value="Update your Account">
 </form>
 {% endblock %}

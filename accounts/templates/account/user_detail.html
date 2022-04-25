@@ -1,8 +1,26 @@
 {% extends "base.html" %}
+{% load i18n %}
+
+{% block head_title %}{% trans "My Profile" %}{% endblock %}
 
 {% block content %}
-<form method="post">
-    {% csrf_token %}
-    {{form.as_p}}
+<h1>{% trans "My Profile" %}:</h1>
+
+{% load bootstrap4 %}
+
+<form>
+  {% csrf_token %}
+  {% bootstrap_form form %}
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+  {% buttons %}
+  <button type="submitdd" class="btn btn-primary">{% trans "Update Your Account" %} &raquo;</button>
+  {% endbuttons %}
 </form>
+ <script>
+    $(function () {
+      $("#id_birthdate").datepicker({date:new Date(1990,0, 1),format:'dd.mm.yyyy'});
+    });
+  </script>
 {% endblock %}

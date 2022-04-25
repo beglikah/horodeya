@@ -2,15 +2,16 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 
 from accounts.models import User
-from projects.models import Project
 from projects.views import neat_photo
 
 from stream_django.feed_manager import feed_manager
 from stream_django.enrich import Enrich
 
+from django.views.generic import DetailView
 from django.views.generic.edit import UpdateView
 
 from rules.contrib.views import permission_required, objectgetter
+from rules.contrib.views import AutoPermissionRequiredMixin
 
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
@@ -24,13 +25,6 @@ def account(request, pk=None):
     else:
         account = request.user
 
-    projectsSet = []
-
-    for project in Project.objects.filter(verified_status='accepted'):
-        if project.author_admin == account:
-            projectsSet.append(project)
-
-    account.projects = projectsSet
     print(account.projects)
     return render(request, 'account/account.html', {'object': account})
 
@@ -89,15 +83,13 @@ def notifications(request):
     )
 
 
-"""
 class UserDetailView(AutoPermissionRequiredMixin, DetailView):
-    template_name = 'account/user_detail.html'
+    template_name = 'account/user_form.html'
     model = User
-"""
 
 
 class UserUpdateView(UpdateView):
-    template_name = 'account/user_form.html'
+    template_name = 'account/user_update.html'
     model = User
     fields = [
         'first_name',

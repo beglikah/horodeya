@@ -93,16 +93,17 @@
         {% endif %}
 
 
-
+        {% comment %}
         <li class="list-group-item">
           {% blocktrans with count=object.moneysupport_set.count %}
           Donated {{count}} times.
           {% endblocktrans %}
           <a href="{% url 'projects:user_support_list' object.pk 'money' %}"> {% trans 'See all' %} </a>
         </li>
+        {% endcomment %}
         <li class="list-group-item">
           {% blocktrans with count=object.timesupport_set.count  %}
-          Volunteered {{count}} times.
+          Invested time {{count}} times.
           {% endblocktrans %}
           <a href="{% url 'projects:user_support_list' object.pk 'time' %}"> {% trans 'See all' %} </a>
         </li>
