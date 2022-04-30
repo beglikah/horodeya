@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _translate
 from allauth.account.forms import SignupForm
 from allauth.account.forms import SetPasswordField, PasswordField
 
-from accounts.models import User
+# from accounts.models import User
 
 mark_safe_lazy = lazy(mark_safe)
 
@@ -54,9 +54,12 @@ class NamesSignupForm(SignupForm):
     )
 
     def clean_password2(self):
-        if ("password1" in self.cleaned_data and "password2" in self.cleaned_data):
-            if (self.cleaned_data["password1"] != self.cleaned_data["password2"]):
-                raise forms.ValidationError(("You must type the same password each time."))
+        if ("password1" in self.cleaned_data
+                and "password2" in self.cleaned_data):
+            if (self.cleaned_data["password1"]
+                    != self.cleaned_data["password2"]):
+                raise forms.ValidationError(
+                    ("You must type the same password each time."))
         return self.cleaned_data["password2"]
 
     def signup(self, request, user):

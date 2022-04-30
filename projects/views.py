@@ -5,61 +5,59 @@ import base64
 from hashlib import sha1
 import hmac
 
-from requests.exceptions import Timeout, ConnectionError
-
-from django.utils import timezone
-from django.core.mail import EmailMultiAlternatives
-
-from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.request import HttpRequest
 
-from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
-from django.views import generic
-from django.utils.text import slugify
-from django.utils.html import format_html
-from django.forms import modelformset_factory
-from django.views.decorators.csrf import csrf_exempt
 
 from django import forms
+from django.forms import modelformset_factory
 
 from django.urls import reverse_lazy
+from django.utils.text import slugify
 from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
-
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
-
+from django.utils.crypto import get_random_string
+from django.utils.html import format_html
+from django.utils import timezone
 from django.utils.translation import gettext as _
 
-from rules.contrib.views import AutoPermissionRequiredMixin, permission_required, objectgetter, PermissionRequiredMixin
-
-import projects.models as _model
-
-import projects.forms as _form
-
-from vote.models import UP, DOWN
-
-from photologue.models import Photo, Gallery
-from accounts.models import User, DonatorData, LegalEntityDonatorData
-
-from dal import autocomplete
-
-from stream_django.feed_manager import feed_manager
-from stream_django.enrich import Enrich
+from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.decorators import login_required, user_passes_test
 
-from notifications.signals import notify
-from notifications.models import Notification
+from django.views import generic
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.decorators.csrf import csrf_exempt
+
+from rules.contrib.views import AutoPermissionRequiredMixin, objectgetter
+from rules.contrib.views import PermissionRequiredMixin, permission_required
+
+from requests.exceptions import Timeout, ConnectionError
+from django.core.mail import EmailMultiAlternatives
 from django.db import IntegrityError
+
 from datetime import datetime
 from datetime import timedelta
 
+from dal import autocomplete
+from photologue.models import Photo, Gallery
+from stream_django.feed_manager import feed_manager
+from stream_django.enrich import Enrich
+
+from notifications.signals import notify
+from notifications.models import Notification
+
 from weasyprint import HTML as weasyHTML
-from django.utils.crypto import get_random_string
 
 from config import settings
+import projects.models as _model
+import projects.forms as _form
+from vote.models import UP, DOWN
+from accounts.models import User, DonatorData, LegalEntityDonatorData
+
+
 mark_safe_lazy = lazy(mark_safe)
 
 
@@ -91,12 +89,16 @@ def time_necessity_update(request, project_id):
     return necessity_update(request, project_id, 'time')
 
 
-def necessity_update(request, project_id, type):
+def necessity_update(request, project_id, type): # noqa: C901
 
     def handle_no_permission(self):
         return redirect('permission_denied')
 
-    cls = _form.TimeNecessityFormset if type == 'time' else _form.ThingNecessityFormset
+    if type == 'time':
+        cls = _form.TimeNecessityFormset
+    else:
+        cls = _form.ThingNecessityFormset
+
     template_name = 'projects/necessity_form.html'
     project = get_object_or_404(_model.Project, pk=project_id)
 
@@ -139,14 +141,18 @@ def necessity_update(request, project_id, type):
                     formset = _form.ThingNecessityFormsetWithRow(
                         instance=project)  # за да добави празен ред
                 else:
-                    formset = _form.TimeNecessityFormsetWithRow(instance=project)
+                    formset = _form.TimeNecessityFormsetWithRow(
+                        instance=project
+                    )
             else:
                 if type == 'time':
                     return redirect('projects:time_necessity_list', project.pk)
                 else:
-                    return redirect('projects:thing_necessity_list', project.pk)
+                    return redirect(
+                        'projects:thing_necessity_list', project.pk
+                    )
 
-    return render(request, 'projects/necessity_form.html', {
+    return render(request, template_name, {
         'formset': formset,
         'project': project,
         'type': type
@@ -213,7 +219,9 @@ class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
         return context
 
 
-class ProjectCreate(AutoPermissionRequiredMixin, UserPassesTestMixin, CreateView):
+class ProjectCreate(
+    AutoPermissionRequiredMixin, UserPassesTestMixin, CreateView
+):
     model = _model.Project
     form_class = _form.ProjectForm
 
@@ -239,7 +247,6 @@ class ProjectCreate(AutoPermissionRequiredMixin, UserPassesTestMixin, CreateView
         user = self.request.user
         form.instance.author_admin = self.request.user
         project = form.instance
-
 
         # Потребител 0 следва всички проекти
         user_follow_project(0, project)
@@ -267,7 +274,6 @@ class ProjectUpdateSlack(AutoPermissionRequiredMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
-        user = self.request.user
         return super().form_valid(form)
 
 
@@ -285,20 +291,22 @@ class ProjectUpdatePresentation(AutoPermissionRequiredMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
-        user = self.request.user
         return super().form_valid(form)
 
 
 def handle_uploaded_file(project_id, f):
     print("file Id: ", project_id)
-    with open('media/prezentations/'+f"{project_id}/"+f.name, 'wb+') as destination:
+    with open(
+        'media/prezentations/'+f"{project_id}/"+f.name, 'wb+'
+    ) as destination:
         for chunk in f.chunks():
             destination.write(chunk)
 
 
-# @permission_required('projects.change', fn=objectgetter(_model.Project, 'pk'))
+# @permission_required(
+# 'projects.change', fn=objectgetter(_model.Project, 'pk'))
 def project_prezentation_update(request, project_id):
-    user = request.user
+    # user = request.user
     print("Project id: ", project_id)
     project = get_object_or_404(_model.Project, pk=project_id)
     print(project)
@@ -315,18 +323,22 @@ def project_prezentation_update(request, project_id):
                 prezentationFile = request.FILES.get('prezentation')
                 print(prezentationFile)
                 if(prezentationFile):
-                    handle_uploaded_file(project_id, request.FILES["prezentation"])
+                    handle_uploaded_file(
+                        project_id, request.FILES["prezentation"]
+                    )
                     print("Project Prezentation: ", project.prezentation)
                     project.prezentation = request.FILES.get("prezentation")
                     print("New Presentation: ", project.prezentation)
                     project.save()
 
                 messages.success(request, _('Prezentation uploaded'))
-                context = {'pk': project.pk}
                 return redirect('projects:details', pk=project.pk)
     else:
-        form = _form.ProjectUpdatePresentationForm(
-            initial={'prezentation': project.prezentation if project.prezentation else None})
+        if project.prezentation:
+            initial = {'prezentation': project.prezentation}
+        else:
+            initial = None
+        form = _form.ProjectUpdatePresentationForm(initial)
 
     return render(request, 'home/upload_file.html', {
         'form': form, 'project:': project,
@@ -347,8 +359,6 @@ class ProjectUpdateAdministrators(AutoPermissionRequiredMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
-        user = self.request.user
-
         return super().form_valid(form)
 
 
@@ -366,7 +376,6 @@ class ProjectUpdateMembers(AutoPermissionRequiredMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
-        user = self.request.user
         return super().form_valid(form)
 
 
@@ -384,7 +393,6 @@ class ProjectTextUpdate(AutoPermissionRequiredMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
-        user = self.request.user
         return super().form_valid(form)
 
 
@@ -555,16 +563,18 @@ def money_support_create(request, project_id=None):
         return redirect('permission_denied')
 
     supporterType = request.GET.get('supportertype')
+    dncr_ep = '/projects/donator/create/?next=/projects/create_epay_support/%s'
+    le_ep = '/projects/legalentitydonator/create/?next=/create_epay_support/%s'
     if(supporterType == 'donator'):
         if(request.user.donatorData):
             return create_epay_support(request, pk=project_id)
         else:
-            return redirect('/projects/donator/create/?next=/projects/create_epay_support/%s' % (project_id))
+            return redirect(dncr_ep % (project_id))
     elif (supporterType == 'legalentitydonator'):
         if(request.user.legalEntityDonatorData):
             return create_epay_support(request, pk=project_id)
         else:
-            return redirect('/projects/legalentitydonator/create/?next=/projects/create_epay_support/%s' % (project_id))
+            return redirect(le_ep % (project_id))
 
 
 class MoneySupportUpdate(AutoPermissionRequiredMixin, UpdateView):
@@ -646,7 +656,8 @@ def money_support_crud(request, project_id=None, support_id=None):
                     support.supportType = supportType
                     support.save()
 
-                    notification_message = '%s applied for financial support for a %s' % (
+                    notification_message = '%s applied for financial \
+                        support for a %s' % (
                         request.user, project)
                     notify.send(request.user, verb=notification_message)
 
@@ -757,11 +768,13 @@ def support_change_accept(request, pk, type, accepted):
 
         if type == 'time':
             if support.STATUS == support.STATUS.accepted:
-                notification_message = 'Your request to volonteer for the %s has been accepted' % (
+                notification_message = 'Your request to volonteer for \
+                    the %s has been accepted' % (
                     project_name)
                 email_txt_filename = 'email/support-accepted-time.txt'
             else:
-                notification_message = 'Your request to volonteer for the %s has been rejected' % (
+                notification_message = 'Your request to volonteer for the %s \
+                    has been rejected' % (
                     project_name)
                 email_txt_filename = 'email/support-declined-time.txt'
         else:
@@ -770,7 +783,8 @@ def support_change_accept(request, pk, type, accepted):
 
         result = support.set_accepted(accepted)
         if result == accepted:
-            notification_message = 'Your request to volonteer for the %s has been accepted' % (project_name)
+            notification_message = 'Your request to volonteer for the %s has \
+                been accepted' % (project_name)
             email_txt_filename = 'email/support-accepted-time.txt'
 
             notify.send(request.user, recipient=user_recipient,
@@ -816,7 +830,8 @@ def support_delivered(request, pk, type):
     project_name = project.name
 
     if type == 'time':
-        notification_message = 'Congratulations on the successful volunteering of the project %s' % (
+        notification_message = 'Congratulations on the successful \
+            volunteering of the project %s' % (
             project_name)
     else:
         notification_message = 'Your donation for the %s has been recieved' % (
@@ -845,7 +860,9 @@ def support_delivered(request, pk, type):
 )
 def time_support_update(request, pk):
     time_support = get_object_or_404(_model.TimeSupport, pk=pk)
-    return time_support_create_update(request, time_support.project, time_support)
+
+    return time_support_create_update(
+        request, time_support.project, time_support)
 
 
 class TimeSupportDetails(AutoPermissionRequiredMixin, generic.DetailView):
@@ -1036,11 +1053,12 @@ class AnnouncementDetails(AutoPermissionRequiredMixin, generic.DetailView):
     login_url='permission_denied')
 def time_support_create(request, project_id):
     project = get_object_or_404(_model.Project, pk=project_id)
+    don_cr = '/projects/donator/create/?next=/projects/%s/timesupport/create/'
 
     if(request.user.donatorData or request.user.legalEntityDonatorData):
         return time_support_create_update(request, project)
     else:
-        return redirect('/projects/donator/create/?next=/projects/%s/timesupport/create/' % (project_id))
+        return redirect(don_cr % (project_id))
 
 
 def time_support_create_update(request, project, support=None):
@@ -1065,7 +1083,8 @@ def time_support_create_update(request, project, support=None):
         fields=['necessity', 'comment', 'start_date', 'end_date', 'price'],
         labels={
             'comment': _(
-                'Why do you apply for this position? List your relevant experience / skills'
+                'Please write the name of the person or organization that \
+                invited you to the project.'
             )
         },
         widgets={
@@ -1080,8 +1099,14 @@ def time_support_create_update(request, project, support=None):
             )},
         extra=len(necessity_list))
 
-    initial = list(map(lambda n: {'necessity': n, 'start_date': n.start_date,
-                                  'end_date': n.end_date, 'price': n.price}, necessity_list))
+    initial = list(
+        map(lambda n: {
+            'necessity': n,
+            'start_date': n.start_date,
+            'end_date': n.end_date,
+            'price': n.price
+        }, necessity_list)
+    )
     questions = project.question_set.order_by('order').all()
     if request.method == 'GET':
         formset = TimeSupportFormset(
@@ -1120,10 +1145,14 @@ def time_support_create_update(request, project, support=None):
                         saved += 1
 
                 messages.success(request, _(
-                    'Applied to %d volunteer positions' % saved))
-                notification_message = '%s applied for volunteering for a %s' % (request.user, project)
+                    'Applied to %d time investor positions' % saved))
+                notification_message = '%s applied for time investing \
+                    for a %s' % (request.user, project)
 
-                notify.send(request.user, recipient=request.user, verb=notification_message)
+                notify.send(
+                    request.user,
+                    recipient=request.user,
+                    verb=notification_message)
                 return redirect(project)
 
     context['formset'] = formset
@@ -1187,6 +1216,7 @@ class TimeNecessityDetails(AutoPermissionRequiredMixin, generic.DetailView):
         show_admin = self.request.GET.get('show_admin', 'True') == 'True'
         context = super().get_context_data(**kwargs)
         context['type'] = 'time'
+        context['show_admin'] = show_admin
         return context
 
 
@@ -1276,7 +1306,7 @@ def gallery_update(request, project_id):
 
             return redirect(project)
 
-    return render(request, 'projects/photo_form.html', {
+    return render(request, template_name, {
         'formset': formset,
         'project': project,
     })
@@ -1345,12 +1375,18 @@ def questions_update(request, project_id):
                         form.save()
 
         except IntegrityError:
-            error_message = 'You have added any of the questions more than once'
-            formset = cls(initial=initial, queryset=_model.Question.objects.filter(
-                project=project).order_by('order'))
-            return render(request, template_name, {'formset': formset,
-                                                   'project': project,
-                                                   'error_message': error_message})
+            error_message = 'You have added any of the questions \
+                more than once'
+            qrs = _model.Question.objects.filter(project=project).order_by(
+                'order'
+            )
+            formset = cls(initial=initial, queryset=qrs)
+
+            return render(
+                request, template_name, {'formset': formset,
+                                         'project': project,
+                                         'error_message': error_message}
+            )
 
         return redirect('projects:time_necessity_list', project.pk)
 
@@ -1371,7 +1407,7 @@ class DonatorDataCreate(AutoPermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        redirectUrl = self.request.GET.get('next')
+        # redirectUrl = self.request.GET.get('next')
         return context
 
     def form_valid(self, form):
@@ -1427,7 +1463,10 @@ def notifications_feed(request):
     user = request.user
     notifications = user.notifications.unread()
 
-    return render(request, 'projects/notifications.html', {'notifications': notifications})
+    return render(
+        request, 'projects/notifications.html',
+        {'notifications': notifications}
+    )
 
 
 def notifications_read(request):
@@ -1462,7 +1501,9 @@ def unverified_cause_list(request):
     )
 
 
-class ProjectVerify(AutoPermissionRequiredMixin, UserPassesTestMixin, UpdateView):
+class ProjectVerify(
+    AutoPermissionRequiredMixin, UserPassesTestMixin, UpdateView
+):
     model = _model.Project
     fields = ['verified_status']
     template_name_suffix = '_verify_form'
@@ -1623,8 +1664,11 @@ def pay_epay_support(request, pk):
     context['user_id'] = request.user.id
     context['project_id'] = support.project.id
 
-    context['data'] = ('MIN='+context['MIN'] + '\nINVOICE='+str(context['INVOICE']) + '\nAMOUNT=' +
-                       str(context['AMOUNT']) + '\nEXP_TIME='+context['EXP_TIME'] + '\nDESCR='+context['DESCR'])
+    context['data'] = ('MIN=' + context['MIN']
+                       + '\nINVOICE=' + str(context['INVOICE'])
+                       + '\nAMOUNT=' + str(context['AMOUNT'])
+                       + '\nEXP_TIME=' + context['EXP_TIME']
+                       + '\nDESCR=' + context['DESCR'])
     encoded = base64.b64encode(context['data'].encode())
     context['ENCODED'] = encoded.decode('utf-8')
 
@@ -1655,7 +1699,7 @@ def accept_epay_payment(request):
 
     invoice_number_decoded = epay_item_currencies[0]
     status = epay_item_currencies[1]
-    pay_time = epay_item_currencies[2]
+    # pay_time = epay_item_currencies[2]
 
     key = os.getenv('EPAY_KEY').encode()
 
@@ -1671,8 +1715,8 @@ def accept_epay_payment(request):
             support.status = _model.MoneySupport.STATUS.delivered
             support.save()
 
-            txt_subject = 'Your donation to the %s project has been received' % (
-                support.project.name)
+            txt_subject = 'Your donation to the %s \
+                project has been received' % (support.project.name)
             txt_msg = render_to_string(
                 'email/support-delivered-money.txt',
                 context={'project_name': support.project.name}

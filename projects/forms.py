@@ -240,7 +240,7 @@ class ProjectUpdateSlackForm(forms.ModelForm):
         fields = ['slack_channel']
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user')
+        self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
 
 
@@ -250,7 +250,7 @@ class ProjectUpdateTextForm(forms.ModelForm):
         fields = ['text']
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user')
+        self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
 
 
@@ -260,7 +260,7 @@ class ProjectUpdatePresentationForm(forms.ModelForm):
         fields = ['prezentation']
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user')
+        self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
 
 
@@ -270,12 +270,13 @@ class ProjectUpdateAdministratorsForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
+
     class Meta:
         model = _model.Project
         fields = ['administrators']
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user')
+        self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
 
     def save(self):
@@ -292,7 +293,7 @@ class ProjectUpdateAdministratorsForm(forms.ModelForm):
 
         if new_administrators:
             for administrator in new_administrators.all():
-                if administrator.is_administrator == False:
+                if administrator.is_administrator is False:
                     administrator.is_administrator = True
                     administrator.save()
 
@@ -309,12 +310,13 @@ class ProjectUpdateMembersForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
+
     class Meta:
         model = _model.Project
         fields = ['members']
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user')
+        self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
 
     def save(self):
@@ -323,7 +325,7 @@ class ProjectUpdateMembersForm(forms.ModelForm):
         original_members = project.members.all()
         new_members = self.cleaned_data.get('members')
         remove_m = original_members.exclude(id__in=new_members.values('id'))
-        add_m = new_members.exclude(id__in=original_members.values('id'))
+        # add_m = new_members.exclude(id__in=original_members.values('id'))
         project.save()
 
         project.members.remove(*remove_m)

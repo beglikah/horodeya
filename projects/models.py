@@ -4,6 +4,7 @@ from django.conf import settings
 
 import rules
 
+
 import datetime
 from django.utils import timezone
 from django.utils.translation import get_language, gettext_lazy as _
@@ -58,6 +59,10 @@ def myself(user, user2):
         return user == user2
 
     return user == user2.user
+
+
+all_of_project = is_author_admin | administrator_of_project | member_of_project
+is_administration = is_author_admin | administrator_of_project
 
 
 @rules.predicate
@@ -241,14 +246,16 @@ class Project(Timestamped):
 
     def money_support(self):
         s = 0
-        for money_support in self.moneysupport_set.filter(status__in=[Support.STATUS.accepted, Support.STATUS.delivered]):
+        for money_support in self.moneysupport_set.filter(
+            status__in=[Support.STATUS.accepted, Support.STATUS.delivered]
+        ):
             s += money_support.leva
 
         return s
 
     def things_fulfilled(self):
         s = 0
-        money_support = self.money_support()
+        # money_support = self.money_support()
         for necessity in self.thingnecessity_set.all():
             accepted = necessity.accepted_support()
             s += accepted
@@ -323,9 +330,9 @@ class Project(Timestamped):
 class Announcement(Timestamped, Activity):
     class Meta:
         rules_permissions = {
-            "add": is_author_admin | administrator_of_project | member_of_project,
+            "add": all_of_project,
             "delete": is_author_admin,
-            "change": is_author_admin | administrator_of_project | member_of_project,
+            "change": all_of_project,
             "view": rules.is_authenticated,
         }
 
@@ -347,9 +354,9 @@ class Announcement(Timestamped, Activity):
 class Report(VoteModel, Timestamped, Activity):
     class Meta:
         rules_permissions = {
-            "add": is_author_admin | administrator_of_project | member_of_project,
+            "add": all_of_project,
             "delete": is_author_admin,
-            "change": is_author_admin | member_of_project | administrator_of_project,
+            "change": all_of_project,
             "view": rules.is_authenticated,
         }
     name = models.CharField(max_length=50, verbose_name=_('Name'))
@@ -379,7 +386,7 @@ class TimeNecessity(Timestamped):
         rules_permissions = {
             "add": is_author_admin | administrator_of_project,
             "delete": is_author_admin,
-            "change": is_author_admin | administrator_of_project | member_of_project,
+            "change": all_of_project,
             "view": rules.is_authenticated,
             "list": rules.is_authenticated,
         }
@@ -405,7 +412,8 @@ class TimeNecessity(Timestamped):
         return self.supports.filter(status=Support.STATUS.review)
 
     def get_absolute_url(self):
-        return reverse('projects:time_necessity_details', kwargs={'pk': self.pk})
+        return reverse(
+            'projects:time_necessity_details', kwargs={'pk': self.pk})
 
 # TODO notify in feed
 
@@ -414,8 +422,8 @@ class ThingNecessity(Timestamped):
     class Meta:
         rules_permissions = {
             "add": is_author_admin | administrator_of_project,
-            "delete": is_author_admin | administrator_of_project | member_of_project,
-            "change": is_author_admin | administrator_of_project | member_of_project,
+            "delete": all_of_project,
+            "change": all_of_project,
             "view": rules.is_authenticated,
             "list": rules.is_authenticated,
         }
@@ -468,7 +476,8 @@ class ThingNecessity(Timestamped):
                         project=self.project,
                         user=support.user,
                         comment='reminder from %d' % support.id,
-                        # so that admin is forced to choose Necessity to spend it on
+                        # so that admin is forced to choose
+                        # Necessity to spend it on
                         status=Support.STATUS.review,
                         status_since=timezone.now(),
                     )
@@ -504,13 +513,17 @@ class ThingNecessity(Timestamped):
         return self.money_supports.filter(status=Support.STATUS.accepted).all()
 
     def accepted_money_support_leva(self):
-        return sum(self.money_supports.filter(status=Support.STATUS.accepted).values_list('leva', flat=True))
+        return sum(self.money_supports.filter(
+            status=Support.STATUS.accepted).values_list('leva', flat=True))
 
     def support_candidates_count(self):
-        return self.supports.filter(status=Support.STATUS.review).count() + self.money_supports.filter(status=Support.STATUS.review).count()
+        sp_time = self.supports.filter(status=Support.STATUS.review).count()
+        sp_m = self.money_supports.filter(status=Support.STATUS.review).count()
+        return sp_time + sp_m
 
     def get_absolute_url(self):
-        return reverse('projects:thing_necessity_details', kwargs={'pk': self.pk})
+        return reverse(
+            'projects:thing_necessity_details', kwargs={'pk': self.pk})
 
 
 class Support(Timestamped):
@@ -519,11 +532,11 @@ class Support(Timestamped):
         rules_permissions = {
             "add": rules.is_authenticated,
             "delete": myself & ~is_accepted,
-            "change": (myself & ~is_accepted) | is_author_admin | administrator_of_project,
-            "view": myself | is_author_admin | administrator_of_project | member_of_project,
-            "accept": is_author_admin | administrator_of_project | member_of_project,
-            "mark_delivered": is_author_admin | administrator_of_project | member_of_project,
-            "list": is_author_admin | administrator_of_project | member_of_project,
+            "change": (myself & ~is_accepted) | is_administration,
+            "view": myself | all_of_project,
+            "accept": all_of_project,
+            "mark_delivered": all_of_project,
+            "list": all_of_project,
         }
 
         abstract = True
@@ -544,7 +557,8 @@ class Support(Timestamped):
     )
 
     status = models.CharField(_('status'),
-                              max_length=20, choices=STATUS, default=STATUS.review)
+                              max_length=20,
+                              choices=STATUS, default=STATUS.review)
     status_since = models.DateTimeField(
         _('status_since'), default=timezone.now)
     __original_status = None
@@ -602,16 +616,19 @@ class MoneySupport(Support):
         rules_permissions = {
             "add": rules.is_authenticated,
             "delete": myself & ~is_accepted,
-            "change": (myself & ~is_accepted) | is_author_admin | administrator_of_project | member_of_project,
-            "view": myself |is_author_admin | administrator_of_project |  member_of_project,
-            "accept": is_author_admin | administrator_of_project |  member_of_project,
-            "mark_delivered": is_author_admin | administrator_of_project |  member_of_project,
-            "list": is_author_admin | administrator_of_project |  member_of_project,
+            "change": (myself & ~is_accepted) | all_of_project,
+            "view": myself | all_of_project,
+            "accept": all_of_project,
+            "mark_delivered": all_of_project,
+            "list": all_of_project,
             "list-user": myself
         }
 
-    necessity = models.ForeignKey(ThingNecessity, on_delete=models.PROTECT, related_name='money_supports',
-                                  null=True, blank=True, verbose_name=_('Which necessity do you wish to donate to'))
+    necessity = models.ForeignKey(
+        ThingNecessity, on_delete=models.PROTECT,
+        related_name='money_supports', null=True, blank=True,
+        verbose_name=_('Which necessity do you wish to donate to')
+    )
     leva = models.FloatField(verbose_name=_('How much do you wish to donate'))
 
     payment_method = models.CharField(max_length=20, verbose_name=_(
@@ -620,7 +637,8 @@ class MoneySupport(Support):
     pay_time = models.DateTimeField(null=True, blank=True, editable=False)
 
     def get_absolute_url(self):
-        return reverse('projects:money_support_details', kwargs={'pk': self.pk})
+        return reverse(
+            'projects:money_support_details', kwargs={'pk': self.pk})
 
     def get_type(self):
         return 'money'
@@ -631,9 +649,11 @@ class MoneySupport(Support):
         if accepted:
             if not self.necessity:
                 raise RuntimeError(
-                    'Expected necessity to be set when accepting money support')
+                    'Expected necessity to be set when accepting money support'
+                )
 
-            new_accepted = self.necessity.create_thing_support_from_unused_money_support()
+            a = self.necessity.create_thing_support_from_unused_money_support()
+            new_accepted = a
 
             if new_accepted != accepted:
                 return super(MoneySupport, self).set_accepted(None)
@@ -641,7 +661,8 @@ class MoneySupport(Support):
         return accepted
 
     def __str__(self):
-        return "%s (%s)" % (self.user.first_name, self.leva) + (" for %s" % self.necessity if self.necessity else "")
+        for_statement = " for %s" % self.necessity if self.necessity else ""
+        return "%s (%s)" % (self.user.first_name, self.leva) + (for_statement)
 
 # TODO notify in feed
 
@@ -652,10 +673,10 @@ class ThingSupport(Support):
             "add": rules.is_authenticated,
             "delete": myself & ~is_accepted,
             "change": myself & ~is_accepted,
-            "view": myself |is_author_admin | administrator_of_project | member_of_project,
-            "accept": is_author_admin | administrator_of_project |  member_of_project,
-            "mark_delivered": is_author_admin | administrator_of_project | member_of_project,
-            "list": is_author_admin | administrator_of_project | member_of_project,
+            "view": myself | all_of_project,
+            "accept": all_of_project,
+            "mark_delivered": all_of_project,
+            "list": all_of_project,
             "list-user": myself
         }
 
@@ -665,7 +686,8 @@ class ThingSupport(Support):
     from_money_supports = models.ManyToManyField(MoneySupport, blank=True)
 
     def get_absolute_url(self):
-        return reverse('projects:thing_support_details', kwargs={'pk': self.pk})
+        return reverse(
+            'projects:thing_support_details', kwargs={'pk': self.pk})
 
     def get_type(self):
         return 'thing'
@@ -680,8 +702,8 @@ class Answer(Timestamped):
             "add": rules.is_authenticated,
             "delete": myself & ~is_accepted,
             "change": myself & ~is_accepted,
-            "view": myself | is_author_admin | administrator_of_project | member_of_project,
-            "list": myself | is_author_admin | administrator_of_project | member_of_project
+            "view": myself | all_of_project,
+            "list": myself | all_of_project
         }
         unique_together = ['project', 'question', 'user']
 
@@ -698,11 +720,11 @@ class TimeSupport(Support):
         rules_permissions = {
             "add": rules.is_authenticated,
             "delete": myself & ~is_accepted,
-            "change": (myself & ~is_accepted) | is_author_admin | administrator_of_project,
+            "change": (myself & ~is_accepted) | is_administration,
             "view": rules.is_authenticated,
             "accept": is_author_admin | administrator_of_project,
-            "mark_delivered": is_author_admin | administrator_of_project | member_of_project,
-            "list": is_author_admin | administrator_of_project | member_of_project,
+            "mark_delivered": all_of_project,
+            "list": all_of_project,
         }
         unique_together = ['necessity', 'user']
 
@@ -725,7 +747,9 @@ class TimeSupport(Support):
         return "%s: %s" % (self.necessity, self.user.first_name)
 
     def ordered_answers(self):
-        return self.user.answer_set.filter(project=self.necessity.project).order_by('question__order')
+        my_pr = self.necessity.project
+        ordered = 'question__order'
+        return self.user.answer_set.filter(project=my_pr).order_by(ordered)
 
 
 class QuestionPrototype(Timestamped):
@@ -769,7 +793,8 @@ class Question(Timestamped):
     order = models.IntegerField()
 
     def __str__(self):
-        return "%s. %s%s" % (self.order, self.prototype, ('*' if self.required else ''))
+        new_string = self.order, self.prototype, ('*' if self.required else '')
+        return "%s. %s%s" % (new_string)
 
     def text(self):
         return getattr(self.prototype, 'text_%s' % get_language())

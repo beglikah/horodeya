@@ -18,7 +18,7 @@ from django.contrib.auth.models import BaseUserManager, AbstractUser
 from django_countries.fields import CountryField
 
 from photologue.models import Photo
-from vote.models import UP, DOWN
+# from vote.models import UP, DOWN
 # from projects.models import Report
 
 
@@ -29,7 +29,8 @@ def has_a_project(user):
 
 class UserManager(BaseUserManager):
 
-    def _create_user(self, email, password, is_staff, is_superuser, **extra_fields):
+    def _create_user(
+            self, email, password, is_staff, is_superuser, **extra_fields):
         if not email:
             raise ValueError('Users must have an email address')
         now = timezone.now()
@@ -75,7 +76,6 @@ class User(RulesModelMixin, AbstractUser, metaclass=RulesModelBase):
         verbose_name_plural = 'users'
         db_table = 'auth_user'
 
-
     email = models.EmailField(
         'email address',
         unique=True,
@@ -90,7 +90,10 @@ class User(RulesModelMixin, AbstractUser, metaclass=RulesModelBase):
         _('birthdate'), blank=False, null=True)
 
     photo = models.ForeignKey(Photo, on_delete=models.SET_NULL, null=True)
-    country = CountryField(blank_label='(select country)', null=True, blank=True)
+    country = CountryField(
+        blank_label='(select country)',
+        null=True, blank=True
+    )
     city = models.CharField(max_length=30, null=True, blank=True)
     address = models.CharField(max_length=200, null=True, blank=True)
 
@@ -160,7 +163,9 @@ class User(RulesModelMixin, AbstractUser, metaclass=RulesModelBase):
         return self.moneysupport_set.count() + self.timesupport_set.count()
 
     # def total_votes_count(self):
-        # return len(Report.votes.all(self.pk, UP)) + len(Report.votes.all(self.pk, DOWN))
+        # len_up = len(Report.votes.all(self.pk, UP))
+        # len_down = len(Report.votes.all(self.pk, DOWN))
+        # return len_up + len_down
 
     def administrator_of(self, project_pk):
         return self.projects.filter(pk=project_pk).exists()
@@ -247,7 +252,9 @@ class LegalEntityDonatorData(Timestamped):
 
 
 class AuthorAdmin(Timestamped):
-    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        User, null=True, blank=True, on_delete=models.CASCADE
+    )
 
     # additional fields
     activation_key = models.CharField(max_length=255, default=1)
@@ -255,5 +262,3 @@ class AuthorAdmin(Timestamped):
 
     def __str__(self):
         return self.user.get_full_name()
-
-
