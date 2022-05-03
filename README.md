@@ -1,6 +1,8 @@
-# Хородея
+# ITEC
 
-## Python3.8 - Настройка на средата за разработка
+## Run Project:
+
+### Python3.8
 
 ```bach
 virtualenv -p python3.8 venv --no-site-packages
@@ -14,26 +16,26 @@ Download [manage.sh](https://trello.com/c/Rp1cvIX8/54-managesh) and run:
 chmod +x manage.sh
 ```
 
-### Локална база данни
+### Local database:
 
 ```bash
 docker run --name itec-postgres -e POSTGRES_USER=itec -e POSTGRES_PASSWORD=itec-foundation -d postgres
 ```
 
-След като сме пуснали postgres Docker изображението:
+After we realized postgres Docker container:
 
 ```bash
 export DB_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' itec-postgres)
 export DB_URL="postgresql://itec:itec@$DB_HOST/itec"
 ```
 
-За връзка с база данни през терминал:
+To connect to the database via the terminal:
 
 ```bash
 docker run -it --rm --network container:itec-postgres postgres psql -h $DB_HOST -U itec
 ```
 
-### Стартиране
+### Run Localhost:
 
 ```bash
 ./manage.sh migrate
@@ -41,7 +43,7 @@ docker run -it --rm --network container:itec-postgres postgres psql -h $DB_HOST 
 ./manage.sh runserver
 ```
 
-### Превод
+### Make Translations:
 
 ```bash
 manage.py makemessages -l bg -i venv/bin
@@ -53,13 +55,13 @@ manage.py makemessages -l bg -i venv/bin
 manage.py compilemessages -l bg
 ```
 
-### Запазване на локална информация
+### Save local information
 
 ```bash
 ./manage.sh dumpdata --natural-foreign --format yaml -o fixtures/dev.yaml -e auth.Permission -e sessions -e admin.logentry --exclude contenttypes
 ```
 
-### Смяна на парола за даден потребител
+### Change password for a user:
 
 ```bash
 manage.py changepassword <user_name>
