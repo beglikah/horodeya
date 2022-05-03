@@ -262,7 +262,8 @@ LANGUAGES = (
 def PHOTOLOGUE_PATH(instance, filename):
     fn = unicodedata.normalize('NFKD', force_text(filename)).encode(
         'ascii', 'ignore').decode('ascii')
-    return os.path.join(instance.first_directory, instance.second_directory, fn)
+    return os.path.join(
+        instance.first_directory, instance.second_directory, fn)
 
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')

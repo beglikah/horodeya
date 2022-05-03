@@ -123,13 +123,19 @@ class QuestionForm(forms.Form):
             self.answer_values[question_key(answer.question)] = answer.answer
 
         self.questions = {}
-
+        print("Self questions: ", self.questions)
+        print("Questions: ", questions)
+        print()
         for question in questions:
+            print("Project Question prototype: ", question.prototype)
+            print("Project Question project: ", question.project)
+            print("Project Question description: ", question.description)
+            print("Project Question order: ", question.order)
             label = getattr(question.prototype, 'text_%s' % get_language())
             key = question_key(question)
             if question.prototype.type == 'Necessities':
                 self.fields['necessities'] = forms.CharField(
-                    label=label, required=False)
+                    label=question.description, required=False)
             else:
                 if question.prototype.type == 'TextField':
                     field_class = forms.CharField
@@ -137,8 +143,8 @@ class QuestionForm(forms.Form):
                     field_class = getattr(forms, question.prototype.type)
 
                 field = field_class(
-                    label=label,
-                    help_text=question.description,
+                    label=question.description,
+                    help_text=label,
                     required=question.required
                 )
                 field.initial = self.answer_values.get(key)

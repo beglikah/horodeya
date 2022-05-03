@@ -768,13 +768,13 @@ def support_change_accept(request, pk, type, accepted):
 
         if type == 'time':
             if support.STATUS == support.STATUS.accepted:
-                notification_message = 'Your request to volonteer for \
-                    the %s has been accepted' % (
+                notification_message = 'Your request to invest time for '
+                'the %s has been accepted' % (
                     project_name)
                 email_txt_filename = 'email/support-accepted-time.txt'
             else:
-                notification_message = 'Your request to volonteer for the %s \
-                    has been rejected' % (
+                notification_message = 'Your request to invest time for '
+                'the %s has been rejected' % (
                     project_name)
                 email_txt_filename = 'email/support-declined-time.txt'
         else:
@@ -783,8 +783,9 @@ def support_change_accept(request, pk, type, accepted):
 
         result = support.set_accepted(accepted)
         if result == accepted:
-            notification_message = 'Your request to volonteer for the %s has \
-                been accepted' % (project_name)
+            notification_message = 'Your request to volonteer for '
+            'the %s has been accepted' % (
+                project_name)
             email_txt_filename = 'email/support-accepted-time.txt'
 
             notify.send(request.user, recipient=user_recipient,
@@ -1082,10 +1083,9 @@ def time_support_create_update(request, project, support=None):
         _model.TimeSupport,
         fields=['necessity', 'comment', 'start_date', 'end_date', 'price'],
         labels={
-            'comment': _(
-                'Please write the name of the person or organization that \
-                invited you to the project.'
-            )
+            'comment': _('Please write the name of the person or '
+                         'organization that invited you to the project.'
+                         )
         },
         widgets={
             'start_date': forms.HiddenInput(),
@@ -1375,8 +1375,8 @@ def questions_update(request, project_id):
                         form.save()
 
         except IntegrityError:
-            error_message = 'You have added any of the questions \
-                more than once'
+            error_message = """
+            You have added any of the questions more than once"""
             qrs = _model.Question.objects.filter(project=project).order_by(
                 'order'
             )
@@ -1398,8 +1398,7 @@ def questions_update(request, project_id):
 
 class DonatorDataCreate(AutoPermissionRequiredMixin, CreateView):
     model = DonatorData
-    fields = ['phone', 'citizenship', 'postAddress',
-              'TIN']
+    fields = ['phone', 'citizenship', 'postAddress']
     redirectUrl = ''
 
     def handle_no_permission(self):

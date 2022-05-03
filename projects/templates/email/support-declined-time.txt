@@ -1,6 +1,6 @@
 Hello!
 
-Your application for employment in the Project {{project_name}} has been rejected by a project adinistrator.
+Your application for invest time in the Project {{project_name}} has been rejected by a project adinistrator.
 
 Thank you! Do not give up and look for another position or another Project in which to participate.
 
@@ -8,7 +8,7 @@ Follow the Projects in ITEC to receive notifications and reports on their activi
 
 This is an automatically generated email. Please do not reply to this message!
 
-We are transforming the way we work together, create, volunteer, do business and contribute to society.
+We are transforming the way we work together, create, invest time, do business and contribute to society.
 
 ITEC Foundation
 

@@ -10,7 +10,7 @@
   </li>
   <li class="breadcrumb-item active">
     {% if type == 'time' %}
-      {% trans "Volunteering" %}
+      {% trans "Time Invesments" %}
     {% else %}
     {% trans 'Donations status' %}
     {% endif %}
@@ -24,7 +24,7 @@
     <h4>
       {% if type == 'time' %}
         {% blocktrans with name=account.first_name %}
-          {{name}}'s volunteering
+          {{name}}'s time investments
         {% endblocktrans %}
       {% else %}
         {% blocktrans with name=account.first_name%}

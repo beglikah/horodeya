@@ -1,6 +1,6 @@
 Hello!
 
-Your application for employment in the Project {{project_name}} has been approved.
+Your application for invest time in the Project {{project_name}} has been approved.
 
 Contact the Project administrators to clarify your activities. Thank you for your support!
 
@@ -8,7 +8,7 @@ Follow the Projects in ITEC to receive notifications and reports on their activi
 
 This is an automatically generated email. Please do not reply to this message!
 
-We are transforming the way we work together, create, volunteer, do business and contribute to society.
+We are transforming the way we work together, create, invest time, do business and contribute to society.
 
 ITEC Foundation
 
