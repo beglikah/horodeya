@@ -31,6 +31,7 @@ urlpatterns = [
     path('projects/', include('projects.urls')),
     path('accounts/', include('accounts.urls')),
     path('documents/', include('documents.urls', namespace="documents")),
+    path('questionnaires/', include('questionnaires.urls')),
     path('qr_code/', include('qr_code.urls', namespace="qr_code")),
     path('check-qr/', include('check_qr.urls')),
     path('admin/', admin.site.urls),

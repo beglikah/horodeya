@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<title>{% block title %}{% endblock %}</title>
+<style type="text/css">
+    ul { list-style: none; padding: 0; }
+    li { list-style-type: none; margin-bottom: 1em; }
+</style>
+</head>
+
+<body>
+    <div id="content">
+        {% block content %}
+            {{ content }}
+            <form action="" method="post" enctype="multipart/form-data">
+                <ul>
+                    {{ form.as_ul }}
+                </ul>
+                <input type="submit">
+                <input type="reset">
+                {% if request.GET.result_set %}
+                    <a href="{%  url 'basic_questionnaire_form' form.current_questionnaire.pk %}">new result set</a>
+                {% endif %}
+            </form>
+        {% endblock %}
+    </div>
+</body>
+</html>

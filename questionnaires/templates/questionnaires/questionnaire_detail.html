@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% load bootstrap4 %}
+
+{% block content %}
+<div class="row mt-4" style="background-image:none; margin-right:0; margin-left:0;">
+    <h1>{{ object.title }}</h1>
+</div>
+<div class="row mt-4" style="background-image:none; margin-right:0; margin-left:0;">
+    <h3>Published at: {{ object.pub_date }}</h3>
+</div>
+{% for question in questions %}
+<p> {{question.position}}. {{question.question_text }}</p>
+<p> {{question.answer}}</p>
+{% endfor %}
+
+{% endblock %}

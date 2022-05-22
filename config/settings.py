@@ -101,6 +101,7 @@ INSTALLED_APPS = [
     'cookielaw',
     'classytags',
     'documents',
+    'questionnaires',
 ]
 
 

@@ -7,7 +7,6 @@ class DocumentAdmin(admin.ModelAdmin):
     list_display = ('title', 'pub_date', 'doc_name')
     fields = [
         'title',
-        'slug',
         'document'
     ]
     search_fields = ['title', 'content']

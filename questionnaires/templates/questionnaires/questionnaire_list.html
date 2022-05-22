@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block content %}
+<div class="mt-4">
+  {% for questionnaire in object_list %}
+  <div class="card mb-3 mx-auto" style="max-width: 980;">
+      <div class="card-title" style="border-bottom: 5px solid #5cb0cef5;">
+          <h5 class="card-title"><a href="{% url 'questionnaire_detail' questionnaire.id %}">{{questionnaire.pk}}. {{ questionnaire.title }}</a> | Published at: {{ questionnaire.pub_date }}</h5>
+    </div>
+
+  {% endfor %}
+{% endblock %}
