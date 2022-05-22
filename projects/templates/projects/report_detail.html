@@ -22,7 +22,7 @@
   {{object.name}}
 </h2>
 
-<p>{{ object.text }}</p>
+<p>{{ object.text|urlize }}</p>
 <p>{{ object.published_at }}</p>
 
 <a class="btn {{vote_up_classes}}" href="{% url 'projects:report_vote_up' object.pk %}">

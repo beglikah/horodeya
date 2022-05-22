@@ -116,7 +116,7 @@
                 <p>{% trans "Project author: " %}{{ project.author_admin }},</p>
             {% endif %}
             {%if object.slack_channel is not None %}
-                <p>{% trans "Slack chanel: " %}{{object.slack_channel}}</p>
+                <p>{% trans "Slack chanel: " %}{{object.slack_channel|urlize}}</p>
             {%endif%}
             {%if project.administrators is not None %}
                 <p>{% trans "Project Administrators: " %}
@@ -140,13 +140,13 @@
         <br />
         <div class="accordion" id="shortLongText">
         <div class="collapse show" id="shortText" data-parent="#shortLongText">
-            {{ object.text|linebreaks|truncatewords_html:50 }}
+            {{ object.text|urlize|linebreaks|truncatewords_html:50 }}
             {% if object.text|length > 50 %}
             <a class='btn btn-link' data-toggle="collapse" href="#fullText">{% trans 'Show more' %}</a>
             {% endif %}
         </div>
         <div class="collapse" id="fullText" data-parent="#shortLongText">
-            {{ object.text|linebreaks}}
+            {{ object.text|linebreaks|urlize}}
             <a class='btn btn-link' data-toggle="collapse" href="#shortText">{% trans 'Show less' %}</a>
         </div>
         </div>
