@@ -26,73 +26,73 @@ PROJECT_ACTIVYTY_TYPES = [
 
 class ProjectForm(forms.ModelForm):
 
-class Meta:
-    model = _model.Project
-    fields = [
-        'name',
-        'category',
-        'location',
-        'description',
-        'goal',
-        'text',
-        'start_date',
-        'end_date',
-        'end_date_tasks',
-        'report_period',
-    ]
-    widgets = {
-        'end_date': DatePicker(
-            attrs={
-                'required': True
-            },
-            options={
-                'useCurrent': True,
-                'collapse': False,
-            }
-        ),
-        'start_date': DatePicker(
-            attrs={
-                'required': True
-            },
-            options={
-                'useCurrent': True,
-                'collapse': False,
-            }
-        ),
-        'end_date_tasks': DatePicker(
-            attrs={
-                'required': True
-            },
-            options={
-                'useCurrent': True,
-                'collapse': True,
-            }
-        ),
-        'category': forms.RadioSelect(
-            attrs=None, choices=PROJECT_ACTIVYTY_TYPES
-        )
-    }
-    labels = {
-        'goal1': 'Goal 1 ',
-        'goal2': 'Goal 2',
-        'goal3': 'Goal 3',
-        'text': _('Text(5000 characters)')
-    }
+    class Meta:
+        model = _model.Project
+        fields = [
+            'name',
+            'category',
+            'location',
+            'description',
+            'goal',
+            'text',
+            'start_date',
+            'end_date',
+            'end_date_tasks',
+            'report_period',
+        ]
+        widgets = {
+            'end_date': DatePicker(
+                attrs={
+                    'required': True
+                },
+                options={
+                    'useCurrent': True,
+                    'collapse': False,
+                }
+            ),
+            'start_date': DatePicker(
+                attrs={
+                    'required': True
+                },
+                options={
+                    'useCurrent': True,
+                    'collapse': False,
+                }
+            ),
+            'end_date_tasks': DatePicker(
+                attrs={
+                    'required': True
+                },
+                options={
+                    'useCurrent': True,
+                    'collapse': True,
+                }
+            ),
+            'category': forms.RadioSelect(
+                attrs=None, choices=PROJECT_ACTIVYTY_TYPES
+            )
+        }
+        labels = {
+            'goal1': 'Goal 1 ',
+            'goal2': 'Goal 2',
+            'goal3': 'Goal 3',
+            'text': _('Text(5000 characters)')
+        }
 
-def clean_end_date(self):
-    startDate = self.cleaned_data['start_date']
-    endDate = self.cleaned_data['end_date']
-    if endDate <= startDate:
-        raise forms.ValidationError(_(
-            'End date must be after  start date'), code='invalid')
+    def clean_end_date(self):
+        startDate = self.cleaned_data['start_date']
+        endDate = self.cleaned_data['end_date']
+        if endDate <= startDate:
+            raise forms.ValidationError(_(
+                'End date must be after  start date'), code='invalid')
 
-    return endDate
+        return endDate
 
-def __init__(self, *args, **kwargs):
-    user = kwargs.pop('user')
-    self.author_admin = user
-    super().__init__(*args, **kwargs)
-    # self.fields['project'].queryset = user.projects
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        self.author_admin = user
+        super().__init__(*args, **kwargs)
+        # self.fields['project'].queryset = user.projects
 
 
 class AnnouncementForm(forms.ModelForm):
