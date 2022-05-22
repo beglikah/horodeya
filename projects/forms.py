@@ -263,7 +263,7 @@ class ProjectUpdateTextForm(forms.ModelForm):
 class ProjectUpdatePresentationForm(forms.ModelForm):
     class Meta:
         model = _model.Project
-        fields = ['prezentation']
+        fields = ['presentation']
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')

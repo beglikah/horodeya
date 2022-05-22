@@ -215,7 +215,6 @@ class ProjectDetails(AutoPermissionRequiredMixin, generic.DetailView):
             context['timeline'] = None
 
         context['announcement_form'] = _form.AnnouncementForm()
-        print()
         return context
 
 
@@ -295,9 +294,8 @@ class ProjectUpdatePresentation(AutoPermissionRequiredMixin, UpdateView):
 
 
 def handle_uploaded_file(project_id, f):
-    print("file Id: ", project_id)
     with open(
-        'media/prezentations/'+f"{project_id}/"+f.name, 'wb+'
+        'media/presentations/'+f"{project_id}/"+f.name, 'wb+'
     ) as destination:
         for chunk in f.chunks():
             destination.write(chunk)
@@ -305,37 +303,32 @@ def handle_uploaded_file(project_id, f):
 
 # @permission_required(
 # 'projects.change', fn=objectgetter(_model.Project, 'pk'))
-def project_prezentation_update(request, project_id):
+def project_presentation_update(request, project_id):
     # user = request.user
-    print("Project id: ", project_id)
     project = get_object_or_404(_model.Project, pk=project_id)
-    print(project)
     if request.method == 'POST':
         form = _form.ProjectUpdatePresentationForm(request.POST, request.FILES)
         if form.is_valid():
 
-            if project.prezentation:
-                project.prezentation.delete()
+            if project.presentation:
+                project.presentation.delete()
 
             if form.cleaned_data.get('delete'):
-                messages.success(request, _('Prezentation deleted'))
+                messages.success(request, _('Presentation deleted'))
             else:
-                prezentationFile = request.FILES.get('prezentation')
-                print(prezentationFile)
-                if(prezentationFile):
+                presentationFile = request.FILES.get('presentation')
+                if(presentationFile):
                     handle_uploaded_file(
-                        project_id, request.FILES["prezentation"]
+                        project_id, request.FILES["presentation"]
                     )
-                    print("Project Prezentation: ", project.prezentation)
-                    project.prezentation = request.FILES.get("prezentation")
-                    print("New Presentation: ", project.prezentation)
+                    project.presentation = request.FILES.get("presentation")
                     project.save()
 
-                messages.success(request, _('Prezentation uploaded'))
+                messages.success(request, _('Presentation uploaded'))
                 return redirect('projects:details', pk=project.pk)
     else:
-        if project.prezentation:
-            initial = {'prezentation': project.prezentation}
+        if project.presentation:
+            initial = {'presentation': project.presentation}
         else:
             initial = None
         form = _form.ProjectUpdatePresentationForm(initial)

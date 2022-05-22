@@ -141,7 +141,7 @@ def get_report_translated_choices():
 
 
 def project_directory_path(instance, filename):
-    return 'prezentations/{0}/{1}'.format(instance.id, filename)
+    return 'presentations/{0}/{1}'.format(instance.id, filename)
 
 
 class Project(Timestamped):
@@ -162,7 +162,7 @@ class Project(Timestamped):
     goal = models.TextField(_('goal'), null=True)
     description = models.CharField(_('description'), max_length=300)
     text = models.TextField(_('text'), max_length=5000)
-    prezentation = models.FileField(
+    presentation = models.FileField(
         upload_to=project_directory_path, null=True, blank=True,
     )
     start_date = models.DateField(_('start_date'), null=True, blank=False)

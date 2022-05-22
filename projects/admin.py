@@ -27,7 +27,7 @@ class ProjectAdminForm(forms.ModelForm):
             'verified_status',
             'administrators',
             'members',
-            'prezentation',
+            'presentation',
         ]
 
         def __init__(self, *args, **kwargs):
