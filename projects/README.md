@@ -119,3 +119,13 @@ Time Support for `his project`
 ### Authenticated User
 
 - can apply for a project member
+
+### Project questions
+
+Now project question is created by default with id=1
+There we need to update:
+in view.py:
+row 92 def necessity_update
+
+Removed question_update, QuestionForm
+From admin.py removed Question, QuestionPrototype
