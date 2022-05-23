@@ -775,6 +775,26 @@ class QuestionPrototype(Timestamped):
         return self.text_bg
 
 
+class QuestionText(Timestamped):
+    class Meta:
+        rules_permissions = {
+            "add": is_author_admin | administrator_of_project,
+            "delete": is_author_admin | administrator_of_project,
+            "change": is_author_admin | administrator_of_project,
+            "view": rules.always_allow,
+            "list": rules.always_allow
+        }
+
+    question_text = models.CharField(
+        max_length=200,
+        default="Please write the name of the person or organization that invited you to the project")
+    answer = models.TextField(_('answer'), null=False, blank=True)
+    project = models.ForeignKey(Project, on_delete=models.PROTECT, null=True)
+
+    def __str__(self):
+        return self.question_text
+
+
 class Question(Timestamped):
     class Meta:
         rules_permissions = {

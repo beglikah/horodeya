@@ -14,13 +14,13 @@ from projects.templatetags.projects_tags import leva
 
 
 PROJECT_ACTIVYTY_TYPES = [
-('Creativity', 'Наука и творчество'),
-('Education', 'Просвета и възпитание'),
-('Art', 'Култура и артистичност'),
-('Administration', 'Администрация и финанси'),
-('Willpower', 'Спорт и туризъм'),
-('Health', 'Бит и здравеопазване'),
-('Food', 'Земеделие и изхранване')
+    ('Creativity', 'Наука и творчество'),
+    ('Education', 'Просвета и възпитание'),
+    ('Art', 'Култура и артистичност'),
+    ('Administration', 'Администрация и финанси'),
+    ('Willpower', 'Спорт и туризъм'),
+    ('Health', 'Бит и здравеопазване'),
+    ('Food', 'Земеделие и изхранване')
 ]
 
 
@@ -106,6 +106,51 @@ class AnnouncementForm(forms.ModelForm):
 
 def question_key(question):
     return 'question_%d' % question.pk
+
+
+class QuestionTextForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        questions = kwargs.pop('questions')
+        print("Questions form: ", questions)
+        self.user = kwargs.pop('user')
+        if 'answers' in kwargs:
+            answers = kwargs.pop('answers')
+        else:
+            answers = []
+        super(QuestionTextForm, self).__init__(*args, **kwargs)
+
+        self.answer_values = {}
+        for answer in answers:
+            self.answer_values[question_key(answer.question)] = answer.answer
+
+        self.questions = {}
+        print("Self questions: ", self.questions)
+        print("Questions: ", questions)
+        print()
+        for question in questions:
+            print("Project Question text: ", question.question_text)
+            print("Project Question answer: ", question.answer)
+            key = question_key(question)
+            self.fields['question_text'] = forms.CharField(
+                label=question.question_text,
+                required=False
+            )
+
+    def save(self, project):
+        print("Fields keys: ", self.fields.keys())
+        for question in self.fields.keys():
+            if 'question' in question:
+                value = self.cleaned_data[question]
+
+
+                if value is None:
+                    value = ''
+                answer, created = _model.QuestionText.objects.update_or_create(
+                    project=project,
+                    question_text=question,
+                    defaults={'answer': value}
+                )
+
 
 
 class QuestionForm(forms.Form):

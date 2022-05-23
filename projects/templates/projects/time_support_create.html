@@ -35,15 +35,10 @@
 
 
   {% for field in form.visible_fields %}
-    {% if field.name == 'necessities' %}
       <div class="form-group">
-        <label for="necessities">{{ field.label }}</label>
         {% include "projects/time_support_types_fragment.html" %}
       </div>
 
-    {% else %}
-     <div readonly> {% bootstrap_field field  %}</div>
-    {% endif %}
   {% endfor %}
    {% if update %}
       {% comment %} {% trans 'Update' %} {% endcomment %}

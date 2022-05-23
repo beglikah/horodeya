@@ -1100,13 +1100,21 @@ def time_support_create_update(request, project, support=None):
             'price': n.price
         }, necessity_list)
     )
-    questions = project.question_set.order_by('order').all()
+    print("Initial: ", initial)
+    questions = _model.QuestionText.objects.all()
+    for value in questions.values():
+        question = value
+    print("Question Text: ", question['question_text'])
+    question_text = question['question_text']
     if request.method == 'GET':
         formset = TimeSupportFormset(
             queryset=queryset,
             initial=initial)
-        question_form = _form.QuestionForm(
+        print("Formset:", formset)
+        question_form = _form.QuestionTextForm(
             questions=questions, answers=answers, user=request.user)
+        # question_form = _form.QuestionForm(
+        #     question_text=questions, answers=answers, user=request.user)
 
     elif request.method == 'POST':
         formset = TimeSupportFormset(
@@ -1114,7 +1122,7 @@ def time_support_create_update(request, project, support=None):
             queryset=queryset,
             initial=None)
 
-        question_form = _form.QuestionForm(
+        question_form = _form.QuestionTextForm(
             request.POST, questions=questions, user=request.user)
 
         selected_necessities = request.POST.getlist('necessity')
