@@ -120,9 +120,10 @@ class QuestionTextForm(forms.Form):
         super(QuestionTextForm, self).__init__(*args, **kwargs)
 
         self.answer_values = {}
+        """
         for answer in answers:
             self.answer_values[question_key(answer.question)] = answer.answer
-
+        """
         self.questions = {}
         print("Self questions: ", self.questions)
         print("Questions: ", questions)

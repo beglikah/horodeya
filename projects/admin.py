@@ -91,9 +91,9 @@ class ProjectAdmin(admin.ModelAdmin):
 
 
 class QuestionTextAdmin(admin.ModelAdmin):
-     list_display = (
-         'id', 'question_text'
-     )
+    list_display = (
+        'id', 'question_text'
+    )
 
 
 admin.site.register(_models.Project, ProjectAdmin)
