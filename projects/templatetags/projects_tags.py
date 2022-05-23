@@ -13,20 +13,14 @@ register = template.Library()
 def author_admin(user, project_pk, show_admin):
     project = get_object_or_404(Project, pk=project_pk)
     context = {}
-    print("Project Author: ", project.author_admin)
-    print("Is Author: ", project.author_admin == user)
     if project.author_admin == user and project.pk and show_admin:
-        print("Show Admin: ", show_admin)
         if show_admin is False:
             show_admin = False
             context['as_regular_user'] = user.is_authenticated
-            print(context)
         else:
             show_admin = True
             context['author_admin'] = user and show_admin
 
-    print("Tag Context: ", context)
-    print()
     return context
 
 
@@ -36,18 +30,13 @@ def administrator_admin(user, project_pk, show_admin):
     context = {}
 
     administrators = project.all_administrators().split(',')
-    print("Administrators: ", administrators)
     for administrator in administrators:
-        print("Is administrator: ", administrator == user.get_full_name())
         if administrator == user.get_full_name() and project.pk and show_admin:
             if show_admin is False:
                 context['as_regular_user'] = user.is_authenticated
-                print("Current user: ", user)
             else:
                 show_admin = True
                 context['administrator_admin'] = user and show_admin
-    print("Administrator tag: ", context)
-    print()
     return context
 
 
@@ -56,13 +45,9 @@ def member_admin(user, project_pk):
     project = get_object_or_404(Project, pk=project_pk)
     context = {}
     members = project.all_members().split(', ')
-    print("Project Members:", members)
     for member in members:
-        print("Is member: ", member == user.get_full_name())
         if member == user.get_full_name() and project.pk:
             context['member_admin'] = member
-    print("Member:", context)
-    print()
     return context
 
 
@@ -73,9 +58,6 @@ def as_regular_user(user, project_pk, show_admin):
 
     if show_admin is False and project.pk:
         context['as_regular_user'] = user.is_authenticated
-        print("Current user: ", user)
-    print("As Regular User tag: ", context)
-    print()
     return context
 
 
@@ -84,10 +66,8 @@ def is_author_of(user, project_id):
     project = get_object_or_404(Project, pk=project_id)
     context = {}
     if project.author_admin == user:
-        print("Project Author: ", project.author_admin == user)
         context['is_author_of'] = user.is_authenticated
         context['object.project_id'] = project.pk
-    print(context)
     return context
 
 
@@ -97,10 +77,8 @@ def is_administrator_of(user, project_id):
     administrators = project.all_administrators().split(',')
     for administrator in administrators:
         if administrator == user.get_full_name():
-            print("Is Administrator: ", (administrator == user.get_full_name()))
             context = {'is_administrator_of': user.is_authenticated}
             context['object.project_id'] = project.pk
-            print(context)
             return context
 
 

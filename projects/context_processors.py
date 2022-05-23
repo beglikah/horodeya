@@ -14,7 +14,6 @@ def author(request):
 
         user.projects = projectsSet
         context['author'] = user.projects
-        print(context)
         return context
     else:
         return ""
@@ -34,7 +33,6 @@ def administrator_of(request):
 
         user.administrator_of = projectsSet
         context['administrator_of'] = user.administrator_of
-        print(context)
         return context
     else:
         return ""
@@ -53,8 +51,6 @@ def member_of(request):
 
         user.member_of = projectsSet
         context['member_of'] = user.member_of
-        print(context)
-        print()
 
         return context
     else:

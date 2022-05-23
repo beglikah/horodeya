@@ -1,6 +1,6 @@
 from django import forms
 from django.utils.translation import gettext as _
-from django.utils.translation import get_language
+# from django.utils.translation import get_language
 from django.utils.text import slugify
 # from django.core.exceptions import ValidationError
 
@@ -111,7 +111,6 @@ def question_key(question):
 class QuestionTextForm(forms.Form):
     def __init__(self, *args, **kwargs):
         questions = kwargs.pop('questions')
-        print("Questions form: ", questions)
         self.user = kwargs.pop('user')
         if 'answers' in kwargs:
             answers = kwargs.pop('answers')
@@ -120,102 +119,23 @@ class QuestionTextForm(forms.Form):
         super(QuestionTextForm, self).__init__(*args, **kwargs)
 
         self.answer_values = {}
-        """
-        for answer in answers:
-            self.answer_values[question_key(answer.question)] = answer.answer
-        """
         self.questions = {}
-        print("Self questions: ", self.questions)
-        print("Questions: ", questions)
-        print()
         for question in questions:
-            print("Project Question text: ", question.question_text)
-            print("Project Question answer: ", question.answer)
-            key = question_key(question)
             self.fields['question_text'] = forms.CharField(
                 label=question.question_text,
                 required=False
             )
 
     def save(self, project):
-        print("Fields keys: ", self.fields.keys())
         for question in self.fields.keys():
             if 'question' in question:
                 value = self.cleaned_data[question]
-
 
                 if value is None:
                     value = ''
                 answer, created = _model.QuestionText.objects.update_or_create(
                     project=project,
                     question_text=_model.QuestionText,
-                    defaults={'answer': value}
-                )
-
-
-
-class QuestionForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        questions = kwargs.pop('questions')
-        self.user = kwargs.pop('user')
-        if 'answers' in kwargs:
-            answers = kwargs.pop('answers')
-        else:
-            answers = []
-        super(QuestionForm, self).__init__(*args, **kwargs)
-
-        self.answer_values = {}
-        for answer in answers:
-            self.answer_values[question_key(answer.question)] = answer.answer
-
-        self.questions = {}
-        print("Self questions: ", self.questions)
-        print("Questions: ", questions)
-        print()
-        for question in questions:
-            print("Project Question prototype: ", question.prototype)
-            print("Project Question project: ", question.project)
-            print("Project Question description: ", question.description)
-            print("Project Question order: ", question.order)
-            label = getattr(question.prototype, 'text_%s' % get_language())
-            key = question_key(question)
-            if question.prototype.type == 'Necessities':
-                self.fields['necessities'] = forms.CharField(
-                    label=question.description, required=False)
-            else:
-                if question.prototype.type == 'TextField':
-                    field_class = forms.CharField
-                else:
-                    field_class = getattr(forms, question.prototype.type)
-
-                field = field_class(
-                    label=question.description,
-                    help_text=label,
-                    required=question.required
-                )
-                field.initial = self.answer_values.get(key)
-
-                if question.prototype.type == 'ChoiceField':
-                    field.widget = forms.RadioSelect()
-                    field.choices = [(1, _('Yes')), (2, _('No'))]
-
-                if question.prototype.type == 'TextField':
-                    field.widget = forms.Textarea()
-
-                self.fields[key] = field
-            self.questions[key] = question
-
-    def save(self, project):
-        for question in self.fields.keys():
-            if 'question' in question:
-                value = self.cleaned_data[question]
-
-                if value is None:
-                    value = ''
-                answer, created = _model.Answer.objects.update_or_create(
-                    project=project,
-                    question=self.questions[question],
-                    user=self.user,
                     defaults={'answer': value}
                 )
 
