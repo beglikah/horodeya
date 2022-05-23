@@ -1105,7 +1105,6 @@ def time_support_create_update(request, project, support=None):
     for value in questions.values():
         question = value
     print("Question Text: ", question['question_text'])
-    question_text = question['question_text']
     if request.method == 'GET':
         formset = TimeSupportFormset(
             queryset=queryset,
@@ -1113,8 +1112,6 @@ def time_support_create_update(request, project, support=None):
         print("Formset:", formset)
         question_form = _form.QuestionTextForm(
             questions=questions, answers=answers, user=request.user)
-        # question_form = _form.QuestionForm(
-        #     question_text=questions, answers=answers, user=request.user)
 
     elif request.method == 'POST':
         formset = TimeSupportFormset(
@@ -1174,8 +1171,11 @@ class TimeNecessityList(AutoPermissionRequiredMixin, generic.ListView):
         context = super().get_context_data(**kwargs)
 
         project_pk = self.kwargs['project_id']
+        questions = _model.QuestionText.objects.all()
+        print(questions)
         project = get_object_or_404(_model.Project, pk=project_pk)
         context['project'] = project
+        context['questions'] = questions
 
         context['necessity_list'] = project.timenecessity_set.all()
         context['type'] = 'time'

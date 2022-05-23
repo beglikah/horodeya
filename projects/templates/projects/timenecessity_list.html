@@ -10,9 +10,6 @@
 {% endblock %}
 
 {% block admin_tools %}
-{%if necessity_list.count > 0 %}
-<a href="{% url 'projects:volunteer_questions_update' project.pk %}" class="nav-item nav-link text-white">{% trans 'Update questions' %}</a>
-{%endif%}
   <a href="{% url 'projects:time_necessity_update' project_id=project.pk %}" class="nav-item nav-link text-white">{% trans 'Update types' %}</a>
 {% endblock %}
 
@@ -23,11 +20,11 @@
 {% endif %}
 
   <div class="text-center">
-    <h4>{% trans 'Questions' %}</h4>
+    <h4>{% trans 'Question' %}</h4>
   </div>
   <ul class="list-group list-group-horizontal">
-    {% for question in project.question_set.all %}
-      <li class="list-group-item">{{question}}</li>
+    {% for question in questions %}
+      <li class="list-group-item">{{question.question_text}}</li>
     {% empty %}
       {% trans 'No questions configured' %}
     {% endfor %}

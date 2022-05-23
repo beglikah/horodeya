@@ -31,13 +31,13 @@
 
     {% if not short %}
 
-    {% if author_admin or administrator_admin %}
     <a
         class="btn btn-primary mt-3"
         href="{% url 'projects:time_necessity_list' project.pk %}"
         >
         {% trans 'See Time Investments' %}
     </a>
+    {% if author_admin or administrator_admin %}
     <a
         class="btn btn-primary mt-3"
         href="{% url 'projects:time_necessity_update' project.pk %}"
@@ -45,23 +45,14 @@
         {% trans 'Update Time Investments types' %}
     </a>
         {% endif %}
-    {% if member_admin %}
-    <a
-        class="btn btn-primary mt-3"
-        href="{% url 'projects:time_necessity_list' project.pk %}"
-        >
-        {% trans 'See Time Investments' %}
-    </a>
 
-    {% else %}
-        {%if project.time_still_needed is not 0 and project.question_set.count > 0 %}
+        {%if project.time_still_needed is not 0 %}
         <a class="btn btn-primary mt-3" href="{% url 'projects:time_support_create' object.pk %}">
             {% trans "Invest time" %}
         </a>
         {%else%}
         <h6>{% trans 'No Time Investments needed' %}</h6>
         {%endif%}
-    {% endif %}
     {% else %}
     <hr />
     {% endif %}

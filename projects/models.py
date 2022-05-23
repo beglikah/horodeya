@@ -789,7 +789,8 @@ class QuestionText(Timestamped):
         max_length=200,
         default="Please write the name of the person or organization that invited you to the project")
     answer = models.TextField(_('answer'), null=False, blank=True)
-    project = models.ForeignKey(Project, on_delete=models.PROTECT, null=True)
+    project = models.ForeignKey(
+        Project, on_delete=models.PROTECT, null=True, blank=True)
 
     def __str__(self):
         return self.question_text

@@ -40,12 +40,7 @@
             {% trans 'Update members' %}
         </a>
         </li>
-        <li class="nav-item flex-fill text-center ">
-        <a class="nav-link text-white" href="{% url 'projects:volunteer_questions_update' project.pk %}">
-            {% trans 'Update questions' %}
-        </a>
-        </li>
-        <li class="nav-item flex-fill text-center ">
+                <li class="nav-item flex-fill text-center ">
         <a class="nav-link text-white" href="{% url 'projects:update_presentation' project.pk  %}">
             {% trans 'Update Presentation' %}
         </a>
@@ -159,16 +154,11 @@
     </div>
     {% endif %}
     <div class="">
-        {% if author_admin or administrator_admin %}
         <div id="volunteer" class="">
             {% include "projects/project_stats.html" with project=object %}
         </div>
-        {% endif %}
     </div>
         {% if member_admin %}
-        <div id="volunteer" class="">
-            {% include "projects/project_stats.html" with project=object %}
-        </div>
     <div class="">
         <div id="volunteer" class="col-md-4 mt-4" style="padding-left: 0px;" >
             <p class="font-weight-bold footer-titles">Report problems: </p>
@@ -176,13 +166,6 @@
         </div>
     </div>
     {% endif %}
-
-    <div id="donate" class="col-md-4 mt-4" style="padding-left: 0px;">
-        <a class="btn btn-primary mt-3"
-            href="{% url 'projects:time_support_create' project.pk %}?supportertype=donator">
-            {% trans 'Invest Time' %}
-        </a>
-    </div>
 
     {% if author_admin or administrator_admin %}
     <div id="reports" class="col-8 p-0 mt-5">
