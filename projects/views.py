@@ -1171,7 +1171,7 @@ class TimeNecessityList(AutoPermissionRequiredMixin, generic.ListView):
         context = super().get_context_data(**kwargs)
 
         project_pk = self.kwargs['project_id']
-        questions = _model.QuestionText.objects.all()
+        questions = _model.QuestionText.objects.filter(pk=1)
         print(questions)
         project = get_object_or_404(_model.Project, pk=project_pk)
         context['project'] = project

@@ -90,6 +90,12 @@ class ProjectAdmin(admin.ModelAdmin):
             project.members.add(*add_m)
 
 
+class QuestionTextAdmin(admin.ModelAdmin):
+     list_display = (
+         'id', 'question_text'
+     )
+
+
 admin.site.register(_models.Project, ProjectAdmin)
 admin.site.register(Vote)
 admin.site.register(_models.MoneySupport)
@@ -98,7 +104,7 @@ admin.site.register(_models.ThingSupport)
 admin.site.register(_models.Announcement)
 admin.site.register(_models.QuestionPrototype)
 admin.site.register(_models.Question)
-admin.site.register(_models.QuestionText)
+admin.site.register(_models.QuestionText, QuestionTextAdmin)
 admin.site.register(_models.Answer)
 admin.site.register(_models.Report)
 admin.site.register(DonatorData)

@@ -147,7 +147,7 @@ class QuestionTextForm(forms.Form):
                     value = ''
                 answer, created = _model.QuestionText.objects.update_or_create(
                     project=project,
-                    question_text=question,
+                    question_text=_model.QuestionText,
                     defaults={'answer': value}
                 )
 
